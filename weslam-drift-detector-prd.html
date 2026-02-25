@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WeSlam — Design System Drift Detector · Lean PRD</title>
+<style>
+  :root {
+    --black: #0A0A0A;
+    --white: #FFFFFF;
+    --accent: #FF4A1C;
+    --accent2: #6B4EFF;
+    --gray-100: #F5F5F5;
+    --gray-200: #E8E8E8;
+    --gray-400: #9A9A9A;
+    --gray-600: #5A5A5A;
+    --green: #00C27C;
+    --yellow: #FFB800;
+    --red: #FF4A1C;
+    --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font);
+    background: var(--black);
+    color: var(--white);
+    line-height: 1.6;
+    font-size: 15px;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(10,10,10,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid #1A1A1A;
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 56px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  .nav-logo {
+    font-weight: 800;
+    font-size: 16px;
+    letter-spacing: -0.5px;
+    color: var(--accent);
+    margin-right: 16px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .nav-btn {
+    background: none;
+    border: none;
+    color: var(--gray-400);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+    font-family: var(--font);
+  }
+  .nav-btn:hover { color: var(--white); background: #1A1A1A; }
+  .nav-btn.active { color: var(--white); background: #1F1F1F; }
+
+  /* SECTIONS */
+  .section {
+    display: none;
+    min-height: 100vh;
+    padding: 80px 32px 64px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  .section.visible { display: block; }
+
+  /* HERO */
+  .hero { padding-top: 100px; padding-bottom: 60px; }
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,74,28,0.12);
+    border: 1px solid rgba(255,74,28,0.3);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 100px;
+    margin-bottom: 28px;
+  }
+  .dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.4} }
+
+  h1 {
+    font-size: clamp(36px, 6vw, 56px);
+    font-weight: 800;
+    letter-spacing: -2px;
+    line-height: 1.05;
+    margin-bottom: 24px;
+  }
+  .gradient-text {
+    background: linear-gradient(135deg, #FF4A1C, #6B4EFF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-sub {
+    font-size: 18px;
+    color: var(--gray-400);
+    max-width: 620px;
+    margin-bottom: 40px;
+    line-height: 1.7;
+  }
+
+  h2 {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 8px;
+  }
+  h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .section-sub {
+    color: var(--gray-400);
+    font-size: 15px;
+    margin-bottom: 40px;
+  }
+
+  /* CARDS */
+  .card {
+    background: #111;
+    border: 1px solid #1E1E1E;
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+  .card:hover { border-color: #333; }
+  .card-tag {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  .card h3 { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+  .card p { color: var(--gray-400); font-size: 14px; line-height: 1.6; }
+
+  /* GRID */
+  .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  @media (max-width: 768px) { .g2, .g3 { grid-template-columns: 1fr; } }
+
+  /* BADGES */
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .badge-green { background: rgba(0,194,124,0.15); color: var(--green); }
+  .badge-orange { background: rgba(255,74,28,0.15); color: var(--accent); }
+  .badge-purple { background: rgba(107,78,255,0.15); color: var(--accent2); }
+  .badge-yellow { background: rgba(255,184,0,0.15); color: var(--yellow); }
+  .badge-red { background: rgba(255,74,28,0.15); color: var(--red); }
+
+  /* STAT CARDS */
+  .stat-card {
+    background: #111;
+    border: 1px solid #1E1E1E;
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .stat-number {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    color: var(--white);
+    display: block;
+  }
+  .stat-label { font-size: 12px; color: var(--gray-400); margin-top: 4px; }
+
+  /* VERDICT BOX */
+  .verdict-box {
+    background: linear-gradient(135deg, rgba(255,74,28,0.08), rgba(107,78,255,0.08));
+    border: 1px solid rgba(255,74,28,0.25);
+    border-radius: 16px;
+    padding: 32px;
+    margin-top: 32px;
+  }
+  .verdict-box h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin-bottom: 12px; }
+  .verdict-box p { font-size: 16px; line-height: 1.7; color: var(--white); }
+  .verdict-box strong { color: var(--accent); }
+
+  /* CODE BLOCK */
+  .code-block {
+    background: #0D0D0D;
+    border: 1px solid #1E1E1E;
+    border-radius: 10px;
+    padding: 20px;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    overflow-x: auto;
+    margin: 16px 0;
+    color: #E0E0E0;
+  }
+  .code-block .comment { color: #5A5A5A; }
+  .code-block .key { color: #FF6B6B; }
+  .code-block .string { color: #98C379; }
+  .code-block .number { color: #D19A66; }
+  .code-block .keyword { color: #C678DD; }
+  .code-block .fn { color: #61AFEF; }
+
+  /* ALERT */
+  .alert {
+    display: flex;
+    gap: 14px;
+    padding: 16px 20px;
+    border-radius: 10px;
+    margin: 16px 0;
+  }
+  .alert-green { background: rgba(0,194,124,0.08); border: 1px solid rgba(0,194,124,0.2); }
+  .alert-orange { background: rgba(255,74,28,0.08); border: 1px solid rgba(255,74,28,0.2); }
+  .alert-purple { background: rgba(107,78,255,0.08); border: 1px solid rgba(107,78,255,0.2); }
+  .alert-yellow { background: rgba(255,184,0,0.08); border: 1px solid rgba(255,184,0,0.2); }
+  .alert-ico { font-size: 20px; flex-shrink: 0; }
+  .alert-body h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .alert-body p { font-size: 13px; color: var(--gray-400); line-height: 1.6; }
+
+  /* TABLE */
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+  th { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--gray-400); text-align: left; padding: 8px 12px; border-bottom: 1px solid #1E1E1E; }
+  td { padding: 10px 12px; border-bottom: 1px solid #111; font-size: 14px; color: var(--gray-400); }
+  td:first-child { color: var(--white); font-weight: 600; }
+  tr:hover td { background: #0D0D0D; }
+
+  /* FLOW DIAGRAM */
+  .flow { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin: 24px 0; }
+  .flow-step {
+    background: #111;
+    border: 1px solid #1E1E1E;
+    border-radius: 10px;
+    padding: 14px 18px;
+    text-align: center;
+    min-width: 120px;
+  }
+  .flow-step .step-num { font-size: 11px; color: var(--accent); font-weight: 700; letter-spacing: 1px; }
+  .flow-step .step-label { font-size: 13px; font-weight: 600; margin-top: 4px; }
+  .flow-arrow { color: var(--gray-600); font-size: 20px; }
+
+  /* USER STORY */
+  .story {
+    background: #111;
+    border: 1px solid #1E1E1E;
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin-bottom: 12px;
+  }
+  .story-persona {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .story-persona.dev { color: var(--green); }
+  .story-persona.lead { color: var(--accent2); }
+  .story-persona.head { color: var(--accent); }
+  .story q {
+    font-size: 15px;
+    color: var(--white);
+    font-style: italic;
+    line-height: 1.6;
+  }
+  .story .acceptance {
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--gray-400);
+    line-height: 1.7;
+  }
+  .story .acceptance strong { color: var(--gray-200); }
+
+  /* PRIORITY */
+  .prio-must { color: var(--red); font-weight: 700; }
+  .prio-should { color: var(--yellow); font-weight: 700; }
+  .prio-nice { color: var(--gray-400); font-weight: 700; }
+
+  /* TIMELINE */
+  .timeline { margin: 24px 0; }
+  .tl-phase {
+    display: flex;
+    gap: 20px;
+    padding: 20px 0;
+    border-left: 2px solid #1E1E1E;
+    margin-left: 20px;
+    padding-left: 24px;
+    position: relative;
+  }
+  .tl-phase::before {
+    content: '';
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    position: absolute;
+    left: -7px;
+    top: 24px;
+  }
+  .tl-phase.phase-1::before { background: var(--green); }
+  .tl-phase.phase-2::before { background: var(--accent2); }
+  .tl-phase.phase-3::before { background: var(--accent); }
+  .tl-phase.phase-4::before { background: var(--yellow); }
+  .tl-content { flex: 1; }
+  .tl-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .tl-label.green { color: var(--green); }
+  .tl-label.purple { color: var(--accent2); }
+  .tl-label.orange { color: var(--accent); }
+  .tl-label.yellow { color: var(--yellow); }
+
+  /* MISC */
+  .mt16 { margin-top: 16px; }
+  .mt24 { margin-top: 24px; }
+  .mt32 { margin-top: 32px; }
+  .mb8 { margin-bottom: 8px; }
+  .mb16 { margin-bottom: 16px; }
+  .small { font-size: 13px; }
+  .muted { color: var(--gray-400); }
+  .hi { color: var(--accent); }
+  .divider { border: none; border-top: 1px solid #1E1E1E; margin: 32px 0; }
+  .sup { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 6px; }
+
+  /* META INFO */
+  .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin: 24px 0;
+  }
+  @media (max-width: 768px) { .meta-grid { grid-template-columns: 1fr 1fr; } }
+  .meta-item {
+    background: #111;
+    border: 1px solid #1E1E1E;
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .meta-label { font-size: 11px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; }
+  .meta-value { font-size: 15px; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">WeSlam PRD</div>
+  <button class="nav-btn active" onclick="show('overview',this)">Übersicht</button>
+  <button class="nav-btn" onclick="show('problem',this)">Problem</button>
+  <button class="nav-btn" onclick="show('landscape',this)">Landscape</button>
+  <button class="nav-btn" onclick="show('stories',this)">User Stories</button>
+  <button class="nav-btn" onclick="show('scope',this)">MVP Scope</button>
+  <button class="nav-btn" onclick="show('architecture',this)">Architektur</button>
+  <button class="nav-btn" onclick="show('gtm',this)">Go-to-Market</button>
+  <button class="nav-btn" onclick="show('risks',this)">Risiken</button>
+</nav>
+
+<!-- ============================================ -->
+<!--  1. OVERVIEW                                 -->
+<!-- ============================================ -->
+<div id="overview" class="section visible">
+  <div class="hero">
+    <div class="hero-tag"><span class="dot"></span> Lean PRD v1.0</div>
+    <h1>Design System<br><span class="gradient-text">Drift Detector</span></h1>
+    <p class="hero-sub">
+      Ein Open-Source GitHub Action, der auf jedem Pull Request prüft ob AI-generierter Code die Design-System-Tokens korrekt nutzt — oder ob er Farben, Abstände und Komponenten hardcoded.
+    </p>
+
+    <div class="meta-grid">
+      <div class="meta-item">
+        <div class="meta-label">Produkt-Typ</div>
+        <div class="meta-value">Open Source GitHub Action</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Lizenz</div>
+        <div class="meta-value">MIT</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Ziel MVP</div>
+        <div class="meta-value">8 Wochen</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Budget</div>
+        <div class="meta-value">CHF 20–30k</div>
+      </div>
+    </div>
+
+    <div class="verdict-box">
+      <h3>Strategischer Zweck</h3>
+      <p>
+        Der Drift Detector ist <strong>kein SaaS-Produkt</strong> — er ist ein <strong>strategisches Marketing- und Lead-Generation-Tool</strong>.
+        Er demonstriert WeSlam's Expertise, baut Community auf, und generiert Enterprise-Inbounds für das Kerngeschäft: AI-Ready Design System Consulting.
+        Ziel: <strong>100 GitHub Stars bis Ende 2026</strong>, <strong>3–5 Enterprise-Leads</strong> aus der Community.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!--  2. PROBLEM                                  -->
+<!-- ============================================ -->
+<div id="problem" class="section">
+  <h2>Das Problem</h2>
+  <p class="section-sub">Warum AI-Coding ohne Design-System-Guardrails scheitert</p>
+
+  <div class="card">
+    <div class="card-tag">Kern-Problem</div>
+    <h3>AI-generierter Code respektiert keine Design Systems</h3>
+    <p>
+      Wenn Cursor, Copilot oder Claude Code auf einem PR arbeitet, weiss heute niemand ob der generierte Code die Design-System-Tokens und Komponenten korrekt nutzt. Statt <code>var(--color-primary-500)</code> schreibt die AI <code>#3B82F6</code>. Statt <code>var(--spacing-4)</code> steht <code>16px</code>. Das passiert hundertfach am Tag.
+    </p>
+  </div>
+
+  <div class="g3 mt16">
+    <div class="stat-card">
+      <span class="stat-number" style="color:var(--red)">62%</span>
+      <span class="stat-label">der Entwickler berichten Rework wegen inkonsistentem AI-Code</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-number" style="color:var(--yellow)">20–30%</span>
+      <span class="stat-label">Produktivitätsgewinn durch AI-Coding — aber nur wenn Code konsistent bleibt</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-number" style="color:var(--green)">0</span>
+      <span class="stat-label">generische Open-Source-Tools die Design-System-Drift auf PRs prüfen</span>
+    </div>
+  </div>
+
+  <div class="alert alert-orange mt24">
+    <div class="alert-ico">🔥</div>
+    <div class="alert-body">
+      <h4>Die Drift-Kaskade</h4>
+      <p>Hardcoded Werte → Inkonsistente UI → Designer meldet Bug → Dev fixt manuell → Nächster AI-generierter PR wiederholt den Fehler → Design System wird ignoriert → Team fällt zurück auf manuelle Reviews. Der gesamte AI-Productivity-Gain geht verloren.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <h3 class="mt24 mb8">Warum existierende Tools das nicht lösen</h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Tool</th>
+        <th>Was es macht</th>
+        <th>Was fehlt</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>stylelint-declaration-strict-value</td>
+        <td>Prüft ob CSS Properties Variablen nutzen</td>
+        <td>Nur CSS. Kein JSX/TSX. Kennt keine Token-Map. Keine AI-spezifischen Patterns.</td>
+      </tr>
+      <tr>
+        <td>Carbon Stylelint Plugin</td>
+        <td>Enforces IBM Carbon Tokens</td>
+        <td>Nur für Carbon Design System. Nicht konfigurierbar für andere Token-Sets.</td>
+      </tr>
+      <tr>
+        <td>Atlassian ESLint Plugin</td>
+        <td>Enforces Atlassian Design Tokens</td>
+        <td>Nur für Atlassian. Erfordert @atlaskit Dependency.</td>
+      </tr>
+      <tr>
+        <td>MetaMask ESLint Plugin</td>
+        <td>Flagged Hex Colors in JS</td>
+        <td>Nur React Native / MetaMask spezifisch. Keine Token-Map Konfiguration.</td>
+      </tr>
+      <tr>
+        <td>Supernova.io</td>
+        <td>Design System Documentation + AI</td>
+        <td>SaaS-Plattform ($9.2M raised). Kein CI/CD-Level-Check. Kein PR-Level-Feedback.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="alert alert-green mt16">
+    <div class="alert-ico">✅</div>
+    <div class="alert-body">
+      <h4>Die Lücke</h4>
+      <p>Jedes existierende Tool ist entweder (a) an ein spezifisches Design System gebunden, (b) nur CSS, nicht JS/TSX, oder (c) keine CI/CD-Integration. <strong>Es gibt kein generisches, framework-agnostisches, token-map-konfigurierbares Open-Source-Tool das auf PR-Level Design-System-Compliance prüft.</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!--  3. COMPETITIVE LANDSCAPE                    -->
+<!-- ============================================ -->
+<div id="landscape" class="section">
+  <h2>Competitive Landscape</h2>
+  <p class="section-sub">Positioning im Ökosystem existierender Tools</p>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-tag">293k Downloads/Woche</div>
+      <h3>stylelint-declaration-strict-value</h3>
+      <p>Populärstes Tool für "keine hardcoded CSS-Werte". Zeigt massive Nachfrage. Aber: nur CSS, keine Token-Map-Awareness, kein Framework-Support (React/Angular/Vue).</p>
+      <div style="margin-top:10px"><span class="badge badge-green">KOMPLEMENTÄR</span></div>
+    </div>
+    <div class="card">
+      <div class="card-tag">$9.2M Series A</div>
+      <h3>Supernova.io</h3>
+      <p>Design System Documentation Plattform. "Portal" Feature mit Ask AI. Push to Cursor/VS Code. Löst Discovery-Problem, nicht Enforcement-Problem.</p>
+      <div style="margin-top:10px"><span class="badge badge-yellow">KEIN DIREKTER WETTBEWERB</span></div>
+    </div>
+    <div class="card">
+      <div class="card-tag">W3C DTCG Stable — Okt 2025</div>
+      <h3>Design Tokens Standard</h3>
+      <p>Erste stabile Version des W3C Design Token Formats. Figma, Tokens Studio, Style Dictionary unterstützen es. Der Standard auf dem unser Token-Matching basiert.</p>
+      <div style="margin-top:10px"><span class="badge badge-purple">FOUNDATION</span></div>
+    </div>
+    <div class="card">
+      <div class="card-tag">Salesforce-intern</div>
+      <h3>Lightning Design Linter</h3>
+      <p>GitHub Action von Salesforce für ihr eigenes Lightning Design System. Proof-of-Concept dass das Konzept funktioniert — aber proprietär und nicht nutzbar für andere.</p>
+      <div style="margin-top:10px"><span class="badge badge-orange">PROOF OF CONCEPT</span></div>
+    </div>
+  </div>
+
+  <div class="verdict-box mt24">
+    <h3>Positionierung</h3>
+    <p>
+      Der WeSlam Drift Detector positioniert sich <strong>unterhalb</strong> der SaaS-Plattformen (Supernova, Zeroheight) und <strong>oberhalb</strong> der CSS-only Linters (stylelint).
+      Er ist das <strong>fehlende Bindeglied zwischen Design-System-Tokens und CI/CD-Pipeline</strong> — ein framework-agnostischer, token-map-konfigurierbarer GitHub Check
+      der auf der W3C DTCG Spec aufbaut.
+    </p>
+  </div>
+
+  <div class="flow mt32">
+    <div class="flow-step">
+      <div class="step-num">DESIGN</div>
+      <div class="step-label">Figma Tokens</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="step-num">EXPORT</div>
+      <div class="step-label">W3C DTCG JSON</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="border-color: var(--accent);">
+      <div class="step-num" style="color:var(--accent)">⚡ DRIFT DETECTOR</div>
+      <div class="step-label">PR Check</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="step-num">CODE</div>
+      <div class="step-label">Compliant Merge</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!--  4. USER STORIES                             -->
+<!-- ============================================ -->
+<div id="stories" class="section">
+  <h2>User Stories</h2>
+  <p class="section-sub">Die drei Personas und ihre Kernbedürfnisse</p>
+
+  <div class="sup">Persona 1 — Frontend Developer</div>
+  <div class="story">
+    <div class="story-persona dev">🧑‍💻 Frontend Developer</div>
+    <q>Als Frontend-Dev will ich auf meinem PR sofort sehen welche Stellen hardcoded Werte statt Design Tokens nutzen, damit ich sie fixen kann bevor der Review startet.</q>
+    <div class="acceptance">
+      <strong>Acceptance Criteria:</strong><br>
+      • GitHub Check erscheint innerhalb von 60 Sekunden nach PR-Öffnung<br>
+      • Inline-Annotations zeigen exakt die Zeile und den vorgeschlagenen Token<br>
+      • False-Positive-Rate unter 10% bei korrekt konfigurierter Token-Map
+    </div>
+  </div>
+
+  <div class="story">
+    <div class="story-persona dev">🧑‍💻 Frontend Developer (AI-Coding)</div>
+    <q>Als Dev der Cursor/Copilot nutzt, will ich dass AI-generierter Code automatisch auf Design-System-Compliance geprüft wird, ohne dass ich jede Zeile manuell reviewen muss.</q>
+    <div class="acceptance">
+      <strong>Acceptance Criteria:</strong><br>
+      • Erkennt typische AI-Patterns (hardcoded Tailwind-ähnliche Werte, inline styles)<br>
+      • Summary-Kommentar auf dem PR zeigt Gesamtscore (X violations, Y auto-fixable)<br>
+      • Optionaler Strict Mode blockt Merge bei Critical Violations
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="sup">Persona 2 — Design System Lead</div>
+  <div class="story">
+    <div class="story-persona lead">👩‍🎨 Design System Lead</div>
+    <q>Als DS Lead will ich wissen wie konsistent unser Design System über alle Repos hinweg genutzt wird — und ob die Adoption mit der Zeit steigt oder sinkt.</q>
+    <div class="acceptance">
+      <strong>Acceptance Criteria:</strong><br>
+      • Wöchentlicher Trend-Report (Violations pro Woche, Top-10 Offenders)<br>
+      • Dashboard-Daten via JSON-Export oder GitHub API<br>
+      • Filtermöglichkeit nach Team / Repo / Token-Kategorie
+    </div>
+  </div>
+
+  <div class="story">
+    <div class="story-persona lead">👩‍🎨 Design System Lead</div>
+    <q>Als DS Lead will ich die Token-Map selbst konfigurieren können, ohne den Source Code des Tools anzufassen.</q>
+    <div class="acceptance">
+      <strong>Acceptance Criteria:</strong><br>
+      • YAML-Config-Datei im Repo-Root (<code>.driftrc.yml</code>)<br>
+      • Importiert W3C DTCG JSON direkt als Token-Source<br>
+      • Custom-Rules für spezifische Properties definierbar
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="sup">Persona 3 — Head of Engineering</div>
+  <div class="story">
+    <div class="story-persona head">👔 Head of Engineering</div>
+    <q>Als Head of Engineering will ich sicherstellen dass unsere AI-Coding-Investition (Cursor Lizenzen, Copilot Enterprise) nicht zu technischem Debt führt weil generierter Code die UI-Konsistenz untergräbt.</q>
+    <div class="acceptance">
+      <strong>Acceptance Criteria:</strong><br>
+      • Quantifizierbarer ROI: "Design-System-Compliance von 64% auf 92% in 3 Monaten"<br>
+      • Kein Vendor Lock-in (Open Source, self-hosted)<br>
+      • Setup in unter 30 Minuten pro Repo
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!--  5. MVP SCOPE                                -->
+<!-- ============================================ -->
+<div id="scope" class="section">
+  <h2>MVP Scope</h2>
+  <p class="section-sub">Was rein kommt, was raus bleibt</p>
+
+  <div class="alert alert-purple">
+    <div class="alert-ico">🎯</div>
+    <div class="alert-body">
+      <h4>MVP-Prinzip</h4>
+      <p>Der MVP muss in 8 Wochen benutzbar sein und auf einem realen WeSlam-Kundenprojekt laufen. Alles was dieses Ziel nicht direkt unterstützt, ist Post-MVP.</p>
+    </div>
+  </div>
+
+  <h3 class="mt24 mb16">Feature-Matrix</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Feature</th>
+        <th>Beschreibung</th>
+        <th>Priorität</th>
+        <th>Phase</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Token-Map Import</td>
+        <td>W3C DTCG JSON + CSS Custom Properties + SCSS Variables als Token-Source</td>
+        <td><span class="prio-must">MUST</span></td>
+        <td>MVP</td>
+      </tr>
+      <tr>
+        <td>Color Detection</td>
+        <td>Hex (#fff, #3B82F6), rgb(), rgba(), hsl() in CSS, SCSS, JS, TSX erkennen</td>
+        <td><span class="prio-must">MUST</span></td>
+        <td>MVP</td>
+      </tr>
+      <tr>
+        <td>Spacing Detection</td>
+        <td>Hardcoded px/rem/em Werte für margin, padding, gap, etc. flaggen</td>
+        <td><span class="prio-must">MUST</span></td>
+        <td>MVP</td>
+      </tr>
+      <tr>
+        <td>GitHub PR Annotations</td>
+        <td>Inline-Kommentare auf den exakten Zeilen mit Token-Vorschlag</td>
+        <td><span class="prio-must">MUST</span></td>
+        <td>MVP</td>
+      </tr>
+      <tr>
+        <td>Summary Comment</td>
+        <td>PR-Kommentar mit Gesamt-Score, Violations-Breakdown, Token-Coverage</td>
+        <td><span class="prio-must">MUST</span></td>
+        <td>MVP</td>
+      </tr>
+      <tr>
+        <td>.driftrc.yml Config</td>
+        <td>YAML-Config für Token-Source-Path, Severity-Levels, Ignore-Patterns</td>
+        <td><span class="prio-must">MUST</span></td>
+        <td>MVP</td>
+      </tr>
+      <tr>
+        <td>React/Vue/Angular Support</td>
+        <td>Framework-spezifische Parser für JSX/TSX inline styles und styled-components</td>
+        <td><span class="prio-should">SHOULD</span></td>
+        <td>MVP</td>
+      </tr>
+      <tr>
+        <td>Tailwind Aware Mode</td>
+        <td>Erkennt willkürliche Tailwind-Werte wie <code>text-[#3B82F6]</code> oder <code>p-[17px]</code></td>
+        <td><span class="prio-should">SHOULD</span></td>
+        <td>MVP</td>
+      </tr>
+      <tr>
+        <td>Auto-Fix Suggestions</td>
+        <td>GitHub Suggestion-Format für 1:1 Token-Matches (Click-to-Apply)</td>
+        <td><span class="prio-should">SHOULD</span></td>
+        <td>MVP</td>
+      </tr>
+      <tr>
+        <td>Typography Detection</td>
+        <td>Font-size, font-weight, line-height Hardcodes erkennen</td>
+        <td><span class="prio-nice">NICE</span></td>
+        <td>Post-MVP</td>
+      </tr>
+      <tr>
+        <td>Trend Dashboard</td>
+        <td>Violations-over-time als GitHub Pages oder JSON-Export</td>
+        <td><span class="prio-nice">NICE</span></td>
+        <td>Post-MVP</td>
+      </tr>
+      <tr>
+        <td>GitLab CI Support</td>
+        <td>GitLab CI/CD Integration neben GitHub Actions</td>
+        <td><span class="prio-nice">NICE</span></td>
+        <td>Post-MVP</td>
+      </tr>
+      <tr>
+        <td>Figma MCP Integration</td>
+        <td>Token-Map direkt aus Figma via MCP Server statt JSON-File</td>
+        <td><span class="prio-nice">NICE</span></td>
+        <td>Post-MVP</td>
+      </tr>
+      <tr>
+        <td>Strict Mode / Merge Block</td>
+        <td>Optionaler Check-Failure der den Merge bei Critical Violations blockt</td>
+        <td><span class="prio-should">SHOULD</span></td>
+        <td>Post-MVP</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="g2 mt24">
+    <div class="card" style="border-color: rgba(0,194,124,0.3);">
+      <div class="card-tag" style="color:var(--green)">MVP: Drin</div>
+      <p>Token-Map Import (DTCG + CSS Vars) · Color + Spacing Detection · CSS + SCSS + JS/TSX · GitHub PR Annotations + Summary · YAML Config · React Support · Tailwind Aware Mode · Auto-Fix Suggestions</p>
+    </div>
+    <div class="card" style="border-color: rgba(255,74,28,0.3);">
+      <div class="card-tag" style="color:var(--red)">MVP: Raus</div>
+      <p>Typography Detection · Trend Dashboard · GitLab CI · Figma MCP Integration · Multi-Repo Aggregation · Slack Notifications · Component-Level Checks (nur Token-Level im MVP)</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!--  6. ARCHITECTURE                             -->
+<!-- ============================================ -->
+<div id="architecture" class="section">
+  <h2>Technische Architektur</h2>
+  <p class="section-sub">Wie der Drift Detector funktioniert</p>
+
+  <div class="flow">
+    <div class="flow-step">
+      <div class="step-num">1</div>
+      <div class="step-label">PR öffnen</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="step-num">2</div>
+      <div class="step-label">.driftrc.yml lesen</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="step-num">3</div>
+      <div class="step-label">Token-Map laden</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="step-num">4</div>
+      <div class="step-label">Changed Files parsen</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="step-num">5</div>
+      <div class="step-label">Values matchen</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="border-color:var(--accent)">
+      <div class="step-num" style="color:var(--accent)">6</div>
+      <div class="step-label">PR annotieren</div>
+    </div>
+  </div>
+
+  <h3 class="mt32 mb8">Config-Datei: .driftrc.yml</h3>
+  <div class="code-block">
+<span class="comment"># .driftrc.yml — Design System Drift Detector Config</span>
+
+<span class="key">token_sources</span>:
+  - <span class="key">path</span>: <span class="string">"./tokens/design-tokens.json"</span>
+    <span class="key">format</span>: <span class="string">"dtcg"</span>  <span class="comment"># W3C DTCG Standard</span>
+  - <span class="key">path</span>: <span class="string">"./src/styles/variables.css"</span>
+    <span class="key">format</span>: <span class="string">"css-custom-properties"</span>
+
+<span class="key">rules</span>:
+  <span class="key">color</span>:
+    <span class="key">severity</span>: <span class="string">"error"</span>
+    <span class="key">detect</span>: [<span class="string">"hex"</span>, <span class="string">"rgb"</span>, <span class="string">"rgba"</span>, <span class="string">"hsl"</span>]
+    <span class="key">ignore</span>: [<span class="string">"transparent"</span>, <span class="string">"inherit"</span>, <span class="string">"currentColor"</span>]
+  <span class="key">spacing</span>:
+    <span class="key">severity</span>: <span class="string">"warning"</span>
+    <span class="key">properties</span>: [<span class="string">"margin"</span>, <span class="string">"padding"</span>, <span class="string">"gap"</span>]
+    <span class="key">ignore</span>: [<span class="string">"0"</span>, <span class="string">"auto"</span>]
+  <span class="key">tailwind</span>:
+    <span class="key">enabled</span>: <span class="keyword">true</span>
+    <span class="key">detect_arbitrary</span>: <span class="keyword">true</span>  <span class="comment"># text-[#xxx], p-[17px]</span>
+
+<span class="key">scan</span>:
+  <span class="key">include</span>: [<span class="string">"src/**/*.{css,scss,tsx,jsx,vue}"</span>]
+  <span class="key">exclude</span>: [<span class="string">"**/*.test.*"</span>, <span class="string">"**/node_modules/**"</span>]
+
+<span class="key">output</span>:
+  <span class="key">annotations</span>: <span class="keyword">true</span>    <span class="comment"># Inline PR comments</span>
+  <span class="key">summary</span>: <span class="keyword">true</span>        <span class="comment"># Summary PR comment</span>
+  <span class="key">suggestions</span>: <span class="keyword">true</span>    <span class="comment"># Auto-fix suggestions</span>
+  <span class="key">fail_on</span>: <span class="string">"none"</span>       <span class="comment"># "none" | "error" | "warning"</span>
+  </div>
+
+  <h3 class="mt32 mb8">GitHub Action Usage</h3>
+  <div class="code-block">
+<span class="comment"># .github/workflows/drift-check.yml</span>
+<span class="key">name</span>: <span class="string">Design System Drift Check</span>
+<span class="key">on</span>: [<span class="string">pull_request</span>]
+
+<span class="key">jobs</span>:
+  <span class="key">drift-check</span>:
+    <span class="key">runs-on</span>: <span class="string">ubuntu-latest</span>
+    <span class="key">steps</span>:
+      - <span class="key">uses</span>: <span class="string">actions/checkout@v4</span>
+      - <span class="key">uses</span>: <span class="string">weslam/drift-detector@v1</span>
+        <span class="key">with</span>:
+          <span class="key">config</span>: <span class="string">".driftrc.yml"</span>
+          <span class="key">token</span>: <span class="string">${{ secrets.GITHUB_TOKEN }}</span>
+  </div>
+
+  <h3 class="mt32 mb8">Tech Stack</h3>
+  <div class="g2">
+    <div class="card">
+      <div class="card-tag">Runtime</div>
+      <h3>Node.js + TypeScript</h3>
+      <p>Maximale Kompatibilität mit dem Frontend-Ökosystem. TypeScript für Type Safety. Läuft nativ in GitHub Actions ohne Docker-Overhead.</p>
+    </div>
+    <div class="card">
+      <div class="card-tag">Parsing</div>
+      <h3>PostCSS + AST Parser</h3>
+      <p>PostCSS für CSS/SCSS. @babel/parser oder ts-morph für JSX/TSX. Regex-Fallback für Tailwind arbitrary values. Modular: je ein Parser pro Sprache/Framework.</p>
+    </div>
+    <div class="card">
+      <div class="card-tag">Token Matching</div>
+      <h3>Fuzzy Color Matching</h3>
+      <p>Exact Match (hex → token), Nearest Match (Delta-E Color Distance für nahe Farben), Spacing Scale Match (16px → spacing-4 wenn spacing-scale = 4px). Konfigurierbarer Threshold.</p>
+    </div>
+    <div class="card">
+      <div class="card-tag">Output</div>
+      <h3>GitHub Checks API</h3>
+      <p>@actions/core für Annotations. @octokit/rest für PR Comments. GitHub Suggestions Format für Auto-Fix. Keine externen Dependencies ausser GitHub.</p>
+    </div>
+  </div>
+
+  <div class="alert alert-purple mt16">
+    <div class="alert-ico">⚡</div>
+    <div class="alert-body">
+      <h4>Performance-Ziel</h4>
+      <p>Unter 60 Sekunden für einen PR mit 50 geänderten Dateien. Nur geänderte Dateien scannen (git diff), nicht das gesamte Repo. Token-Map einmal laden und im Memory halten.</p>
+    </div>
+  </div>
+
+  <h3 class="mt32 mb8">Beispiel: PR Output</h3>
+  <div class="code-block">
+<span class="comment">// 🔍 Design System Drift Report</span>
+<span class="comment">// PR #142: Add user profile page</span>
+<span class="comment">// ───────────────────────────────</span>
+
+<span class="fn">⚠ 7 violations found</span> (5 errors, 2 warnings)
+
+<span class="key">src/components/ProfileCard.tsx:24</span>
+  <span class="string">color: "#3B82F6"</span> → use <span class="fn">var(--color-primary-500)</span>  <span class="comment">[error]</span>
+
+<span class="key">src/components/ProfileCard.tsx:31</span>
+  <span class="string">padding: "16px 24px"</span> → use <span class="fn">var(--spacing-4) var(--spacing-6)</span>  <span class="comment">[warning]</span>
+
+<span class="key">src/components/ProfileCard.tsx:45</span>
+  <span class="string">className="text-[#6B7280]"</span> → use <span class="fn">text-gray-500</span>  <span class="comment">[error]</span>
+
+<span class="comment">// ───────────────────────────────</span>
+<span class="comment">// Token Coverage: 87% (was 82% last PR)</span>
+<span class="comment">// 3 violations are auto-fixable → click "Apply suggestion"</span>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!--  7. GO-TO-MARKET                             -->
+<!-- ============================================ -->
+<div id="gtm" class="section">
+  <h2>Go-to-Market</h2>
+  <p class="section-sub">Von internem Tool zu Community-Footprint</p>
+
+  <div class="timeline">
+    <div class="tl-phase phase-1">
+      <div class="tl-content">
+        <div class="tl-label green">Phase 1 — Wochen 1–4: Build & Internal Use</div>
+        <h3>MVP auf WeSlam-Kundenprojekt</h3>
+        <p class="muted small">MVP bauen und auf einem realen Kundenprojekt (z.B. Swisscom, Homegate) einsetzen. Validiert die Token-Map-Konfiguration, testet Performance, sammelt erste Real-World-Daten zu Violations und False Positives.</p>
+        <div class="alert alert-green mt16">
+          <div class="alert-ico">🎯</div>
+          <div class="alert-body">
+            <h4>Exit-Kriterium</h4>
+            <p>False-Positive-Rate unter 15%. Mindestens 1 Kundenprojekt läuft produktiv. Token-Map-Config funktioniert mit W3C DTCG JSON.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-phase phase-2">
+      <div class="tl-content">
+        <div class="tl-label purple">Phase 2 — Wochen 5–8: Polish & Open Source</div>
+        <h3>GitHub Release + README + Landing Page</h3>
+        <p class="muted small">Code aufräumen, README schreiben (mit GIF-Demo), GitHub Action Marketplace Listing erstellen. Landing Page als Section auf weslam.com. Erster Blogpost: "How We Detect Design System Drift in AI-Generated Code".</p>
+        <div class="alert alert-purple mt16">
+          <div class="alert-ico">🎯</div>
+          <div class="alert-body">
+            <h4>Exit-Kriterium</h4>
+            <p>GitHub Action auf Marketplace gelistet. README mit Setup-Guide, Config-Doku, GIF-Demo. Erster Blogpost publiziert.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-phase phase-3">
+      <div class="tl-content">
+        <div class="tl-label orange">Phase 3 — Monat 3–4: Community & Awareness</div>
+        <h3>Distribution & Thought Leadership</h3>
+        <p class="muted small">Posts auf: Dev.to, Hashnode, Reddit (r/frontend, r/reactjs), Hacker News Show HN, Twitter/X. Talk bei Swiss Tech Community (SwissJS, Frontend Conf Zürich). WeSlam-Newsletter an bestehende Kunden.</p>
+        <div class="g3 mt16">
+          <div class="stat-card">
+            <span class="stat-number" style="color:var(--green)">50+</span>
+            <span class="stat-label">GitHub Stars</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-number" style="color:var(--accent2)">500+</span>
+            <span class="stat-label">Action Runs / Monat</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-number" style="color:var(--accent)">2–3</span>
+            <span class="stat-label">Enterprise-Inbounds</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-phase phase-4">
+      <div class="tl-content">
+        <div class="tl-label yellow">Phase 4 — Monat 5–6: Evaluate & Decide</div>
+        <h3>Datenbasierte SaaS-Entscheidung</h3>
+        <p class="muted small">Nach 6 Monaten: Daten analysieren. Lohnt sich ein SaaS-Layer (Dashboard, Multi-Repo, Team Features)? Oder bleibt es ein Marketing-Tool das Consulting-Leads generiert? Entscheidung basiert auf: GitHub Stars, Action Runs, Inbound-Qualität, Willingness-to-Pay-Signale.</p>
+        <div class="alert alert-yellow mt16">
+          <div class="alert-ico">⚖️</div>
+          <div class="alert-body">
+            <h4>Decision Framework</h4>
+            <p>SaaS nur wenn: >200 GitHub Stars AND >3 zahlungswillige Enterprise-Anfragen AND klarer Feature-Gap den die Open-Source-Version nicht füllt (z.B. Dashboard, Multi-Repo-Aggregation, Slack-Integration).</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!--  8. RISKS                                    -->
+<!-- ============================================ -->
+<div id="risks" class="section">
+  <h2>Risiken & Mitigations</h2>
+  <p class="section-sub">Was schiefgehen kann und wie wir gegensteuern</p>
+
+  <div class="card" style="border-color: rgba(255,74,28,0.3);">
+    <div class="g2" style="align-items:flex-start">
+      <div>
+        <div class="card-tag" style="color:var(--red)">Risiko 1 — Hoch</div>
+        <h3>False Positives frustrieren Entwickler</h3>
+        <p>Zu viele falsche Alarme führen dazu dass Teams den Check deaktivieren. Jeder Linter stirbt an zu hoher False-Positive-Rate.</p>
+      </div>
+      <div>
+        <div class="card-tag" style="color:var(--green)">Mitigation</div>
+        <p>Konservative Default-Config (nur High-Confidence Matches). Granulare Ignore-Rules. "Confidence Score" auf jedem Finding. Schneller Feedback-Loop mit erstem Kundenprojekt.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="border-color: rgba(255,184,0,0.3);">
+    <div class="g2" style="align-items:flex-start">
+      <div>
+        <div class="card-tag" style="color:var(--yellow)">Risiko 2 — Mittel</div>
+        <h3>Supernova oder Figma baut das Feature</h3>
+        <p>Supernova ($9.2M) könnte CI/CD-Checks als Feature launchen. Figma's native DTCG-Export (Nov 2026) könnte den Token-Pipeline-Bedarf reduzieren.</p>
+      </div>
+      <div>
+        <div class="card-tag" style="color:var(--green)">Mitigation</div>
+        <p>Open Source = kein Revenue-Risiko. Der Drift Detector kostet CHF 20–30k, nicht CHF 500k. Selbst wenn Supernova es baut, haben wir 6+ Monate Vorsprung und das Consulting-Positioning. Worst case: Das Tool bewies WeSlam's Expertise und generierte Leads.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="border-color: rgba(255,184,0,0.3);">
+    <div class="g2" style="align-items:flex-start">
+      <div>
+        <div class="card-tag" style="color:var(--yellow)">Risiko 3 — Mittel</div>
+        <h3>Token-Map-Konfiguration zu komplex</h3>
+        <p>Enterprise Design Systems haben oft kein sauberes W3C DTCG JSON. Die Konfiguration könnte zu aufwändig sein für Self-Service-Adoption.</p>
+      </div>
+      <div>
+        <div class="card-tag" style="color:var(--green)">Mitigation</div>
+        <p>Mehrere Input-Formate (DTCG JSON + CSS Custom Properties + SCSS Vars). "Auto-Detect" Modus der Token-Files im Repo findet. Starter-Templates für gängige Setups. Und: Die Konfiguration IST das Consulting-Upsell — WeSlam hilft beim Setup.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="border-color: rgba(107,78,255,0.3);">
+    <div class="g2" style="align-items:flex-start">
+      <div>
+        <div class="card-tag" style="color:var(--accent2)">Risiko 4 — Niedrig</div>
+        <h3>Wartungsaufwand übersteigt Nutzen</h3>
+        <p>Open-Source-Projekte brauchen Maintenance: Issues, PRs, neue Framework-Versionen, Breaking Changes in GitHub Actions API.</p>
+      </div>
+      <div>
+        <div class="card-tag" style="color:var(--green)">Mitigation</div>
+        <p>Bewusst schlanker Scope (kein Feature Creep). Modulare Architektur (Parser sind austauschbar). Community-PRs akzeptieren für Framework-spezifische Parser. Max. 4h/Woche Maintenance-Budget einplanen.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="verdict-box mt32">
+    <h3>Bottom Line</h3>
+    <p>
+      Das grösste Risiko ist <strong>nicht technisch</strong> — es ist <strong>Adoption</strong>. Ein perfekt gebautes Tool das niemand benutzt hat keinen Wert.
+      Deshalb: <strong>Erst intern auf Kundenprojekt validieren</strong>, dann open-sourcen. Die ersten 3 "Kunden" sind WeSlam-Bestandskunden
+      die das Tool gratis bekommen. Ihr Feedback bestimmt ob und wie es veröffentlicht wird.
+    </p>
+  </div>
+</div>
+
+<script>
+function show(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('visible'));
+  document.getElementById(id).classList.add('visible');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  window.scrollTo(0, 0);
+}
+</script>
+
+</body>
+</html>

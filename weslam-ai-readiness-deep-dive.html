@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WeSlam — AI-Readiness Score Deep Dive</title>
+<style>
+  :root {
+    --black: #0A0A0A;
+    --white: #FFFFFF;
+    --accent: #FF4A1C;
+    --accent2: #6B4EFF;
+    --g100: #F5F5F5;
+    --g200: #E8E8E8;
+    --g400: #9A9A9A;
+    --g600: #5A5A5A;
+    --green: #00C27C;
+    --yellow: #FFB800;
+    --red: #FF4A1C;
+    --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: var(--black); color: var(--white); line-height: 1.6; font-size: 15px; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(10,10,10,0.92); backdrop-filter: blur(12px);
+    border-bottom: 1px solid #1A1A1A;
+    display: flex; flex-direction: column;
+  }
+  .nav-row { display: flex; align-items: center; gap: 6px; padding: 0 24px; height: 44px; overflow-x: auto; scrollbar-width: none; }
+  .nav-row::-webkit-scrollbar { display: none; }
+  .nav-row:first-child { border-bottom: 1px solid #141414; }
+  .nav-logo { font-weight: 800; font-size: 15px; letter-spacing: -0.5px; color: var(--accent); margin-right: 12px; white-space: nowrap; flex-shrink: 0; }
+  .nav-btn {
+    background: none; border: none; color: var(--g400); font-size: 12px; font-weight: 500;
+    padding: 5px 10px; border-radius: 6px; cursor: pointer; transition: all 0.2s;
+    white-space: nowrap; flex-shrink: 0; font-family: var(--font);
+  }
+  .nav-btn:hover { color: var(--white); background: #1A1A1A; }
+  .nav-btn.active { color: var(--white); background: #1F1F1F; }
+  .doc-btn { font-size: 13px; font-weight: 600; padding: 6px 14px; }
+  .doc-btn.active { background: var(--accent); color: var(--white); }
+  .doc-btn:hover { background: rgba(255,74,28,0.3); color: var(--white); }
+
+  /* SECTIONS */
+  .section { display: none; min-height: 100vh; padding: 108px 32px 64px; max-width: 960px; margin: 0 auto; }
+  .section.visible { display: block; }
+
+  /* HERO */
+  .hero { padding-top: 120px; padding-bottom: 60px; }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,74,28,0.12); border: 1px solid rgba(255,74,28,0.3);
+    color: var(--accent); font-size: 12px; font-weight: 600;
+    letter-spacing: 0.8px; text-transform: uppercase;
+    padding: 5px 12px; border-radius: 100px; margin-bottom: 24px;
+  }
+  .dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.4} }
+
+  h1 { font-size: clamp(32px, 5vw, 52px); font-weight: 800; letter-spacing: -2px; line-height: 1.05; margin-bottom: 20px; }
+  .gradient-text { background: linear-gradient(135deg, #FF4A1C, #6B4EFF); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  h2 { font-size: 30px; font-weight: 800; letter-spacing: -1px; margin-bottom: 8px; }
+  h3 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+  .section-sub { color: var(--g400); font-size: 15px; margin-bottom: 36px; }
+  .hero-sub { font-size: 17px; color: var(--g400); max-width: 620px; margin-bottom: 36px; line-height: 1.7; }
+
+  /* CARDS */
+  .card { background: #111; border: 1px solid #1E1E1E; border-radius: 14px; padding: 24px; margin-bottom: 16px; }
+  .card:hover { border-color: #333; }
+  .card h3 { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+  .card p { color: var(--g400); font-size: 14px; line-height: 1.65; }
+  .sup { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 6px; }
+
+  /* CRITERION CARD */
+  .criterion {
+    background: #111; border: 1px solid #1E1E1E; border-radius: 16px;
+    padding: 28px 28px 24px; margin-bottom: 20px;
+  }
+  .criterion:hover { border-color: #333; }
+  .crit-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+  .crit-score {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255,74,28,0.1); border: 1px solid rgba(255,74,28,0.2);
+    padding: 4px 12px; border-radius: 8px; font-size: 13px; font-weight: 700; color: var(--accent);
+    flex-shrink: 0;
+  }
+  .crit-score.green { background: rgba(0,194,124,0.1); border-color: rgba(0,194,124,0.2); color: var(--green); }
+  .crit-body { margin-bottom: 16px; }
+  .crit-body p { color: var(--g400); font-size: 14px; line-height: 1.7; }
+
+  /* WHAT WE DO */
+  .what-we-do {
+    background: #0A0A0A; border: 1px solid #1A1A1A; border-radius: 12px; padding: 20px; margin-top: 16px;
+  }
+  .wwd-title { font-size: 12px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: var(--green); margin-bottom: 12px; }
+  .wwd-item { display: flex; gap: 12px; padding: 8px 0; }
+  .wwd-num {
+    width: 24px; height: 24px; border-radius: 6px; background: rgba(0,194,124,0.12);
+    color: var(--green); font-size: 12px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;
+  }
+  .wwd-text { font-size: 13px; line-height: 1.6; color: var(--g200); }
+  .wwd-text strong { color: var(--white); }
+
+  /* BEFORE/AFTER */
+  .ba { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  @media (max-width: 768px) { .ba { grid-template-columns: 1fr; } }
+  .ba-box { border-radius: 10px; padding: 16px; font-size: 13px; line-height: 1.6; }
+  .ba-before { background: rgba(255,74,28,0.06); border: 1px solid rgba(255,74,28,0.15); }
+  .ba-after { background: rgba(0,194,124,0.06); border: 1px solid rgba(0,194,124,0.15); }
+  .ba-label { font-size: 11px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 8px; }
+  .ba-label.red { color: var(--red); }
+  .ba-label.green { color: var(--green); }
+
+  /* CODE */
+  .code {
+    background: #0D0D0D; border: 1px solid #1E1E1E; border-radius: 10px;
+    padding: 16px 20px; font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 12px; line-height: 1.7; overflow-x: auto; margin: 12px 0; color: #E0E0E0;
+  }
+  .code .cm { color: #5A5A5A; }
+  .code .k { color: #FF6B6B; }
+  .code .s { color: #98C379; }
+  .code .fn { color: #61AFEF; }
+
+  /* GRID */
+  .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  @media (max-width: 768px) { .g2, .g3 { grid-template-columns: 1fr; } }
+
+  /* ALERT */
+  .alert { display: flex; gap: 14px; padding: 16px 20px; border-radius: 10px; margin: 16px 0; }
+  .alert-green { background: rgba(0,194,124,0.08); border: 1px solid rgba(0,194,124,0.2); }
+  .alert-orange { background: rgba(255,74,28,0.08); border: 1px solid rgba(255,74,28,0.2); }
+  .alert-purple { background: rgba(107,78,255,0.08); border: 1px solid rgba(107,78,255,0.2); }
+  .alert-ico { font-size: 20px; flex-shrink: 0; }
+  .alert-body h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .alert-body p { font-size: 13px; color: var(--g400); line-height: 1.6; }
+
+  /* STAT */
+  .stat-card { background: #111; border: 1px solid #1E1E1E; border-radius: 12px; padding: 20px; }
+  .stat-number { font-size: 32px; font-weight: 800; letter-spacing: -1px; color: var(--white); display: block; }
+  .stat-label { font-size: 12px; color: var(--g400); margin-top: 4px; }
+
+  /* VERDICT */
+  .verdict-box {
+    background: linear-gradient(135deg, rgba(255,74,28,0.08), rgba(107,78,255,0.08));
+    border: 1px solid rgba(255,74,28,0.25); border-radius: 16px; padding: 28px; margin-top: 28px;
+  }
+  .verdict-box h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin-bottom: 10px; }
+  .verdict-box p { font-size: 16px; line-height: 1.7; color: var(--white); }
+  .verdict-box strong { color: var(--accent); }
+
+  /* PROBLEM CARD */
+  .prob {
+    background: #111; border: 1px solid #1E1E1E; border-radius: 16px;
+    padding: 28px; margin-bottom: 20px; position: relative; overflow: hidden;
+  }
+  .prob::before {
+    content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+  }
+  .prob.p-red::before { background: var(--red); }
+  .prob.p-yellow::before { background: var(--yellow); }
+  .prob.p-purple::before { background: var(--accent2); }
+  .prob-tag { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+  .prob-tag.red { color: var(--red); }
+  .prob-tag.yellow { color: var(--yellow); }
+  .prob-tag.purple { color: var(--accent2); }
+  .prob h3 { font-size: 19px; font-weight: 800; margin-bottom: 10px; letter-spacing: -0.5px; }
+  .prob p { color: var(--g400); font-size: 14px; line-height: 1.7; }
+  .prob .quote {
+    background: rgba(255,255,255,0.04); border-left: 3px solid var(--g600);
+    padding: 12px 16px; margin: 14px 0; font-style: italic; font-size: 14px; color: var(--g200);
+  }
+  .prob .impact {
+    margin-top: 14px; padding: 14px 16px; border-radius: 10px;
+    background: rgba(255,74,28,0.06); border: 1px solid rgba(255,74,28,0.12);
+  }
+  .prob .impact-label { font-size: 11px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+  .prob .impact p { font-size: 13px; color: var(--g200); }
+
+  .divider { border: none; border-top: 1px solid #1E1E1E; margin: 32px 0; }
+  .mt16 { margin-top: 16px; }
+  .mt24 { margin-top: 24px; }
+  .mt32 { margin-top: 32px; }
+  .mb8 { margin-bottom: 8px; }
+  .mb16 { margin-bottom: 16px; }
+  .small { font-size: 13px; }
+  .muted { color: var(--g400); }
+  .hi { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-row">
+    <div class="nav-logo">WeSlam</div>
+    <button class="doc-btn active" onclick="switchDoc('scores')">🎯 AI-Readiness Score</button>
+    <button class="doc-btn" onclick="switchDoc('problems')">🔥 Echte Kundenprobleme</button>
+  </div>
+  <div class="nav-row" id="nav-scores">
+    <button class="nav-btn active" onclick="show('overview',this)">Übersicht</button>
+    <button class="nav-btn" onclick="show('c1',this)">1 Token-Struktur</button>
+    <button class="nav-btn" onclick="show('c2',this)">2 Code Connect</button>
+    <button class="nav-btn" onclick="show('c3',this)">3 MCP Server</button>
+    <button class="nav-btn" onclick="show('c4',this)">4 AI-Agent Doku</button>
+    <button class="nav-btn" onclick="show('c5',this)">5 Naming</button>
+    <button class="nav-btn" onclick="show('c6',this)">6 Token-Aliase</button>
+    <button class="nav-btn" onclick="show('c7',this)">7 States &amp; Props</button>
+    <button class="nav-btn" onclick="show('c8',this)">8 Handoff</button>
+  </div>
+  <div class="nav-row" id="nav-problems" style="display:none">
+    <button class="nav-btn active" onclick="show('p-overview',this)">Übersicht</button>
+    <button class="nav-btn" onclick="show('p1',this)">Problem 1</button>
+    <button class="nav-btn" onclick="show('p2',this)">Problem 2</button>
+    <button class="nav-btn" onclick="show('p3',this)">Problem 3</button>
+    <button class="nav-btn" onclick="show('p4',this)">Problem 4</button>
+    <button class="nav-btn" onclick="show('p5',this)">Problem 5</button>
+    <button class="nav-btn" onclick="show('p6',this)">Problem 6</button>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════ -->
+<!--  SCORES DOC                            -->
+<!-- ═══════════════════════════════════════ -->
+
+<div id="overview" class="section visible" data-doc="scores">
+  <div class="hero">
+    <div class="hero-tag"><span class="dot"></span> AI-Readiness Score · Deep Dive</div>
+    <h1>8 Kriterien,<br><span class="gradient-text">klar erklärt</span></h1>
+    <p class="hero-sub">
+      Was genau prüfen wir bei jedem Kriterium? Was machen wir konkret beim Kunden? Und was ist der Unterschied zwischen vorher und nachher?
+    </p>
+  </div>
+
+  <div class="g3">
+    <div class="stat-card">
+      <span class="stat-number" style="color:var(--red)">23</span>
+      <span class="stat-label">Typischer Score Swiss Enterprise heute (von 100)</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-number" style="color:var(--green)">75+</span>
+      <span class="stat-label">Ziel-Score nach WeSlam Sprint (6 Wochen)</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-number" style="color:var(--accent2)">8</span>
+      <span class="stat-label">Kriterien mit je 0–12.5 Punkten</span>
+    </div>
+  </div>
+
+  <div class="alert alert-green mt24">
+    <div class="alert-ico">💡</div>
+    <div class="alert-body">
+      <h4>Wie der Score funktioniert</h4>
+      <p>Jedes der 8 Kriterien wird mit 0–12.5 Punkten bewertet. Total: 100 Punkte. Der Score ist kein abstraktes Rating — jeder Punkt entspricht einer konkreten, prüfbaren Eigenschaft des Design Systems. Ein Score unter 40 bedeutet: AI-Coding-Tools (Cursor, Copilot, Claude) generieren Code der das Design System ignoriert.</p>
+    </div>
+  </div>
+
+  <h3 class="mt32 mb16">Die 8 Kriterien im Überblick</h3>
+
+  <div class="g2">
+    <div class="card">
+      <span class="sup">Kriterium 1 · Gewicht: 12.5</span>
+      <h3>Token-Struktur (W3C-konform)</h3>
+      <p>Sind eure Design-Tokens im W3C DTCG Standard exportierbar? Haben sie eine saubere Hierarchie?</p>
+    </div>
+    <div class="card">
+      <span class="sup">Kriterium 2 · Gewicht: 12.5</span>
+      <h3>Code Connect Setup</h3>
+      <p>Sind Figma-Komponenten mit echtem Code verknüpft? Weiss die AI welche Komponente sie importieren soll?</p>
+    </div>
+    <div class="card">
+      <span class="sup">Kriterium 3 · Gewicht: 12.5</span>
+      <h3>MCP Server Konfiguration</h3>
+      <p>Ist der Figma MCP Server konfiguriert, damit AI-Agents direkten Zugriff auf Design-Kontext haben?</p>
+    </div>
+    <div class="card">
+      <span class="sup">Kriterium 4 · Gewicht: 12.5</span>
+      <h3>AI-Agent Dokumentation</h3>
+      <p>Gibt es klare Regeln für AI-Agents: welche Komponenten wann nutzen, welche Patterns vermeiden?</p>
+    </div>
+    <div class="card">
+      <span class="sup">Kriterium 5 · Gewicht: 12.5</span>
+      <h3>Component-Naming (Figma ↔ Code)</h3>
+      <p>Heisst der Button in Figma gleich wie im Code? Erkennt die AI die Verbindung?</p>
+    </div>
+    <div class="card">
+      <span class="sup">Kriterium 6 · Gewicht: 12.5</span>
+      <h3>Semantische Token-Aliase</h3>
+      <p>Gibt es semantische Tokens wie "color-bg-error" statt nur primitive Werte wie "red-500"?</p>
+    </div>
+    <div class="card">
+      <span class="sup">Kriterium 7 · Gewicht: 12.5</span>
+      <h3>States &amp; Props dokumentiert</h3>
+      <p>Kennt die AI alle Zustände (hover, disabled, loading) und Props (size, variant) jeder Komponente?</p>
+    </div>
+    <div class="card">
+      <span class="sup">Kriterium 8 · Gewicht: 12.5</span>
+      <h3>Design-Dev Handoff Automation</h3>
+      <p>Ist die Pipeline automatisiert? Oder wird bei jedem Token-Update alles manuell synchronisiert?</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ -->
+<!--  CRITERION 1: TOKENS       -->
+<!-- ═══════════════════════════ -->
+<div id="c1" class="section" data-doc="scores">
+  <h2>1. Token-Struktur (W3C-konform)</h2>
+  <p class="section-sub">Das Fundament — ohne das nichts anderes funktioniert</p>
+
+  <div class="criterion">
+    <div class="crit-header">
+      <div>
+        <span class="sup">Was es ist</span>
+        <h3>Design Tokens = die Atome eures Design Systems</h3>
+      </div>
+      <div class="crit-score">Typischer Score: 2 / 12.5</div>
+    </div>
+    <div class="crit-body">
+      <p>
+        Design Tokens sind die kleinsten Einheiten eures Design Systems: Farben, Abstände, Schriftgrössen, Border-Radien, Schatten.
+        Sie sind die <strong style="color:var(--white)">"Single Source of Truth"</strong> — der Ort wo definiert wird, dass euer Primärblau <code>#0066CC</code> ist
+        und euer Standard-Spacing <code>16px</code>.
+      </p>
+      <p style="margin-top:10px">
+        <strong style="color:var(--white)">W3C DTCG</strong> ist der neue, seit Oktober 2025 stabile Standard der definiert wie diese Tokens in einem JSON-Format
+        geschrieben werden — damit jedes Tool (Figma, Style Dictionary, Supernova, euer Code) sie lesen kann. Denk an CSV für Tabellen —
+        DTCG ist das universelle Format für Design-Entscheidungen.
+      </p>
+    </div>
+
+    <div class="ba">
+      <div class="ba-box ba-before">
+        <div class="ba-label red">❌ Vorher (typisch)</div>
+        <p>Tokens existieren als Figma-Variablen, aber nur in Figma. Kein JSON-Export. Naming ist inkonsistent: mal <code>blue-500</code>, mal <code>primary</code>, mal <code>brand-color</code>. Dev-Team hat eigene CSS-Variablen die nicht mit Figma übereinstimmen. Jeder definiert Farben anders.</p>
+      </div>
+      <div class="ba-box ba-after">
+        <div class="ba-label green">✅ Nachher</div>
+        <p>Ein einziges Token-JSON im W3C DTCG Format. 3-stufige Hierarchie: Primitive → Semantic → Component. Figma exportiert automatisch. Dev-Code konsumiert dasselbe JSON via Style Dictionary. Eine Wahrheit, zwei Outputs.</p>
+      </div>
+    </div>
+
+    <div class="code mt16">
+<span class="cm">// W3C DTCG Standard — so sieht ein Token-File aus</span>
+{
+  <span class="k">"color"</span>: {
+    <span class="k">"primitive"</span>: {
+      <span class="k">"blue-500"</span>: { <span class="k">"$value"</span>: <span class="s">"#0066CC"</span>, <span class="k">"$type"</span>: <span class="s">"color"</span> },
+      <span class="k">"blue-600"</span>: { <span class="k">"$value"</span>: <span class="s">"#004C99"</span>, <span class="k">"$type"</span>: <span class="s">"color"</span> }
+    },
+    <span class="k">"semantic"</span>: {
+      <span class="k">"primary"</span>: { <span class="k">"$value"</span>: <span class="s">"{color.primitive.blue-500}"</span>, <span class="k">"$type"</span>: <span class="s">"color"</span> },
+      <span class="k">"primary-hover"</span>: { <span class="k">"$value"</span>: <span class="s">"{color.primitive.blue-600}"</span>, <span class="k">"$type"</span>: <span class="s">"color"</span> }
+    }
+  },
+  <span class="k">"spacing"</span>: {
+    <span class="k">"xs"</span>: { <span class="k">"$value"</span>: <span class="s">"4px"</span>, <span class="k">"$type"</span>: <span class="s">"dimension"</span> },
+    <span class="k">"sm"</span>: { <span class="k">"$value"</span>: <span class="s">"8px"</span>, <span class="k">"$type"</span>: <span class="s">"dimension"</span> },
+    <span class="k">"md"</span>: { <span class="k">"$value"</span>: <span class="s">"16px"</span>, <span class="k">"$type"</span>: <span class="s">"dimension"</span> }
+  }
+}
+    </div>
+
+    <div class="what-we-do">
+      <div class="wwd-title">🔧 Was WeSlam konkret macht</div>
+      <div class="wwd-item">
+        <div class="wwd-num">1</div>
+        <div class="wwd-text"><strong>Token-Inventar erstellen:</strong> Alle bestehenden Tokens aus Figma und Code extrahieren. Duplikate und Inkonsistenzen finden. Wie viele Blau-Töne hat euer System wirklich? (Antwort bei den meisten: 12–25 statt der geplanten 5.)</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">2</div>
+        <div class="wwd-text"><strong>3-Stufen-Hierarchie aufbauen:</strong> Primitive Tokens (die rohen Werte), Semantic Tokens (was sie bedeuten: "primary", "error", "surface"), Component Tokens (Button-spezifisch). Die AI braucht die semantische Ebene um zu wissen was <em>gemeint</em> ist, nicht nur was der Wert ist.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">3</div>
+        <div class="wwd-text"><strong>W3C DTCG JSON exportieren:</strong> Figma-Variablen in das standardisierte JSON-Format überführen. Tokens Studio Plugin konfigurieren oder Figma's nativen DTCG-Export (ab Nov 2026) vorbereiten. Ergebnis: ein <code>tokens.json</code> das jedes Tool lesen kann.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">4</div>
+        <div class="wwd-text"><strong>Style Dictionary Pipeline einrichten:</strong> Das Token-JSON automatisch in CSS Custom Properties, SCSS Variables, iOS/Android-Formate transformieren. Ein <code>npm run build:tokens</code> Befehl der alles generiert. Kein manuelles Copy-Paste mehr.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ -->
+<!--  CRITERION 2: CODE CONNECT -->
+<!-- ═══════════════════════════ -->
+<div id="c2" class="section" data-doc="scores">
+  <h2>2. Code Connect Setup</h2>
+  <p class="section-sub">Die Brücke zwischen Figma-Design und echtem Code</p>
+
+  <div class="criterion">
+    <div class="crit-header">
+      <div>
+        <span class="sup">Was es ist</span>
+        <h3>Figma-Komponenten mit echtem Codebase-Code verknüpfen</h3>
+      </div>
+      <div class="crit-score">Typischer Score: 0.5 / 12.5</div>
+    </div>
+    <div class="crit-body">
+      <p>
+        Ohne Code Connect zeigt Figma Dev Mode generischen, auto-generierten Code. Mit Code Connect sieht der Entwickler (und die AI!)
+        den <strong style="color:var(--white)">echten Import-Pfad und die echten Props</strong> eurer Komponente.
+        Statt <code>&lt;div style="background: blue"&gt;</code> zeigt es <code>&lt;Button variant="primary" size="lg" /&gt;</code>.
+      </p>
+      <p style="margin-top:10px">
+        Für AI-Coding ist das der <strong style="color:var(--white)">wichtigste Einzelschritt</strong>. Ohne Code Connect hat die AI keinen Hinweis
+        dass eure Codebase schon eine <code>Button</code>-Komponente hat — und baut eine neue von Grund auf.
+      </p>
+    </div>
+
+    <div class="ba">
+      <div class="ba-box ba-before">
+        <div class="ba-label red">❌ Ohne Code Connect</div>
+        <p>AI sieht Figma-Design → generiert: <code>div</code> mit inline-styles, hardcoded Farben, eigene Border-Radien. Kein Import aus der Component Library. Jede generierte Seite ist ein Unikat.</p>
+      </div>
+      <div class="ba-box ba-after">
+        <div class="ba-label green">✅ Mit Code Connect</div>
+        <p>AI sieht Figma-Design → erkennt "das ist ein Button/primary/lg" → generiert: <code>import { Button } from '@company/ui'</code> mit korrekten Props. Konsistenter Code, keine Duplikate.</p>
+      </div>
+    </div>
+
+    <div class="code mt16">
+<span class="cm">// Code Connect File — verknüpft Figma-Komponente mit Code</span>
+<span class="cm">// Datei: src/components/Button/Button.figma.tsx</span>
+
+import figma from <span class="s">"@figma/code-connect"</span>
+import { Button } from <span class="s">"./Button"</span>
+
+figma.<span class="fn">connect</span>(Button, <span class="s">"https://figma.com/file/xxx/Button"</span>, {
+  <span class="k">props</span>: {
+    <span class="k">variant</span>: figma.<span class="fn">enum</span>(<span class="s">"Variant"</span>, {
+      Primary: <span class="s">"primary"</span>,
+      Secondary: <span class="s">"secondary"</span>,
+      Ghost: <span class="s">"ghost"</span>
+    }),
+    <span class="k">size</span>: figma.<span class="fn">enum</span>(<span class="s">"Size"</span>, {
+      Small: <span class="s">"sm"</span>,
+      Medium: <span class="s">"md"</span>,
+      Large: <span class="s">"lg"</span>
+    }),
+    <span class="k">label</span>: figma.<span class="fn">string</span>(<span class="s">"Label"</span>),
+    <span class="k">disabled</span>: figma.<span class="fn">boolean</span>(<span class="s">"Disabled"</span>)
+  },
+  <span class="k">example</span>: (props) =>
+    <span class="s">`&lt;Button variant="${props.variant}" size="${props.size}"
+       disabled={${props.disabled}}&gt;${props.label}&lt;/Button&gt;`</span>
+})
+    </div>
+
+    <div class="what-we-do">
+      <div class="wwd-title">🔧 Was WeSlam konkret macht</div>
+      <div class="wwd-item">
+        <div class="wwd-num">1</div>
+        <div class="wwd-text"><strong>Top-20-Komponenten identifizieren:</strong> Welche 20 Komponenten werden am häufigsten verwendet? (Button, Input, Card, Modal, Avatar, Badge, ...) Diese decken typischerweise 80% aller UI-Patterns ab.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">2</div>
+        <div class="wwd-text"><strong>Code Connect Files schreiben:</strong> Für jede der Top-20-Komponenten eine <code>.figma.tsx</code> Datei erstellen. Property-Mapping: Figma-Varianten → Code-Props. Einmal aufgesetzt, automatisch aktuell.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">3</div>
+        <div class="wwd-text"><strong>CLI einrichten und publishen:</strong> <code>npx figma connect publish</code> in die CI/CD-Pipeline einbauen. Bei jedem Merge auf Main werden die Mappings automatisch an Figma gepusht. Kein manueller Sync.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">4</div>
+        <div class="wwd-text"><strong>Team enablen:</strong> Workshop mit dem Design-System-Team: Wie schreibt man neue Code Connect Files? Wie updated man Mappings wenn sich Props ändern? Playbook mit Templates und Best Practices.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ -->
+<!--  CRITERION 3: MCP SERVER   -->
+<!-- ═══════════════════════════ -->
+<div id="c3" class="section" data-doc="scores">
+  <h2>3. MCP Server Konfiguration</h2>
+  <p class="section-sub">Der direkte Draht zwischen Figma und AI-Coding-Tools</p>
+
+  <div class="criterion">
+    <div class="crit-header">
+      <div>
+        <span class="sup">Was es ist</span>
+        <h3>Figma's MCP Server = AI-Agents können Figma "lesen"</h3>
+      </div>
+      <div class="crit-score">Typischer Score: 0 / 12.5</div>
+    </div>
+    <div class="crit-body">
+      <p>
+        MCP (Model Context Protocol) ist ein offener Standard der AI-Agents erlaubt, mit externen Tools zu kommunizieren.
+        Figma hat 2025 einen eigenen MCP-Server released. Das bedeutet: <strong style="color:var(--white)">Cursor, Claude oder Copilot können
+        direkt auf euer Figma-File zugreifen</strong> — Komponenten lesen, Styles extrahieren, Design-Kontext verstehen.
+      </p>
+      <p style="margin-top:10px">
+        <strong style="color:var(--white)">Einfach erklärt:</strong> Bisher musste der Entwickler Screenshots von Figma machen und dem AI-Tool zeigen. Mit MCP
+        kann die AI das Figma-File selbst öffnen, die Komponenten verstehen, und Code generieren der genau zum Design passt.
+      </p>
+    </div>
+
+    <div class="ba">
+      <div class="ba-box ba-before">
+        <div class="ba-label red">❌ Ohne MCP</div>
+        <p>Dev nimmt Screenshot von Figma → Paste in Cursor → AI "rät" anhand von Pixeln was gemeint ist → generiert ungefähren Code. Keine Ahnung von Tokens, Varianten, Spacing-System.</p>
+      </div>
+      <div class="ba-box ba-after">
+        <div class="ba-label green">✅ Mit MCP + Code Connect</div>
+        <p>Dev sagt "implementiere das Login-Formular aus Figma Frame XY" → AI fragt MCP Server → bekommt: Komponenten-Liste, Token-Werte, Code Connect Snippets → generiert exakten Code mit richtigen Imports.</p>
+      </div>
+    </div>
+
+    <div class="code mt16">
+<span class="cm">// Cursor MCP Config — .cursor/mcp.json</span>
+{
+  <span class="k">"mcpServers"</span>: {
+    <span class="k">"figma"</span>: {
+      <span class="k">"command"</span>: <span class="s">"npx"</span>,
+      <span class="k">"args"</span>: [<span class="s">"-y"</span>, <span class="s">"figma-developer-mcp"</span>, <span class="s">"--figma-api-key=YOUR_KEY"</span>],
+      <span class="k">"env"</span>: { <span class="k">"FIGMA_API_KEY"</span>: <span class="s">"figd_xxx"</span> }
+    }
+  }
+}
+    </div>
+
+    <div class="what-we-do">
+      <div class="wwd-title">🔧 Was WeSlam konkret macht</div>
+      <div class="wwd-item">
+        <div class="wwd-num">1</div>
+        <div class="wwd-text"><strong>MCP Server einrichten:</strong> Figma API-Key generieren, MCP-Config für Cursor/Claude/VS Code erstellen, auf jedem Dev-Rechner ausrollen. Setup-Script für einfaches Onboarding neuer Devs.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">2</div>
+        <div class="wwd-text"><strong>Code Connect optimieren für MCP:</strong> Der MCP-Server liefert nur dann guten Output wenn Code Connect sauber konfiguriert ist. Wir stellen sicher, dass die AI <code>CodeConnectSnippet</code>-Blöcke mit korrekten Imports und Props bekommt.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">3</div>
+        <div class="wwd-text"><strong>Custom Instructions hinzufügen:</strong> In der Code Connect UI können pro Komponente zusätzliche AI-Anweisungen hinterlegt werden: "Nutze immer die Accessible-Variante", "Dieser Button braucht immer ein Icon links". Die AI liest diese bei jedem MCP-Call.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">4</div>
+        <div class="wwd-text"><strong>Security klären:</strong> Figma API-Keys in Secret-Management (GitHub Secrets, 1Password). Für Schweizer Enterprises: prüfen ob Figma-API-Zugriff mit internem Security-Policy kompatibel ist (nDSG, Daten fliessen über Figma's API).</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ -->
+<!--  CRITERION 4: AI AGENT DOCS   -->
+<!-- ═══════════════════════════════ -->
+<div id="c4" class="section" data-doc="scores">
+  <h2>4. AI-Agent Dokumentation</h2>
+  <p class="section-sub">Spielregeln für die AI — damit sie euer System respektiert</p>
+
+  <div class="criterion">
+    <div class="crit-header">
+      <div>
+        <span class="sup">Was es ist</span>
+        <h3>Component Rules &amp; AI Guidelines</h3>
+      </div>
+      <div class="crit-score">Typischer Score: 1 / 12.5</div>
+    </div>
+    <div class="crit-body">
+      <p>
+        AI-Agents wie Cursor und Claude können "System Prompts" oder "Rules Files" lesen — Textdateien die definieren
+        <strong style="color:var(--white)">wie die AI in eurem Projekt Code schreiben soll</strong>.
+        Ohne diese Regeln generiert die AI generischen Code. Mit ihnen generiert sie Code der eurer Design-System-Philosophie folgt.
+      </p>
+      <p style="margin-top:10px">
+        Denk an ein Onboarding-Dokument für einen neuen Entwickler — aber für die AI. "Bei uns nutzen wir immer
+        semantische Tokens. Wir wrappen nie einen Button in einen Link. Wir nutzen immer die <code>Stack</code>-Komponente für Layouts."
+      </p>
+    </div>
+
+    <div class="code mt16">
+<span class="cm"># .cursor/rules/design-system.mdc</span>
+<span class="cm"># Cursor Rules File — wird bei jedem Prompt mitgelesen</span>
+
+<span class="k">## Design System Rules</span>
+
+<span class="s">Du arbeitest mit dem @company/ui Design System.</span>
+
+<span class="k">### Farben</span>
+<span class="s">- Nutze IMMER semantische Tokens: `var(--color-primary)`, nie `#0066CC`</span>
+<span class="s">- Für Hintergründe: `var(--color-bg-*)`, für Text: `var(--color-text-*)`</span>
+<span class="s">- NIEMALS hardcoded Farben, auch nicht für Grau-Töne</span>
+
+<span class="k">### Komponenten</span>
+<span class="s">- Button: immer aus `@company/ui` importieren, nie selbst bauen</span>
+<span class="s">- Layouts: immer `Stack` oder `Grid` nutzen, nie raw flexbox</span>
+<span class="s">- Icons: nur aus `@company/icons`, nie inline SVG</span>
+
+<span class="k">### Spacing</span>
+<span class="s">- Nutze die Spacing-Scale: xs(4), sm(8), md(16), lg(24), xl(32)</span>
+<span class="s">- gap, padding, margin: immer als Token-Variable</span>
+<span class="s">- Kein `margin-top` auf Komponenten — nutze `Stack` mit `gap`</span>
+
+<span class="k">### Accessibility</span>
+<span class="s">- Jeder Button braucht ein `aria-label` wenn nur Icon</span>
+<span class="s">- Farb-Kontraste: mindestens WCAG AA (4.5:1 für Text)</span>
+    </div>
+
+    <div class="what-we-do">
+      <div class="wwd-title">🔧 Was WeSlam konkret macht</div>
+      <div class="wwd-item">
+        <div class="wwd-num">1</div>
+        <div class="wwd-text"><strong>Design-System-Regeln erfassen:</strong> Workshop mit Design- und Dev-Team. Welche Regeln gelten heute implizit? Was steht nirgends geschrieben? Was führt immer wieder zu Review-Kommentaren? Diese "unwritten rules" formalisieren.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">2</div>
+        <div class="wwd-text"><strong>Rules-Files schreiben:</strong> Cursor <code>.mdc</code>-Rules, Claude <code>CLAUDE.md</code>, Copilot Instructions-File. Jedes AI-Tool hat sein eigenes Format — wir erstellen alle drei damit das gesamte Team abgedeckt ist.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">3</div>
+        <div class="wwd-text"><strong>Component-spezifische Guidelines:</strong> Nicht nur globale Regeln, sondern pro-Komponente: "Dialog: immer mit Portal rendern. Table: immer mit virtualisierten Rows über 50 Einträge. Form: immer React Hook Form mit Zod Schema."</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">4</div>
+        <div class="wwd-text"><strong>Ins Repo committen:</strong> Rules-Files leben im Repo, nicht in persönlichen Einstellungen. Jeder Dev (und jede AI) hat automatisch Zugriff. Versioniert, reviewbar, updatebar. Teil des normalen PR-Prozesses.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ -->
+<!--  CRITERION 5: NAMING          -->
+<!-- ═══════════════════════════════ -->
+<div id="c5" class="section" data-doc="scores">
+  <h2>5. Component-Naming (Figma ↔ Code)</h2>
+  <p class="section-sub">Wenn Figma "CTA/Large" sagt aber der Code "ButtonPrimary" heisst</p>
+
+  <div class="criterion">
+    <div class="crit-header">
+      <div>
+        <span class="sup">Was es ist</span>
+        <h3>Identische Namen in Design und Code</h3>
+      </div>
+      <div class="crit-score">Typischer Score: 5 / 12.5</div>
+    </div>
+    <div class="crit-body">
+      <p>
+        <strong style="color:var(--white)">Das klingt trivial — ist es aber nicht.</strong>
+        In Figma heisst die Komponente "CTA / Primary / Large". Im Code heisst sie <code>ButtonPrimary</code> oder <code>PrimaryButton</code> oder <code>Btn</code>.
+        Die AI kann diese Verbindung nicht herstellen. Sie sieht zwei verschiedene Dinge — und baut eine dritte Variante.
+      </p>
+      <p style="margin-top:10px">
+        Naming-Konsistenz ist der Unterschied zwischen "AI versteht unser System" und "AI generiert Chaos".
+        Jeder Namens-Mismatch zwischen Figma und Code ist ein Punkt an dem die AI scheitert.
+      </p>
+    </div>
+
+    <div class="ba">
+      <div class="ba-box ba-before">
+        <div class="ba-label red">❌ Typische Realität</div>
+        <p>Figma: "Input / Text / Default"<br>Code: <code>TextInput</code><br>Storybook: <code>FormField</code><br>CSS-Klasse: <code>.input-text-field</code><br><br>4 Namen für dasselbe Ding. Kein Mensch blickt durch — die AI schon gar nicht.</p>
+      </div>
+      <div class="ba-box ba-after">
+        <div class="ba-label green">✅ Nach Harmonisierung</div>
+        <p>Figma: "TextInput"<br>Code: <code>TextInput</code><br>Storybook: <code>TextInput</code><br>CSS-Klasse: <code>.text-input</code><br><br>Ein Name. Überall. Die AI erkennt sofort: Figma-Komponente = Code-Komponente.</p>
+      </div>
+    </div>
+
+    <div class="what-we-do">
+      <div class="wwd-title">🔧 Was WeSlam konkret macht</div>
+      <div class="wwd-item">
+        <div class="wwd-num">1</div>
+        <div class="wwd-text"><strong>Naming-Audit:</strong> Alle Figma-Komponenten exportieren, alle Code-Komponenten listen, Side-by-Side vergleichen. Jede Abweichung dokumentieren. Bei 50+ Komponenten finden wir typischerweise 30–40 Naming-Mismatches.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">2</div>
+        <div class="wwd-text"><strong>Naming-Convention definieren:</strong> Eine Regel die für Figma UND Code gilt. z.B.: PascalCase, keine Abkürzungen, Variant als Suffix (<code>Button</code>, nicht <code>Btn</code>; <code>TextInput</code>, nicht <code>TxtInp</code>). Konvention im Design System Playbook dokumentieren.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">3</div>
+        <div class="wwd-text"><strong>Renaming durchführen:</strong> Figma-Komponenten umbenennen (Bulk-Rename Plugin). Code-Komponenten refactoren (mit Aliase für Backwards-Compatibility). Migration-Guide für Teams die alte Namen nutzen.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">4</div>
+        <div class="wwd-text"><strong>Linting-Rule einbauen:</strong> ESLint-Rule die prüft ob importierte Komponenten-Namen mit der offiziellen Naming-Convention übereinstimmen. Automatisch — nicht auf Code Review angewiesen.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ -->
+<!--  CRITERION 6: SEMANTIC ALIASES -->
+<!-- ═══════════════════════════════ -->
+<div id="c6" class="section" data-doc="scores">
+  <h2>6. Semantische Token-Aliase</h2>
+  <p class="section-sub">Der Unterschied zwischen "red-500" und "color-error"</p>
+
+  <div class="criterion">
+    <div class="crit-header">
+      <div>
+        <span class="sup">Was es ist</span>
+        <h3>Tokens die sagen was sie <em>bedeuten</em>, nicht wie sie <em>aussehen</em></h3>
+      </div>
+      <div class="crit-score">Typischer Score: 3 / 12.5</div>
+    </div>
+    <div class="crit-body">
+      <p>
+        <strong style="color:var(--white)">Primitive Tokens</strong> beschreiben den Wert: <code>blue-500</code>, <code>red-400</code>, <code>gray-100</code>.
+        <strong style="color:var(--white)">Semantische Tokens</strong> beschreiben die Bedeutung: <code>color-bg-error</code>, <code>color-text-primary</code>, <code>color-border-focus</code>.
+      </p>
+      <p style="margin-top:10px">
+        Für AI ist das der Unterschied zwischen "rate mal" und "ich weiss es". Wenn die AI <code>color-bg-error</code> sieht, weiss sie:
+        das ist ein Error-Hintergrund. Wenn sie nur <code>red-400</code> sieht, hat sie keine Ahnung ob das ein Error, ein Brand-Element, oder ein Sale-Badge ist.
+      </p>
+    </div>
+
+    <div class="code mt16">
+<span class="cm">// ❌ Nur primitive Tokens — AI muss raten</span>
+<span class="k">background-color</span>: var(<span class="s">--red-100</span>);     <span class="cm">/* Ist das Error? Danger? Sale? */</span>
+<span class="k">color</span>: var(<span class="s">--red-700</span>);                  <span class="cm">/* Welches Rot für welchen Zweck? */</span>
+<span class="k">border</span>: 1px solid var(<span class="s">--red-300</span>);     <span class="cm">/* Zusammengehörend? Keine Ahnung */</span>
+
+<span class="cm">// ✅ Semantische Tokens — AI versteht den Kontext</span>
+<span class="k">background-color</span>: var(<span class="s">--color-bg-error</span>);       <span class="cm">/* Klar: Error-Hintergrund */</span>
+<span class="k">color</span>: var(<span class="s">--color-text-on-error</span>);              <span class="cm">/* Klar: Text auf Error */</span>
+<span class="k">border</span>: 1px solid var(<span class="s">--color-border-error</span>);   <span class="cm">/* Klar: Error-Border */</span>
+    </div>
+
+    <div class="what-we-do">
+      <div class="wwd-title">🔧 Was WeSlam konkret macht</div>
+      <div class="wwd-item">
+        <div class="wwd-num">1</div>
+        <div class="wwd-text"><strong>Semantische Ebene entwerfen:</strong> Kategorien definieren: Background (bg), Text (text), Border (border), Icon (icon). Zustände: default, hover, active, disabled, focus, error, success. Systematik die für das ganze System gilt.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">2</div>
+        <div class="wwd-text"><strong>Mapping erstellen:</strong> Jeder semantische Token referenziert einen primitiven: <code>color-bg-error</code> → <code>red-100</code>. Dokumentiert in einer Token-Map. Wenn sich das Rot ändert, ändert sich alles — an einer Stelle.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">3</div>
+        <div class="wwd-text"><strong>Theming vorbereiten:</strong> Semantische Tokens ermöglichen Light/Dark Mode durch einfaches Umschalten der Referenzen. <code>color-bg-surface</code> zeigt auf <code>white</code> im Light Mode und <code>gray-900</code> im Dark Mode. Die AI generiert theme-fähigen Code von Anfang an.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">4</div>
+        <div class="wwd-text"><strong>Migration:</strong> Bestehendes CSS durchgehen, primitive Token-Referenzen durch semantische ersetzen. Wo <code>var(--blue-500)</code> steht, wird <code>var(--color-primary)</code>. Schrittweise, file-by-file, mit Linting-Support.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ -->
+<!--  CRITERION 7: STATES & PROPS  -->
+<!-- ═══════════════════════════════ -->
+<div id="c7" class="section" data-doc="scores">
+  <h2>7. States &amp; Props dokumentiert</h2>
+  <p class="section-sub">Die AI muss wissen was ein Button alles "kann"</p>
+
+  <div class="criterion">
+    <div class="crit-header">
+      <div>
+        <span class="sup">Was es ist</span>
+        <h3>Jeder Zustand und jede Eigenschaft jeder Komponente ist maschinell lesbar</h3>
+      </div>
+      <div class="crit-score">Typischer Score: 4 / 12.5</div>
+    </div>
+    <div class="crit-body">
+      <p>
+        Ein Button hat nicht nur ein Aussehen — er hat <strong style="color:var(--white)">Varianten</strong> (primary, secondary, ghost),
+        <strong style="color:var(--white)">Grössen</strong> (sm, md, lg), <strong style="color:var(--white)">Zustände</strong> (default, hover, active, focus, disabled, loading)
+        und <strong style="color:var(--white)">Slots</strong> (Icon links, Icon rechts, nur Icon).
+      </p>
+      <p style="margin-top:10px">
+        Wenn die AI diese nicht kennt, generiert sie einen Button der nur "default/medium" kann.
+        Das Team fixt manuell — bei jeder Seite, bei jedem PR. Die AI-Produktivität geht verloren.
+      </p>
+    </div>
+
+    <div class="ba">
+      <div class="ba-box ba-before">
+        <div class="ba-label red">❌ Undokumentierte Komponente</div>
+        <p>AI generiert: <code>&lt;Button&gt;Click&lt;/Button&gt;</code><br>Kein variant-Prop. Kein Size. Kein disabled-State. Kein Loading-Spinner. Dev muss alles manuell nachrüsten. Jedes. Mal.</p>
+      </div>
+      <div class="ba-box ba-after">
+        <div class="ba-label green">✅ Vollständig dokumentiert</div>
+        <p>AI generiert: <code>&lt;Button variant="primary" size="lg" isLoading={submitting} leftIcon={&lt;Save /&gt;}&gt;Speichern&lt;/Button&gt;</code><br>Korrekte Props, richtiger State, Icon-Slot genutzt. Production-ready.</p>
+      </div>
+    </div>
+
+    <div class="what-we-do">
+      <div class="wwd-title">🔧 Was WeSlam konkret macht</div>
+      <div class="wwd-item">
+        <div class="wwd-num">1</div>
+        <div class="wwd-text"><strong>Prop-Inventar:</strong> Für jede Komponente: alle Props, alle möglichen Werte, Default-Werte, Required vs. Optional. In Figma als Variants, im Code als TypeScript-Interface. Beide müssen matchen.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">2</div>
+        <div class="wwd-text"><strong>State-Matrix erstellen:</strong> Tabelle pro Komponente: Welche Kombination von States gibt es? (z.B. Button: primary + disabled + loading). In Figma als Varianten-Baum. Im Code als Storybook-Stories.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">3</div>
+        <div class="wwd-text"><strong>Figma Variants aufräumen:</strong> Viele Design Systems haben unvollständige Variants in Figma — es fehlen States oder Grössen. Wir ergänzen die fehlenden und sorgen dafür dass Figma und Code 1:1 übereinstimmen.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">4</div>
+        <div class="wwd-text"><strong>TypeScript Interfaces als Source of Truth:</strong> Die Prop-Definitionen in TypeScript werden zur Referenz. Storybook-Stories werden auto-generiert aus den Interfaces. Die AI liest die Types und kennt automatisch alle Möglichkeiten.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ -->
+<!--  CRITERION 8: HANDOFF         -->
+<!-- ═══════════════════════════════ -->
+<div id="c8" class="section" data-doc="scores">
+  <h2>8. Design-Dev Handoff Automatisierung</h2>
+  <p class="section-sub">Schluss mit manueller Synchronisation</p>
+
+  <div class="criterion">
+    <div class="crit-header">
+      <div>
+        <span class="sup">Was es ist</span>
+        <h3>Tokens, Components und Docs werden automatisch synchronisiert</h3>
+      </div>
+      <div class="crit-score">Typischer Score: 2 / 12.5</div>
+    </div>
+    <div class="crit-body">
+      <p>
+        Heute bei den meisten Teams: Designer ändert eine Farbe in Figma → schreibt Slack-Nachricht an Dev → Dev sucht alle Stellen im Code →
+        ändert manuell → vergisst 3 Stellen → nächster Sprint hat Inkonsistenzen. Dieser Handoff-Prozess ist
+        <strong style="color:var(--white)">das grösste Zeitgrab in Design-System-Teams</strong>.
+      </p>
+      <p style="margin-top:10px">
+        Die Lösung: Eine automatisierte Pipeline. Figma → Token-Export (DTCG JSON) → Style Dictionary Transform → CSS/SCSS/JS Variablen → Git Commit → PR → Review → Merge.
+        Kein manuelles Copy-Paste. Kein Slack. Kein "hast du das schon geändert?".
+      </p>
+    </div>
+
+    <div class="ba">
+      <div class="ba-box ba-before">
+        <div class="ba-label red">❌ Manueller Handoff</div>
+        <p>Designer ändert Tokens in Figma → Slack-Message → Dev ändert CSS → vergisst SCSS → Mobile-Team weiss nichts davon → 3 Wochen später: "Warum sieht die App anders aus als das Design?"</p>
+      </div>
+      <div class="ba-box ba-after">
+        <div class="ba-label green">✅ Automatisierte Pipeline</div>
+        <p>Designer ändert Token in Figma → Tokens Studio pusht JSON zu GitHub → GitHub Action triggert Style Dictionary → generiert CSS + SCSS + iOS + Android → PR wird erstellt → Review → Merge. Alles in 10 Minuten, kein Mensch involviert.</p>
+      </div>
+    </div>
+
+    <div class="what-we-do">
+      <div class="wwd-title">🔧 Was WeSlam konkret macht</div>
+      <div class="wwd-item">
+        <div class="wwd-num">1</div>
+        <div class="wwd-text"><strong>Tokens Studio ↔ GitHub Sync einrichten:</strong> Tokens Studio Plugin mit GitHub-Repo verbinden. Bei jedem "Push" aus Figma wird automatisch ein Branch + PR erstellt mit dem aktualisierten Token-JSON.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">2</div>
+        <div class="wwd-text"><strong>Style Dictionary Pipeline bauen:</strong> GitHub Action die bei Token-Änderungen automatisch CSS Custom Properties, SCSS Variables, TypeScript Constants und bei Bedarf iOS/Android-Formate generiert. Ein Befehl, alle Plattformen.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">3</div>
+        <div class="wwd-text"><strong>Visual Regression einbauen:</strong> Chromatic oder Percy Integration die bei Token-Änderungen automatisch Screenshots aller Storybook-Stories vergleicht. "Diese Farbänderung betrifft 47 Komponenten — hier sind die Diffs." Keine Überraschungen mehr.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">4</div>
+        <div class="wwd-text"><strong>Documentation Auto-Sync:</strong> Storybook, Zeroheight oder Supernova automatisch updaten wenn sich Tokens oder Components ändern. Die Doku ist immer aktuell — nicht "Stand letztes Quartal".</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!--  PROBLEMS DOC                          -->
+<!-- ═══════════════════════════════════════ -->
+
+<div id="p-overview" class="section" data-doc="problems">
+  <div class="hero">
+    <div class="hero-tag"><span class="dot"></span> Die echten Kundenprobleme</div>
+    <h1>Was tut dem<br><span class="gradient-text">Kunden wirklich weh?</span></h1>
+    <p class="hero-sub">
+      Nicht "euer Design System braucht W3C Tokens" — das ist unsere Sprache. Sondern: Was hört der Head of Engineering, der VP Product, der Design System Lead jeden Tag? Was kostet sie Geld, Zeit und Nerven?
+    </p>
+  </div>
+
+  <div class="alert alert-orange">
+    <div class="alert-ico">💡</div>
+    <div class="alert-body">
+      <h4>Verkaufs-Regel Nr. 1</h4>
+      <p>Kein Kunde kauft "AI-Readiness". Kunden kaufen die Lösung eines Problems das sie <em>heute</em> haben. Unsere 8 Score-Kriterien sind das <em>wie</em>. Diese Seite zeigt das <em>warum</em> — die echten Schmerzen die den Kauf auslösen.</p>
+    </div>
+  </div>
+
+  <div class="g2 mt24">
+    <div class="stat-card">
+      <span class="stat-number" style="color:var(--red)">62%</span>
+      <span class="stat-label">der Devs berichten Rework wegen inkonsistentem AI-Code</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-number" style="color:var(--yellow)">19%</span>
+      <span class="stat-label">langsamer arbeiten erfahrene Devs mit AI bei komplexen Tasks</span>
+    </div>
+  </div>
+</div>
+
+<!-- PROBLEM 1 -->
+<div id="p1" class="section" data-doc="problems">
+  <div class="prob p-red">
+    <div class="prob-tag red">Problem 1 — Grösster Schmerz</div>
+    <h3>"Wir haben Cursor/Copilot Lizenzen gekauft — aber die Devs nutzen es kaum für UI-Code"</h3>
+    <p>
+      Das Unternehmen hat in AI-Coding investiert (Cursor Business: $40/User/Monat, Copilot Enterprise: $39/User/Monat).
+      Für Backend und Logik funktioniert es. Aber sobald es um UI-Komponenten geht, generiert die AI Code der
+      nicht ins Design System passt. Die Devs haben gelernt: "Für Frontend lieber selbst schreiben."
+    </p>
+    <div class="quote">
+      "Wir zahlen CHF 15k/Jahr für Cursor-Lizenzen und 70% des UI-Codes wird immer noch manuell geschrieben. Das AI-Tool kennt unser Design System nicht."
+      <br><em>— Engineering Lead, Schweizer Fintech</em>
+    </div>
+    <div class="impact">
+      <div class="impact-label">💰 Business Impact</div>
+      <p>CHF 10–20k/Jahr an ungenutzten AI-Lizenzen pro Team. Die versprochene Produktivitätssteigerung von 20–30% bleibt aus. C-Level fragt: "Wo ist der ROI unserer AI-Investition?"</p>
+    </div>
+
+    <div class="what-we-do mt16">
+      <div class="wwd-title">🎯 Was wir lösen</div>
+      <div class="wwd-item">
+        <div class="wwd-num">→</div>
+        <div class="wwd-text">Wir machen das Design System AI-lesbar (Code Connect + MCP + Rules). Danach generiert Cursor/Copilot Code der <strong>eure echten Komponenten importiert und eure Tokens nutzt</strong>. Die AI-Investition zahlt sich aus.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROBLEM 2 -->
+<div id="p2" class="section" data-doc="problems">
+  <div class="prob p-red">
+    <div class="prob-tag red">Problem 2 — Täglich spürbar</div>
+    <h3>"Jeder PR mit AI-generiertem Code braucht 2x so lang im Review"</h3>
+    <p>
+      Die AI generiert funktionierenden Code — aber mit hardcoded Farben, eigenen Abstände, selbstgebauten Buttons.
+      Der Reviewer muss jede Zeile prüfen: "Ist das unser Token? Ist das unsere Komponente? Warum ist da ein <code>div</code> statt einem <code>Card</code>?"
+      Die Review-Zeit verdoppelt sich. Die Velocity sinkt statt zu steigen.
+    </p>
+    <div class="quote">
+      "Ich verbringe mehr Zeit damit AI-generierten Code zu korrigieren als ihn selbst zu schreiben. Hardcoded Farben, falsche Spacings, fehlende Variants — jedes Mal."
+      <br><em>— Senior Frontend Dev, Swiss Insurance Company</em>
+    </div>
+    <div class="impact">
+      <div class="impact-label">💰 Business Impact</div>
+      <p>Bei 5 Devs die pro Tag 2 PRs reviewen: ~20 Minuten Extra-Review pro PR × 10 PRs × 220 Arbeitstage = <strong>730 Stunden/Jahr</strong> verlorene Review-Zeit. Das sind ~CHF 110k an verbrannter Senior-Dev-Zeit.</p>
+    </div>
+
+    <div class="what-we-do mt16">
+      <div class="wwd-title">🎯 Was wir lösen</div>
+      <div class="wwd-item">
+        <div class="wwd-num">→</div>
+        <div class="wwd-text">Der Drift Detector (GitHub Action) <strong>prüft automatisch auf jedem PR</strong> ob die richtigen Tokens und Komponenten genutzt werden. Reviewer können sich auf Logik konzentrieren statt auf Style-Polizei.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROBLEM 3 -->
+<div id="p3" class="section" data-doc="problems">
+  <div class="prob p-red">
+    <div class="prob-tag red">Problem 3 — Sichtbar für Endnutzer</div>
+    <h3>"Unsere App sieht auf jeder Seite leicht anders aus"</h3>
+    <p>
+      Kunden melden: "Der Button auf der Checkout-Seite hat ein anderes Blau als auf der Produktseite."
+      Das Design-Team ist frustriert — sie haben ein sauberes Figma-File. Aber der Code hat über Monate hinweg
+      hunderte kleine Abweichungen angesammelt. Nicht weil jemand schlampig war, sondern weil es kein System gibt
+      das Konsistenz erzwingt.
+    </p>
+    <div class="quote">
+      "Unser CEO hat im Board-Meeting gesagt: 'Warum sieht unsere App nicht professionell aus? Wir haben doch ein Design System.' Das war der Moment wo wir wussten, wir brauchen Hilfe."
+      <br><em>— VP Product, Schweizer E-Commerce-Unternehmen</em>
+    </div>
+    <div class="impact">
+      <div class="impact-label">💰 Business Impact</div>
+      <p>UI-Inkonsistenz = niedrigere wahrgenommene Qualität = niedrigere Conversion. Studien zeigen: 42% der Nutzer verlassen eine Website wegen "unprofessionellem Design". Jeder Prozentpunkt Conversion bei einem CHF 50M E-Commerce = CHF 500k.</p>
+    </div>
+
+    <div class="what-we-do mt16">
+      <div class="wwd-title">🎯 Was wir lösen</div>
+      <div class="wwd-item">
+        <div class="wwd-num">→</div>
+        <div class="wwd-text">Semantische Tokens + automatische Handoff-Pipeline stellen sicher, dass <strong>jede Farbe, jeder Abstand, jeder Radius aus einer einzigen Quelle</strong> kommt. Änderung an einer Stelle → überall konsistent. Kein Drift mehr.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROBLEM 4 -->
+<div id="p4" class="section" data-doc="problems">
+  <div class="prob p-yellow">
+    <div class="prob-tag yellow">Problem 4 — Change Management</div>
+    <h3>"Unser Design System wird nicht adopted — die Devs nutzen es nicht"</h3>
+    <p>
+      Das Design-System-Team hat Monate investiert. Figma-Library ist sauber, Storybook ist dokumentiert.
+      Aber die Feature-Teams nutzen es nicht konsequent. Manche Devs kopieren CSS, manche bauen eigene Varianten,
+      manche ignorieren es komplett. Es gibt kein Enforcement — nur Bitten und Hoffen.
+    </p>
+    <div class="quote">
+      "Wir haben ein grossartiges Design System in Figma. Aber im Code existieren 4 verschiedene Button-Implementationen. Drei davon kennt das DS-Team nicht mal."
+      <br><em>— Design System Lead, Schweizer Telco</em>
+    </div>
+    <div class="impact">
+      <div class="impact-label">💰 Business Impact</div>
+      <p>Jede duplizierte Komponente kostet ~CHF 5–10k an Maintenance (Bugfixes, Updates, Tests — multipliziert). Bei 20 duplizierten Komponenten: CHF 100–200k/Jahr an unnötigem technischem Debt.</p>
+    </div>
+
+    <div class="what-we-do mt16">
+      <div class="wwd-title">🎯 Was wir lösen</div>
+      <div class="wwd-item">
+        <div class="wwd-num">→</div>
+        <div class="wwd-text"><strong>AI als Adoption-Driver:</strong> Wenn Code Connect korrekt konfiguriert ist, ist es für die AI <em>einfacher</em> die richtige Komponente zu importieren als eine neue zu bauen. Die AI wird zum besten Verfechter des Design Systems — ohne Diskussion, ohne Code Review Kommentar.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROBLEM 5 -->
+<div id="p5" class="section" data-doc="problems">
+  <div class="prob p-yellow">
+    <div class="prob-tag yellow">Problem 5 — Skalierungsproblem</div>
+    <h3>"Token-Änderungen dauern Wochen bis sie im Code ankommen"</h3>
+    <p>
+      Das Design-Team entscheidet: "Unser Primärblau wird dunkler." In Figma ist die Änderung in 5 Minuten gemacht.
+      Bis sie in allen Code-Repos, allen Plattformen (Web, iOS, Android), allen Feature-Teams angekommen ist: 2–6 Wochen.
+      Manche Repos werden vergessen. "Warum hat die Settings-Seite noch das alte Blau?"
+    </p>
+    <div class="quote">
+      "Wir haben letztes Jahr unser Farbsystem aktualisiert. 8 Monate später finden wir immer noch Stellen mit den alten Farben. In jedem Sprint."
+      <br><em>— Design System Lead, Schweizer Retailer</em>
+    </div>
+    <div class="impact">
+      <div class="impact-label">💰 Business Impact</div>
+      <p>6 Wochen Token-Propagation statt 10 Minuten. Bei einem Rebrand oder grösseren Design-Update: CHF 50–150k an manueller Migration die mit einer Pipeline nahezu kostenlos wäre.</p>
+    </div>
+
+    <div class="what-we-do mt16">
+      <div class="wwd-title">🎯 Was wir lösen</div>
+      <div class="wwd-item">
+        <div class="wwd-num">→</div>
+        <div class="wwd-text"><strong>Automatisierte Token-Pipeline:</strong> Figma → Tokens Studio → GitHub → Style Dictionary → alle Plattformen. <strong>Eine Änderung, ein PR, ein Review, fertig.</strong> Token-Propagation in Minuten statt Wochen.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROBLEM 6 -->
+<div id="p6" class="section" data-doc="problems">
+  <div class="prob p-purple">
+    <div class="prob-tag purple">Problem 6 — Strategisches Risiko</div>
+    <h3>"Wir verlieren den Anschluss an AI-Coding — und merken es nicht"</h3>
+    <p>
+      Die Konkurrenz nutzt AI-Coding erfolgreich und liefert Features in der halben Zeit.
+      Das eigene Team hat Cursor und Copilot ausprobiert — für UI-Code "bringt es nicht viel".
+      Aber das Problem ist nicht die AI — das Problem ist, dass das Design System nicht darauf vorbereitet ist.
+      Das Team schliesst: "AI-Coding ist overhyped" — während die Konkurrenz 30% schneller liefert.
+    </p>
+    <div class="quote">
+      "Unser CTO sagt 'AI-first'. Unser Design System sagt '2019'. Die Devs stecken dazwischen."
+      <br><em>— Engineering Manager, Schweizer Versicherung</em>
+    </div>
+    <div class="impact">
+      <div class="impact-label">💰 Business Impact</div>
+      <p>Die Produktivitätslücke zu AI-optimierten Konkurrenten wächst exponentiell. In 18–24 Monaten liefern Teams mit AI-Ready Design Systems Features in der halben Zeit. Wer jetzt nicht investiert, verliert den Anschluss — nicht in der Technologie, sondern in der Geschwindigkeit.</p>
+    </div>
+
+    <div class="what-we-do mt16">
+      <div class="wwd-title">🎯 Was wir lösen</div>
+      <div class="wwd-item">
+        <div class="wwd-num">→</div>
+        <div class="wwd-text"><strong>AI-Readiness in 6 Wochen:</strong> Kein 12-Monats-Projekt. Unser Sprint-Modell bringt das Design System in 6 Wochen von Score 23 auf 75+. Danach generiert AI-Coding Code der euer Design System nutzt — und die AI-Investition zahlt sich endlich aus.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="verdict-box mt32">
+    <h3>Zusammenfassung: Die 6 echten Verkaufsargumente</h3>
+    <p>
+      <strong>1.</strong> Eure AI-Lizenzen sind Geldverbrennung ohne AI-Ready Design System.<br>
+      <strong>2.</strong> Jeder PR mit AI-Code kostet doppelte Review-Zeit.<br>
+      <strong>3.</strong> Eure Endnutzer sehen die Inkonsistenz — und gehen zur Konkurrenz.<br>
+      <strong>4.</strong> Euer Design System wird ignoriert — die AI kann es zum Durchbruch bringen.<br>
+      <strong>5.</strong> Token-Änderungen dauern Wochen statt Minuten.<br>
+      <strong>6.</strong> Die Konkurrenz liefert Features in der halben Zeit — weil ihre AI mit ihrem Design System zusammenarbeitet.
+    </p>
+  </div>
+</div>
+
+
+<script>
+let currentDoc = 'scores';
+
+function switchDoc(doc) {
+  currentDoc = doc;
+  document.querySelectorAll('.doc-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+
+  document.getElementById('nav-scores').style.display = doc === 'scores' ? 'flex' : 'none';
+  document.getElementById('nav-problems').style.display = doc === 'problems' ? 'flex' : 'none';
+
+  // Reset section nav buttons
+  const navRow = document.getElementById(doc === 'scores' ? 'nav-scores' : 'nav-problems');
+  navRow.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  navRow.querySelector('.nav-btn').classList.add('active');
+
+  // Show first section of the selected doc
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('visible'));
+  const firstSection = doc === 'scores' ? 'overview' : 'p-overview';
+  document.getElementById(firstSection).classList.add('visible');
+  window.scrollTo(0, 0);
+}
+
+function show(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('visible'));
+  document.getElementById(id).classList.add('visible');
+
+  const navRow = document.getElementById(currentDoc === 'scores' ? 'nav-scores' : 'nav-problems');
+  navRow.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  window.scrollTo(0, 0);
+}
+</script>
+
+</body>
+</html>
