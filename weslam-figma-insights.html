@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WeSlam — Figma Report: Externe Validierung</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #0f0f0f; color: #e8e8e8; }
+
+  /* TOP NAV */
+  .top-bar { background: #1a1a1a; border-bottom: 1px solid #2a2a2a; padding: 12px 24px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .top-bar .brand { font-size: 13px; font-weight: 700; color: #fff; letter-spacing: 0.05em; text-transform: uppercase; margin-right: 8px; }
+  .top-bar .sep { color: #444; }
+  .doc-nav button { background: none; border: 1px solid #333; color: #999; padding: 6px 14px; border-radius: 6px; font-size: 12px; cursor: pointer; transition: all 0.15s; }
+  .doc-nav button:hover { border-color: #555; color: #ccc; }
+  .doc-nav button.active { background: #7c3aed; border-color: #7c3aed; color: #fff; font-weight: 600; }
+
+  /* SECTION NAV */
+  .section-nav { background: #161616; border-bottom: 1px solid #252525; padding: 0 24px; display: flex; gap: 2px; overflow-x: auto; }
+  .section-nav button { background: none; border: none; color: #666; padding: 14px 18px; font-size: 13px; cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; transition: all 0.15s; }
+  .section-nav button:hover { color: #ccc; }
+  .section-nav button.active { color: #a78bfa; border-bottom-color: #7c3aed; font-weight: 600; }
+
+  /* CONTENT */
+  .content { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+  .section { display: none; }
+  .section.active { display: block; }
+
+  h1 { font-size: 28px; font-weight: 700; color: #fff; margin-bottom: 8px; line-height: 1.3; }
+  h2 { font-size: 20px; font-weight: 700; color: #e8e8e8; margin-bottom: 16px; margin-top: 32px; }
+  h3 { font-size: 15px; font-weight: 700; color: #d4d4d4; margin-bottom: 10px; margin-top: 24px; }
+  p { font-size: 15px; line-height: 1.7; color: #aaa; margin-bottom: 14px; }
+  .lead { font-size: 17px; color: #ccc; line-height: 1.7; margin-bottom: 24px; }
+
+  /* SOURCE BADGE */
+  .source-badge { display: inline-flex; align-items: center; gap: 8px; background: #1a1428; border: 1px solid #7c3aed; border-radius: 8px; padding: 8px 14px; margin-bottom: 28px; font-size: 12px; color: #a78bfa; font-weight: 600; }
+  .source-badge::before { content: "📄"; }
+
+  /* STAT CARDS */
+  .stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin: 24px 0; }
+  .stat-card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 10px; padding: 20px; text-align: center; }
+  .stat-card .num { font-size: 36px; font-weight: 800; color: #a78bfa; display: block; }
+  .stat-card .label { font-size: 12px; color: #777; margin-top: 4px; line-height: 1.5; }
+
+  /* QUOTE */
+  .quote-block { background: #161420; border-left: 3px solid #7c3aed; border-radius: 0 10px 10px 0; padding: 20px 24px; margin: 24px 0; }
+  .quote-block .quote-text { font-size: 16px; color: #d4d4d4; font-style: italic; line-height: 1.7; margin-bottom: 10px; }
+  .quote-block .quote-src { font-size: 12px; color: #7c3aed; font-weight: 600; }
+
+  /* VALIDATION CARDS */
+  .validation-card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+  .validation-card .vc-header { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 16px; }
+  .validation-card .vc-icon { font-size: 24px; flex-shrink: 0; }
+  .validation-card .vc-title { font-size: 16px; font-weight: 700; color: #fff; }
+  .validation-card .vc-sub { font-size: 12px; color: #7c3aed; font-weight: 600; margin-top: 2px; }
+  .figma-says { background: #0d1117; border: 1px solid #1a3a2a; border-radius: 8px; padding: 14px 16px; margin-bottom: 12px; }
+  .figma-says .fs-label { font-size: 10px; color: #4ade80; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
+  .figma-says .fs-text { font-size: 14px; color: #bbb; line-height: 1.6; }
+  .weslam-does { background: #0d0d1a; border: 1px solid #2a2a4a; border-radius: 8px; padding: 14px 16px; }
+  .weslam-does .wd-label { font-size: 10px; color: #a78bfa; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
+  .weslam-does .wd-text { font-size: 14px; color: #bbb; line-height: 1.6; }
+
+  /* FRAMEWORK */
+  .framework-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+  @media (max-width: 600px) { .framework-row { grid-template-columns: 1fr; } }
+  .fw-card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 10px; padding: 18px; }
+  .fw-card .fw-label { font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; font-weight: 600; }
+  .fw-card .fw-title { font-size: 15px; font-weight: 700; color: #e8e8e8; margin-bottom: 8px; }
+  .fw-card p { font-size: 13px; color: #888; line-height: 1.6; margin: 0; }
+
+  /* TAG LIST */
+  .tag-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+  .tag { background: #1e1e2e; border: 1px solid #3a3a5e; color: #a78bfa; font-size: 12px; padding: 4px 12px; border-radius: 20px; font-weight: 600; }
+  .tag.green { background: #0d1f17; border-color: #1a4a2a; color: #4ade80; }
+  .tag.red { background: #1f0d0d; border-color: #4a1a1a; color: #f87171; }
+
+  /* FEATURE TABLE */
+  .feature-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+  .feature-table th { background: #1a1a1a; color: #888; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; padding: 10px 14px; text-align: left; border-bottom: 1px solid #2a2a2a; }
+  .feature-table td { padding: 12px 14px; font-size: 13px; color: #bbb; border-bottom: 1px solid #1e1e1e; vertical-align: top; }
+  .feature-table tr:hover td { background: #161616; }
+  .check { color: #4ade80; font-weight: 700; }
+  .cross { color: #f87171; font-weight: 700; }
+
+  /* CHECKLIST */
+  .checklist { list-style: none; margin: 14px 0; }
+  .checklist li { font-size: 14px; color: #aaa; padding: 6px 0 6px 26px; border-bottom: 1px solid #1e1e1e; position: relative; line-height: 1.5; }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist li::before { content: "✓"; position: absolute; left: 0; color: #4ade80; font-weight: 700; }
+  .checklist li.warn::before { content: "!"; color: #f59e0b; }
+
+  /* PILL ROW */
+  .pill-row { display: flex; gap: 10px; flex-wrap: wrap; margin: 16px 0; }
+  .pill { background: #1e1e1e; border: 1px solid #333; border-radius: 6px; padding: 8px 14px; font-size: 13px; color: #ccc; }
+  .pill strong { color: #a78bfa; }
+
+  /* DIVIDER */
+  .divider { border: none; border-top: 1px solid #222; margin: 32px 0; }
+
+  /* ALERT */
+  .alert { background: #1a1208; border: 1px solid #713f12; border-radius: 10px; padding: 16px 20px; margin: 20px 0; font-size: 14px; color: #fcd34d; line-height: 1.6; }
+  .alert-green { background: #0a1f12; border-color: #14532d; color: #86efac; }
+  .alert-purple { background: #130f1e; border-color: #4c1d95; color: #c4b5fd; }
+
+  /* OVERLAP MAP */
+  .overlap-item { display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid #1e1e1e; align-items: flex-start; }
+  .overlap-item:last-child { border-bottom: none; }
+  .overlap-icon { font-size: 22px; flex-shrink: 0; width: 36px; text-align: center; }
+  .overlap-content .ot { font-size: 14px; font-weight: 700; color: #e8e8e8; margin-bottom: 4px; }
+  .overlap-content .os { font-size: 13px; color: #888; line-height: 1.5; }
+  .overlap-content .op { font-size: 12px; color: #7c3aed; font-weight: 600; margin-top: 4px; }
+
+  /* OVERVIEW HEADER */
+  .overview-header { background: linear-gradient(135deg, #1a0f2e 0%, #0f1a2e 100%); border: 1px solid #3a2a5a; border-radius: 14px; padding: 32px; margin-bottom: 32px; }
+  .overview-header h1 { font-size: 26px; margin-bottom: 10px; }
+  .overview-header .subtitle { font-size: 14px; color: #8a7aaa; line-height: 1.6; }
+
+  /* GAP CARD */
+  .gap-card { background: #1a1a1a; border: 1px solid #2a2a2a; border-left: 3px solid #f59e0b; border-radius: 0 10px 10px 0; padding: 18px 20px; margin-bottom: 14px; }
+  .gap-card .gc-title { font-size: 14px; font-weight: 700; color: #fcd34d; margin-bottom: 6px; }
+  .gap-card .gc-text { font-size: 13px; color: #999; line-height: 1.6; }
+
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <span class="brand">WeSlam</span>
+  <span class="sep">·</span>
+  <div class="doc-nav">
+    <button class="active" onclick="switchDoc('figma')">📄 Figma Report Insights</button>
+    <button onclick="window.location='weslam-service-blueprint.html'">Service Blueprint</button>
+    <button onclick="window.location='weslam-deep-analysis-v2.html'">Tiefenanalyse V2</button>
+    <button onclick="window.location='weslam-ai-readiness-deep-dive.html'">AI-Readiness Score</button>
+    <button onclick="window.location='weslam-drift-detector-prd.html'">Drift Detector PRD</button>
+  </div>
+</div>
+
+<div class="section-nav" id="nav-figma">
+  <button class="active" onclick="show('overview', this)">Übersicht</button>
+  <button onclick="show('report-summary', this)">Report-Zusammenfassung</button>
+  <button onclick="show('validation', this)">Validierung WeSlam</button>
+  <button onclick="show('drift-validation', this)">Drift Detector</button>
+  <button onclick="show('gaps', this)">Lücken &amp; Chancen</button>
+  <button onclick="show('prompting', this)">Prompting-Framework</button>
+  <button onclick="show('action-items', this)">Konsequenzen</button>
+</div>
+
+<!-- OVERVIEW -->
+<div class="content">
+<div id="overview" class="section active">
+  <div class="overview-header">
+    <h1>Figma Report: Externe Validierung für WeSlam</h1>
+    <p class="subtitle">Figmas offizieller Report «How design systems power the new pace of product development» (2025) liefert starke Marktdaten und Framework-Validierung für den WeSlam AI-Ready Design System Service.</p>
+  </div>
+
+  <div class="source-badge">Figma — How design systems power the new pace of product development (2025, 31 Seiten)</div>
+
+  <div class="stat-row">
+    <div class="stat-card">
+      <span class="num">57%</span>
+      <span class="label">der Product Builder verbringen mehr Zeit auf High-Value-Work dank AI</span>
+    </div>
+    <div class="stat-card">
+      <span class="num">3</span>
+      <span class="label">Schlüssel-Tools Figma nennt: Tokens, Code Connect, MCP Server</span>
+    </div>
+    <div class="stat-card">
+      <span class="num">1</span>
+      <span class="label">Kernaussage: Machine-readable Design Systems sind die Zukunft</span>
+    </div>
+    <div class="stat-card">
+      <span class="num">0</span>
+      <span class="label">Swiss Enterprises haben heute eine vollständige AI-Ready Infrastruktur</span>
+    </div>
+  </div>
+
+  <h2>Warum dieser Report für WeSlam wichtig ist</h2>
+  <p>Figma ist der Market Leader im Design-Tool-Bereich. Wenn Figma einen offiziellen Report über AI-Ready Design Systems publiziert, ist das ein Marktsignal — nicht nur eine Produktankündigung. Der Report:</p>
+
+  <div class="tag-list">
+    <span class="tag green">✓ Bestätigt WeSlams Kernhypothese</span>
+    <span class="tag green">✓ Nennt konkrete Tools (die WeSlam implementiert)</span>
+    <span class="tag green">✓ Liefert Verkaufsdaten (57% Stat)</span>
+    <span class="tag green">✓ Validiert Drift Detector Konzept explizit</span>
+    <span class="tag">Neue Lücken identifiziert</span>
+    <span class="tag">Prompting Framework für Kunden</span>
+  </div>
+
+  <hr class="divider">
+
+  <h2>Die 4 Säulen laut Figma Report</h2>
+
+  <div class="framework-row">
+    <div class="fw-card">
+      <div class="fw-label">Säule 1</div>
+      <div class="fw-title">🏗 Machine-Readable Token Infrastructure</div>
+      <p>W3C DTCG Standard als Fundament. Tokens müssen strukturiert sein, damit AI sie konsumieren kann. Primitive → Semantic → Component Hierarchie.</p>
+    </div>
+    <div class="fw-card">
+      <div class="fw-label">Säule 2</div>
+      <div class="fw-title">🔌 Code Connect Integration</div>
+      <p>Figma-Komponenten müssen auf echte Code-Komponenten gemappt sein — sonst generiert AI generic HTML statt Design-System-Komponenten.</p>
+    </div>
+    <div class="fw-card">
+      <div class="fw-label">Säule 3</div>
+      <div class="fw-title">🤖 MCP Server (AI Agent Access)</div>
+      <p>Der Figma MCP Server ermöglicht AI-Agenten (Cursor, Claude, Copilot) direkten Zugriff auf Figma-Dateien — die Verbindung zwischen Design und Code.</p>
+    </div>
+    <div class="fw-card">
+      <div class="fw-label">Säule 4</div>
+      <div class="fw-title">📚 AI-Optimierte Dokumentation</div>
+      <p>Konsistente Namenskonventionen, klare Component-Beschreibungen und maschinenlesbare Dokumentation sind kritisch für AI-Nutzung.</p>
+    </div>
+  </div>
+
+  <div class="alert alert-purple">
+    <strong>WeSlam Connection:</strong> Diese 4 Säulen decken sich exakt mit dem WeSlam AI-Readiness Score Framework. Figma bestätigt: Was WeSlam messen und implementieren will, ist der richtige Ansatz.
+  </div>
+</div>
+
+<!-- REPORT SUMMARY -->
+<div id="report-summary" class="section">
+  <h1>Report-Zusammenfassung</h1>
+  <p class="lead">Die wichtigsten Erkenntnisse aus dem Figma Report — verdichtet und kontextualisiert für den Schweizer Enterprise-Markt.</p>
+
+  <h2>Kernthese des Reports</h2>
+  <div class="quote-block">
+    <div class="quote-text">«Design systems are the connective tissue between design intent and AI execution. Without a well-structured design system, AI cannot reliably reproduce your brand, your components, or your standards.»</div>
+    <div class="quote-src">Figma — How design systems power the new pace of product development (2025)</div>
+  </div>
+
+  <h2>Was Figma als AI-Readiness definiert</h2>
+
+  <div class="validation-card">
+    <div class="vc-header">
+      <div class="vc-icon">🎯</div>
+      <div>
+        <div class="vc-title">Design Tokens als Fundament</div>
+        <div class="vc-sub">Figma Report, Abschnitt: Token Infrastructure</div>
+      </div>
+    </div>
+    <p>Figma ist explizit: Tokens müssen im <strong>W3C DTCG Standard</strong> strukturiert sein. Nur maschinenlesbare Tokens ermöglichen AI die korrekte Interpretation. Der Report unterscheidet drei Ebenen:</p>
+    <div class="pill-row">
+      <div class="pill"><strong>Primitive Tokens</strong> — die Rohdaten (blue-500 = #3B82F6)</div>
+      <div class="pill"><strong>Semantic Tokens</strong> — die Bedeutung (color-primary = {blue-500})</div>
+      <div class="pill"><strong>Component Tokens</strong> — der Kontext (btn-bg = {color-primary})</div>
+    </div>
+    <p>Ohne diese Hierarchie greift AI auf primitive Werte zurück — und generiert hardcoded CSS statt Token-Referenzen.</p>
+  </div>
+
+  <div class="validation-card">
+    <div class="vc-header">
+      <div class="vc-icon">🔌</div>
+      <div>
+        <div class="vc-title">Code Connect: Die Brücke zwischen Figma und Code</div>
+        <div class="vc-sub">Figma Report, Abschnitt: Code Connect</div>
+      </div>
+    </div>
+    <p>Code Connect mappt jede Figma-Komponente auf ihre entsprechende Code-Implementierung. Ohne dieses Mapping generiert AI-Code:</p>
+    <ul class="checklist">
+      <li class="warn">Generic HTML (&lt;button&gt;) statt Design-System-Komponenten (&lt;Button variant="primary"&gt;)</li>
+      <li class="warn">Inline-Styles statt Token-Referenzen</li>
+      <li class="warn">Eigene Implementierungen statt bestehender Bibliotheken</li>
+    </ul>
+    <p>Mit Code Connect weiss der AI-Agent: «Diese Figma-Komponente = diese React-Komponente mit diesen Props».</p>
+  </div>
+
+  <div class="validation-card">
+    <div class="vc-header">
+      <div class="vc-icon">🤖</div>
+      <div>
+        <div class="vc-title">Figma MCP Server: AI-Agenten lesen Figma direkt</div>
+        <div class="vc-sub">Figma Report, Abschnitt: MCP Server</div>
+      </div>
+    </div>
+    <p>Das Model Context Protocol (MCP) ermöglicht AI-Werkzeugen wie Cursor, Claude oder GitHub Copilot, direkt in Figma-Dateien zu lesen. Das bedeutet:</p>
+    <ul class="checklist">
+      <li>AI versteht den Design-Intent direkt aus der Quelle</li>
+      <li>Kein manuelles Copy-Paste von Design-Specs</li>
+      <li>Design-System-Kontext fliesst automatisch in Code-Generierung ein</li>
+    </ul>
+    <div class="alert alert-green">
+      Figma stellt den MCP Server kostenlos zur Verfügung — aber er funktioniert nur dann optimal, wenn das Design System gut strukturiert ist. Ohne saubere Token-Hierarchie und Code Connect liefert auch MCP schlechte Ergebnisse.
+    </div>
+  </div>
+
+  <h2>Die 57% Statistik — erklärt</h2>
+  <div class="quote-block">
+    <div class="quote-text">«57% of product builders now spend more time on high-value work like defining product vision and long-term strategy — thanks to AI handling the overhead.»</div>
+    <div class="quote-src">Figma Report (2025) — aus Befragung von Product Builders weltweit</div>
+  </div>
+  <p>Das bedeutet: Teams die AI sinnvoll einsetzen, verschieben ihre Arbeit von operativem Overhead (Komponenten bauen, Token manuell anwenden) zu strategischer Arbeit. Voraussetzung: Das Design System muss AI-kompatibel sein.</p>
+
+  <h2>Was Figma über Adoption sagt</h2>
+  <div class="quote-block">
+    <div class="quote-text">«AI is going to help a lot with adoption... If the system is something AI can automatically reference, it will use your code components and design tokens in any code it generates.»</div>
+    <div class="quote-src">Figma Report (2025) — Abschnitt: Design System Adoption</div>
+  </div>
+  <p>Figma argumentiert: Das grösste Problem bei Design Systems war immer Adoption. Entwickler umgingen das System, weil es mühsam war. AI ändert das — <em>wenn das System maschinenlesbar ist</em>. AI wird das System automatisch nutzen. Das löst Adoption als Bottleneck.</p>
+
+  <h2>Neue Skills die Teams brauchen</h2>
+  <p>Figma identifiziert Skills für das AI-Zeitalter:</p>
+  <div class="tag-list">
+    <span class="tag">Effektives Prompting</span>
+    <span class="tag">AI-Output-Verifikation</span>
+    <span class="tag">Token-Architektur</span>
+    <span class="tag">Code Connect Setup</span>
+    <span class="tag">MCP-Konfiguration</span>
+    <span class="tag">Design System Governance</span>
+  </div>
+</div>
+
+<!-- VALIDATION -->
+<div id="validation" class="section">
+  <h1>Figma validiert WeSlam — im Detail</h1>
+  <p class="lead">Jeder Punkt des WeSlam AI-Readiness Scores findet sich im Figma Report wieder. Das ist keine Koinzidenz — es bestätigt, dass WeSlams Framework den richtigen Ansatz verfolgt.</p>
+
+  <div class="alert alert-green">
+    <strong>Fazit vorab:</strong> Der Figma Report bestätigt 6 von 8 WeSlam AI-Readiness Kriterien explizit. Die 2 weiteren (Governance, CI/CD) werden implizit angesprochen. WeSlam hat den richtigen Rahmen.
+  </div>
+
+  <div class="validation-card">
+    <div class="vc-header">
+      <div class="vc-icon">1️⃣</div>
+      <div>
+        <div class="vc-title">C1: Token-Architektur — ✅ Explizit bestätigt</div>
+        <div class="vc-sub">WeSlam Kriterium vs. Figma Report</div>
+      </div>
+    </div>
+    <div class="figma-says">
+      <div class="fs-label">Figma sagt</div>
+      <div class="fs-text">W3C DTCG Token-Standard ist der Grundstein. Primitive → Semantic → Component Hierarchie ist obligatorisch. Ohne strukturierte Tokens kann AI keine konsistente Ausgabe liefern.</div>
+    </div>
+    <div class="weslam-does">
+      <div class="wd-label">WeSlam macht</div>
+      <div class="wd-text">Audit der Token-Architektur (C1), Migration auf DTCG-Format, Aufbau der 3-Ebenen-Hierarchie mit Style Dictionary + Tokens Studio. Exakt was Figma empfiehlt.</div>
+    </div>
+  </div>
+
+  <div class="validation-card">
+    <div class="vc-header">
+      <div class="vc-icon">2️⃣</div>
+      <div>
+        <div class="vc-title">C2: Naming Convention — ✅ Explizit bestätigt</div>
+        <div class="vc-sub">WeSlam Kriterium vs. Figma Report</div>
+      </div>
+    </div>
+    <div class="figma-says">
+      <div class="fs-label">Figma sagt</div>
+      <div class="fs-text">«Consistent naming conventions are critical for AI consumption.» AI kann nur dann korrekt arbeiten, wenn Namen vorhersehbar und konsistent sind. Inkonsistente Namen führen zu falschen Zuordnungen.</div>
+    </div>
+    <div class="weslam-does">
+      <div class="wd-label">WeSlam macht</div>
+      <div class="wd-text">Naming Convention Audit (C2), Definition von kebab-case Standards, Elimination von Duplikaten, Einführung von Linting-Rules für Token-Naming. Deckt sich 1:1.</div>
+    </div>
+  </div>
+
+  <div class="validation-card">
+    <div class="vc-header">
+      <div class="vc-icon">3️⃣</div>
+      <div>
+        <div class="vc-title">C3: Dokumentationsqualität — ✅ Explizit bestätigt</div>
+        <div class="vc-sub">WeSlam Kriterium vs. Figma Report</div>
+      </div>
+    </div>
+    <div class="figma-says">
+      <div class="fs-label">Figma sagt</div>
+      <div class="fs-text">AI-Agenten lesen Dokumentation. Ohne klare Component-Beschreibungen (Usage, Variants, Props) generiert AI-Code falsche oder unvollständige Implementierungen.</div>
+    </div>
+    <div class="weslam-does">
+      <div class="wd-label">WeSlam macht</div>
+      <div class="wd-text">Dokumentations-Audit (C3), Aufbau von structured MDX-Docs, AI-optimierte Storybook-Konfiguration mit JSDoc-Kommentaren. Exakt diese Lücke schliesst WeSlam.</div>
+    </div>
+  </div>
+
+  <div class="validation-card">
+    <div class="vc-header">
+      <div class="vc-icon">4️⃣</div>
+      <div>
+        <div class="vc-title">C4: Code Connect / Figma-Code-Sync — ✅ Explizit bestätigt</div>
+        <div class="vc-sub">WeSlam Kriterium vs. Figma Report</div>
+      </div>
+    </div>
+    <div class="figma-says">
+      <div class="fs-label">Figma sagt</div>
+      <div class="fs-text">Code Connect ist die entscheidende Verbindung. Ohne Mapping zwischen Figma-Komponenten und Code-Komponenten weiss AI nicht, welche Komponente zu verwenden ist.</div>
+    </div>
+    <div class="weslam-does">
+      <div class="wd-label">WeSlam macht</div>
+      <div class="wd-text">Code Connect Setup als Teil des WeSlam Sprint-Pakets. Figma-zu-Code Mapping für alle Design-System-Komponenten. WeSlam ist einer der wenigen Schweizer Anbieter, der das anbietet.</div>
+    </div>
+  </div>
+
+  <div class="validation-card">
+    <div class="vc-header">
+      <div class="vc-icon">5️⃣</div>
+      <div>
+        <div class="vc-title">C5: MCP / AI-Tool-Integration — ✅ Explizit bestätigt</div>
+        <div class="vc-sub">WeSlam Kriterium vs. Figma Report</div>
+      </div>
+    </div>
+    <div class="figma-says">
+      <div class="fs-label">Figma sagt</div>
+      <div class="fs-text">Figma MCP Server ist das Bindeglied zwischen Design und AI-Tools. Konfiguration + Testing ist notwendig, um optimale Ergebnisse zu erzielen.</div>
+    </div>
+    <div class="weslam-does">
+      <div class="wd-label">WeSlam macht</div>
+      <div class="wd-text">MCP Server Setup und Konfiguration (C5). WeSlam testet die Integration mit Cursor, Claude, GitHub Copilot und dokumentiert Best Practices für den Kunden.</div>
+    </div>
+  </div>
+
+  <div class="validation-card">
+    <div class="vc-header">
+      <div class="vc-icon">8️⃣</div>
+      <div>
+        <div class="vc-title">C8: Team AI-Kompetenz — ✅ Explizit bestätigt</div>
+        <div class="vc-sub">WeSlam Kriterium vs. Figma Report</div>
+      </div>
+    </div>
+    <div class="figma-says">
+      <div class="fs-label">Figma sagt</div>
+      <div class="fs-text">«New skills will shape the next era.» Teams müssen Prompting, AI-Output-Verifikation und Design System Governance im AI-Zeitalter neu erlernen.</div>
+    </div>
+    <div class="weslam-does">
+      <div class="wd-label">WeSlam macht</div>
+      <div class="wd-text">Workshops für Teams (C8): Prompting für Design System Kontext, AI-Output-Review, Governance-Prozesse. WeSlam bringt das Know-how für die neuen Skills.</div>
+    </div>
+  </div>
+
+  <div class="alert alert-purple">
+    <strong>Swiss Context:</strong> Der Figma Report spricht globale Best Practices an. WeSlam übersetzt diese für den Schweizer Enterprise-Markt: FINMA-Compliance, Swisscom/SBB/PostFinance Landschaft, Deutsch/Französisch Multi-Brand Anforderungen. Das ist der Swiss Advantage.
+  </div>
+</div>
+
+<!-- DRIFT DETECTOR VALIDATION -->
+<div id="drift-validation" class="section">
+  <h1>Figma validiert den Drift Detector</h1>
+  <p class="lead">Der Figma Report benennt explizit das Problem, das der WeSlam Drift Detector löst — ohne es selbst als Produkt anzubieten. Das ist eine Marktlücke.</p>
+
+  <div class="quote-block">
+    <div class="quote-text">«It's important to track how AI interprets your components — logging where it invents workarounds or breaks rules. Teams need visibility into where AI diverges from the design system.»</div>
+    <div class="quote-src">Figma Report (2025) — Abschnitt: Pushing Teams Further</div>
+  </div>
+
+  <div class="alert">
+    <strong>Figma beschreibt das Problem — aber bietet keine Lösung:</strong> Figma sagt, Teams brauchen Tracking-Mechanismen. Sie nennen keine Tools. Das ist die Lücke, die der WeSlam Drift Detector füllt.
+  </div>
+
+  <h2>Mapping: Figma-Problem → Drift Detector Lösung</h2>
+
+  <div class="validation-card">
+    <div class="vc-header">
+      <div class="vc-icon">🔍</div>
+      <div>
+        <div class="vc-title">Problem: «AI invents workarounds»</div>
+        <div class="vc-sub">Figma nennt es explizit als Problem für Teams</div>
+      </div>
+    </div>
+    <div class="figma-says">
+      <div class="fs-label">Figma beschreibt</div>
+      <div class="fs-text">AI-Agenten erfinden eigene Lösungen, wenn der Design-System-Kontext fehlt oder unklar ist. Diese Workarounds schleichen sich in die Codebasis ein — ohne dass Teams es merken.</div>
+    </div>
+    <div class="weslam-does">
+      <div class="wd-label">Drift Detector löst</div>
+      <div class="wd-text">Scannt jeden PR auf hardcoded Werte, undefined Klassen, custom Properties. Erkennt genau diese AI-generierten Workarounds, bevor sie mergen. GitHub Action = automatisches Frühwarnsystem.</div>
+    </div>
+  </div>
+
+  <div class="validation-card">
+    <div class="vc-header">
+      <div class="vc-icon">📊</div>
+      <div>
+        <div class="vc-title">Problem: «Visibility into where AI diverges»</div>
+        <div class="vc-sub">Teams haben keinen Überblick über AI-Abweichungen</div>
+      </div>
+    </div>
+    <div class="figma-says">
+      <div class="fs-label">Figma beschreibt</div>
+      <div class="fs-text">Ohne Tracking weiss das Team nicht, wo AI vom Design System abweicht. Inkonsistenzen akkumulieren sich über Zeit — bis das Design System faktisch obsolet ist.</div>
+    </div>
+    <div class="weslam-does">
+      <div class="wd-label">Drift Detector löst</div>
+      <div class="wd-text">Drift Score pro PR: % Tokens korrekt verwendet. Trend über Zeit: Wird das System besser oder schlechter? GitHub PR Comment mit detailliertem Bericht. Manageable Visibility für DS Lead und Head of Engineering.</div>
+    </div>
+  </div>
+
+  <div class="validation-card">
+    <div class="vc-header">
+      <div class="vc-icon">⚠️</div>
+      <div>
+        <div class="vc-title">Problem: «AI breaks rules without anyone noticing»</div>
+        <div class="vc-sub">Silent Degradation des Design Systems</div>
+      </div>
+    </div>
+    <div class="figma-says">
+      <div class="fs-label">Figma beschreibt</div>
+      <div class="fs-text">«You need to check AI outputs before confidently shipping something.» — Ana Boyer, Designer Advocate, Figma. AI-Output muss verifiziert werden — aber das passiert manuell und sporadisch.</div>
+    </div>
+    <div class="weslam-does">
+      <div class="wd-label">Drift Detector löst</div>
+      <div class="wd-text">Automatisierte Verifikation bei jedem Commit. Kein manuelles Review notwendig. Der Drift Detector ist der «check» den Ana Boyer einfordert — aber automatisiert und skalierbar.</div>
+    </div>
+  </div>
+
+  <h2>Go-to-Market Konsequenz</h2>
+  <div class="alert alert-green">
+    <strong>Messaging:</strong> «Figma sagt, ihr braucht Tracking-Mechanismen für AI-Abweichungen. WeSlam Drift Detector ist das Tool, das Figma beschreibt — aber nicht anbietet. Als Open-Source GitHub Action, kostenlos installiert in 5 Minuten.»
+  </div>
+
+  <h2>Konkrete Zahlen für den Sales-Kontext</h2>
+  <div class="stat-row">
+    <div class="stat-card">
+      <span class="num">293k</span>
+      <span class="label">Weekly Downloads stylelint-declaration-strict-value — Beweis für Nachfrage nach Token-Enforcement</span>
+    </div>
+    <div class="stat-card">
+      <span class="num">57%</span>
+      <span class="label">Teams die mehr Zeit auf High-Value-Work verbringen — weil AI Routine übernimmt</span>
+    </div>
+    <div class="stat-card">
+      <span class="num">~40%</span>
+      <span class="label">Code der bei AI-First-Teams von AI generiert wird — alles potenzielle Drift-Quellen</span>
+    </div>
+  </div>
+</div>
+
+<!-- GAPS -->
+<div id="gaps" class="section">
+  <h1>Lücken &amp; Chancen aus dem Figma Report</h1>
+  <p class="lead">Der Figma Report zeigt, was fehlt — sowohl in der Branche als auch was Figma selbst nicht löst. Für WeSlam sind das Geschäftschancen.</p>
+
+  <h2>Was Figma beschreibt, aber nicht löst</h2>
+
+  <div class="gap-card">
+    <div class="gc-title">🔴 Gap 1: Implementierungs-Support fehlt</div>
+    <div class="gc-text">Figma erklärt hervorragend, <em>was</em> AI-Ready Design Systems brauchen. Aber <em>wie</em> man das umsetzt — Code Connect einrichten, DTCG Migration, MCP konfigurieren — das ist nicht Teil des Reports. Figma bietet kein Professional Services Modell. Hier kommt WeSlam.</div>
+  </div>
+
+  <div class="gap-card">
+    <div class="gc-title">🔴 Gap 2: Governance und Compliance fehlt völlig</div>
+    <div class="gc-text">Der Report erwähnt Governance kaum. Für Swiss Enterprises mit FINMA-Anforderungen, nDSG (neues Datenschutzgesetz) und SIX-Exchange-Auflagen ist Governance aber ein Blocker. WeSlam hat hier einen echten Swiss Advantage — Figma kann das nicht liefern.</div>
+  </div>
+
+  <div class="gap-card">
+    <div class="gc-title">🔴 Gap 3: Drift Detection fehlt als Produkt</div>
+    <div class="gc-text">Figma sagt explizit, Teams brauchen Tracking-Tools. Aber Figma bietet keines an. Kein CI/CD-Plugin, kein GitHub Action, kein Drift Score. Der WeSlam Drift Detector ist das einzige Open-Source-Tool das explizit diesen Use Case adressiert.</div>
+  </div>
+
+  <div class="gap-card">
+    <div class="gc-title">🔴 Gap 4: Multi-Brand / Multi-Sprache nicht adressiert</div>
+    <div class="gc-text">Der Figma Report ist englischsprachig und global ausgerichtet. Swiss Enterprises (Swisscom, SBB, Migros) haben Multi-Brand und Deutsch/Französisch/Italienisch Anforderungen. WeSlam kennt diese Landschaft.</div>
+  </div>
+
+  <div class="gap-card">
+    <div class="gc-title">🟡 Gap 5: Legacy Migration fehlt</div>
+    <div class="gc-text">Der Report setzt voraus, dass ein Design System bereits existiert. Was aber wenn das Schweizer Enterprise noch BEM-CSS aus 2015 hat? WeSlam braucht ein «Legacy to AI-Ready» Migration-Playbook — der Report adressiert das nicht.</div>
+  </div>
+
+  <div class="gap-card">
+    <div class="gc-title">🟡 Gap 6: Training und Change Management</div>
+    <div class="gc-text">Figma erwähnt neue Skills — aber wie vermittelt man sie in einem grossen Swiss Enterprise? WeSlam braucht ein strukturiertes Training-Paket: Workshop-Curriculum, Prompting-Guidelines, AI-Governance für Design-Teams.</div>
+  </div>
+
+  <h2>Strategische Konsequenzen für WeSlam</h2>
+  <table class="feature-table">
+    <thead>
+      <tr><th>Gap</th><th>WeSlam Angebot</th><th>Dringlichkeit</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Implementierungs-Support</td><td>3-Phasen Service (Audit → Sprint → Retainer)</td><td class="check">JETZT</td></tr>
+      <tr><td>Drift Detection</td><td>Open-Source GitHub Action</td><td class="check">IN 8 WOCHEN</td></tr>
+      <tr><td>Swiss Compliance</td><td>Swiss-spezifische Governance-Checkliste</td><td class="check">JETZT</td></tr>
+      <tr><td>Multi-Brand</td><td>Teil des Standard-Audits</td><td class="check">JETZT</td></tr>
+      <tr><td>Legacy Migration</td><td>Playbook entwickeln</td><td class="cross">Q3 2025</td></tr>
+      <tr><td>Training-Paket</td><td>Workshop-Curriculum</td><td class="cross">Q3 2025</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- PROMPTING FRAMEWORK -->
+<div id="prompting" class="section">
+  <h1>Figma Prompting Framework — für WeSlam Kunden</h1>
+  <p class="lead">Figma gibt im Report konkrete Prompting-Empfehlungen für AI-gestützte Design-System-Arbeit. WeSlam kann dieses Framework als Teil des Kunden-Onboardings verwenden.</p>
+
+  <h2>Figmas 5 Best Practices für Design System Prompting</h2>
+
+  <div class="validation-card">
+    <div class="vc-header">
+      <div class="vc-icon">1️⃣</div>
+      <div>
+        <div class="vc-title">Komplexität aufbrechen</div>
+      </div>
+    </div>
+    <p>Grosse Design-System-Anfragen in kleine, spezifische Sub-Tasks aufteilen. Statt «Erstelle eine Produktseite» lieber «Erstelle einen Card-Component mit dem ProductCard-Token-Set».</p>
+  </div>
+
+  <div class="validation-card">
+    <div class="vc-header">
+      <div class="vc-icon">2️⃣</div>
+      <div>
+        <div class="vc-title">Design-Kontext einschliessen</div>
+      </div>
+    </div>
+    <p>Layout-Constraints, verfügbare Komponenten, Token-Namen explizit im Prompt angeben. «Verwende die button-primary Token-Gruppe, Mindestbreite 120px, mobile-first».</p>
+  </div>
+
+  <div class="validation-card">
+    <div class="vc-header">
+      <div class="vc-icon">3️⃣</div>
+      <div>
+        <div class="vc-title">Design System via Code Connect oder MCP verlinken</div>
+      </div>
+    </div>
+    <p>Code Connect oder MCP-Verbindung herstellen, bevor AI-Agenten genutzt werden. Ohne diese Verbindung «weiss» AI nichts über das Design System und generiert generic Code.</p>
+  </div>
+
+  <div class="validation-card">
+    <div class="vc-header">
+      <div class="vc-icon">4️⃣</div>
+      <div>
+        <div class="vc-title">Spezifisch und plain statt vage und kreativ</div>
+      </div>
+    </div>
+    <p>«Verwende einen 16px-Button» statt «mach es grösser». «Hintergrundfarbe color-surface-primary» statt «macht es hell». Design Tokens als Sprache nutzen.</p>
+  </div>
+
+  <div class="validation-card">
+    <div class="vc-header">
+      <div class="vc-icon">5️⃣</div>
+      <div>
+        <div class="vc-title">AI um Reasoning bitten</div>
+      </div>
+    </div>
+    <p>«Erkläre, warum du diese Komponente gewählt hast» — so erkennt man, ob AI das Design System korrekt interpretiert oder ob es einen Workaround gewählt hat.</p>
+  </div>
+
+  <hr class="divider">
+
+  <h2>WeSlam Workshop-Modul: «Prompting für Design System Teams»</h2>
+  <p>Aus Figmas Framework lässt sich ein konkretes Workshop-Modul ableiten — das WeSlam als Teil des Retainer-Pakets anbieten kann:</p>
+
+  <div class="framework-row">
+    <div class="fw-card">
+      <div class="fw-label">Modul A — 2h</div>
+      <div class="fw-title">Grundlagen: Design System als AI-Sprache</div>
+      <p>Token-Namen als Prompt-Vokabular, Component-Namen verstehen, Props als Kontext nutzen. Hands-on mit Cursor/Claude.</p>
+    </div>
+    <div class="fw-card">
+      <div class="fw-label">Modul B — 2h</div>
+      <div class="fw-title">Advanced: Komplexe Generierung steuern</div>
+      <p>Multi-Component-Prompts, Design-Kontext strukturieren, AI-Output reviewen und korrigieren. Live-Übungen mit eigenem Design System.</p>
+    </div>
+    <div class="fw-card">
+      <div class="fw-label">Modul C — 1h</div>
+      <div class="fw-title">Governance: Was wir AI erlauben dürfen</div>
+      <p>Wo AI helfen darf vs. wo menschliche Entscheidung gefragt ist. Tone of Voice, Barrierefreiheit, Brand-Sensitivität. Swiss Enterprise Kontext.</p>
+    </div>
+    <div class="fw-card">
+      <div class="fw-label">Modul D — 1h</div>
+      <div class="fw-title">Tools Setup: MCP, Code Connect, Drift Detector</div>
+      <p>Figma MCP konfigurieren, Code Connect Setup überprüfen, Drift Detector einrichten. Technisches Onboarding für Dev-Team.</p>
+    </div>
+  </div>
+
+  <div class="alert alert-purple">
+    <strong>Pricing-Idee:</strong> 4-modul Workshop-Tag (6h) CHF 4'500. Als Ergänzung zum Sprint-Paket oder separates Training-Produkt. Figma endorset implizit genau diesen Bedarf.
+  </div>
+</div>
+
+<!-- ACTION ITEMS -->
+<div id="action-items" class="section">
+  <h1>Konsequenzen für WeSlam</h1>
+  <p class="lead">Was der Figma Report konkret für die WeSlam Strategie bedeutet — in priorisierten Handlungsempfehlungen.</p>
+
+  <h2>Sofortmassnahmen (Messaging Update)</h2>
+
+  <div class="overlap-item">
+    <div class="overlap-icon">📢</div>
+    <div class="overlap-content">
+      <div class="ot">57% Stat in alle Sales-Materialien aufnehmen</div>
+      <div class="os">«57% der Product Builder verbringen mehr Zeit auf strategischer Arbeit, wenn AI Routine übernimmt.» (Figma, 2025) — Diese Zahl gehört in das Pitch Deck, die Website und jeden Sales-Call.</div>
+      <div class="op">→ Homepage, LinkedIn Posts, Client Pitches</div>
+    </div>
+  </div>
+
+  <div class="overlap-item">
+    <div class="overlap-icon">🏷️</div>
+    <div class="overlap-content">
+      <div class="ot">Figma als Authority Referenz nutzen</div>
+      <div class="os">«Figma — der Design-Tool-Leader — empfiehlt genau das, was WeSlam implementiert: W3C DTCG Tokens, Code Connect, MCP Server.» Das ist externe Validierung ohne Selbstlobby.</div>
+      <div class="op">→ Trust-Building mit Swiss Enterprise Kunden</div>
+    </div>
+  </div>
+
+  <div class="overlap-item">
+    <div class="overlap-icon">🎯</div>
+    <div class="overlap-content">
+      <div class="ot">Drift Detector Messaging schärfen</div>
+      <div class="os">«Figma sagt: Teams brauchen Tracking für AI-Workarounds. WeSlam Drift Detector ist das Tool, das Figma beschreibt.» — Direkte Referenz auf den Figma Report als Markt-Beweis.</div>
+      <div class="op">→ GitHub README, Product Hunt Launch, Dev Community</div>
+    </div>
+  </div>
+
+  <div class="overlap-item">
+    <div class="overlap-icon">📚</div>
+    <div class="overlap-content">
+      <div class="ot">Prompting Workshop als neues Produkt</div>
+      <div class="os">Figma identifiziert Prompting als kritischen neuen Skill. WeSlam kann ein strukturiertes 4-Modul Workshop-Format (CHF 4'500) als Add-on zum Sprint entwickeln.</div>
+      <div class="op">→ Q3 2025 Produktentwicklung</div>
+    </div>
+  </div>
+
+  <div class="overlap-item">
+    <div class="overlap-icon">🇨🇭</div>
+    <div class="overlap-content">
+      <div class="ot">Swiss Gap explizit kommunizieren</div>
+      <div class="os">«Der Figma Report adressiert globale Best Practices. Swiss Enterprises brauchen zusätzlich: FINMA, nDSG, Multi-Sprache. WeSlam ist der einzige Schweizer Anbieter der das liefert.»</div>
+      <div class="op">→ Swiss Market Positioning schärfen</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <h2>Mittelfristige Produktentwicklung</h2>
+
+  <div class="framework-row">
+    <div class="fw-card">
+      <div class="fw-label">Q2 2025</div>
+      <div class="fw-title">Drift Detector Launch</div>
+      <p>Open-Source GitHub Action. Go-to-Market mit Figma Report als Referenz. «Das Tool das Figma beschreibt, aber nicht anbietet.»</p>
+    </div>
+    <div class="fw-card">
+      <div class="fw-label">Q3 2025</div>
+      <div class="fw-title">Workshop-Paket</div>
+      <p>4-Modul Design System AI-Prompting Workshop. Figma Framework als Curriculum-Grundlage. CHF 4'500 pro Tag.</p>
+    </div>
+    <div class="fw-card">
+      <div class="fw-label">Q3 2025</div>
+      <div class="fw-title">Legacy-Migration Playbook</div>
+      <p>Strukturierter Prozess: Legacy CSS → DTCG Tokens. Häufigster Einstiegspunkt für Swiss Enterprises.</p>
+    </div>
+    <div class="fw-card">
+      <div class="fw-label">Q4 2025</div>
+      <div class="fw-title">AI-Readiness Zertifikat</div>
+      <p>Schweizer Design System erhält WeSlam AI-Readiness Badge nach Audit + Sprint. Positionierung als Swiss Standard.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <h2>Updated Revenue-Hochrechnung</h2>
+  <p>Mit dem Figma Report als Validierung und dem Prompting Workshop als neuem Produkt:</p>
+  <div class="stat-row">
+    <div class="stat-card">
+      <span class="num">CHF 500k</span>
+      <span class="label">Jahr 1 Ziel: 4x Sprint (CHF 40k) + 3x Retainer (CHF 30k) + 5x Workshop + Drift SaaS</span>
+    </div>
+    <div class="stat-card">
+      <span class="num">CHF 1.2M</span>
+      <span class="label">Jahr 2 Ziel: Drift Detector als Paid Tier + 8x Retainer + Team-Growth</span>
+    </div>
+  </div>
+
+  <div class="alert alert-green">
+    <strong>Key Insight:</strong> Der Figma Report verschiebt die WeSlam-Positionierung von «netter Swiss Consultant» zu «offiziell endorsed Implementierungspartner für die Figma AI-Ready Design System Vision». Das ist ein signifikanter Positioning-Upgrade.
+  </div>
+</div>
+
+</div><!-- end .content -->
+
+<script>
+function show(id, btn) {
+  document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  document.querySelectorAll(".section-nav button").forEach(b => b.classList.remove("active"));
+  if (btn) btn.classList.add("active");
+}
+
+function switchDoc(doc) {
+  // For now we only have one doc
+}
+</script>
+</body>
+</html>

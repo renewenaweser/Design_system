@@ -54,6 +54,19 @@ Detaillierte Erklärung aller 8 Score-Kriterien + die echten Kundenprobleme die 
 
 ---
 
+### 5. Figma Report — Externe Validierung
+Analyse des offiziellen Figma Reports «How design systems power the new pace of product development» (2025) und was er für WeSlam bedeutet.
+
+- Figma bestätigt explizit: Tokens, Code Connect, MCP Server als Fundament der AI-Readiness
+- 57% Stat: Product Builder verbringen mehr Zeit auf High-Value-Work dank AI
+- Drift Detector Konzept direkt durch Figma Report validiert
+- Identifizierte Lücken die Figma beschreibt, aber nicht löst — WeSlam Chancen
+- Prompting-Framework + neues Workshop-Produkt (CHF 4'500)
+
+🔗 [Figma Report Insights öffnen](https://renewenaweser.github.io/Design_system/weslam-figma-insights.html)
+
+---
+
 ## 🗺 Empfohlene Lesereihenfolge
 
 | Schritt | Dokument | Warum |
@@ -62,6 +75,7 @@ Detaillierte Erklärung aller 8 Score-Kriterien + die echten Kundenprobleme die 
 | 2 | Tiefenanalyse V2 | Markt und Strategie validieren |
 | 3 | AI-Readiness Deep Dive | Service-Inhalt im Detail |
 | 4 | Drift Detector PRD | Nächster konkreter Schritt |
+| 5 | Figma Report Insights | Externe Validierung + neue Chancen |
 
 ---
 
