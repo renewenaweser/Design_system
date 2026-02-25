@@ -17,7 +17,7 @@ Strategische Analyse und Produktentwicklung rund um den Service **"AI-Ready Desi
 - 3-Phasen Service-Modell: Audit → Sprint → Retainer
 - Pricing (CHF 15k–80k) und Validierungs-Experimente
 
-🔗 [Service Blueprint öffnen](https://github.com/renewenaweser/Design_system/blob/main/weslam-service-blueprint.html)
+🔗 [Service Blueprint öffnen](https://htmlpreview.github.io/?https://github.com/renewenaweser/Design_system/blob/main/weslam-service-blueprint.html)
 
 ---
 
@@ -30,7 +30,7 @@ Strategische Analyse und Produktentwicklung rund um den Service **"AI-Ready Desi
 - Ehrliche Bewertung des Swiss Advantage (was ist real, was ist Marketing)
 - Revenue-Modell CHF 400–500k Jahr 1–2
 
-🔗 [Tiefenanalyse V2 öffnen](https://github.com/renewenaweser/Design_system/blob/main/weslam-deep-analysis-v2.html)
+🔗 [Tiefenanalyse V2 öffnen](https://htmlpreview.github.io/?https://github.com/renewenaweser/Design_system/blob/main/weslam-deep-analysis-v2.html)
 
 ---
 
@@ -44,7 +44,7 @@ Strategische Analyse und Produktentwicklung rund um den Service **"AI-Ready Desi
 - Technische Architektur, `.driftrc.yml` Config-Format, GitHub Action Usage
 - Go-to-Market Timeline (8 Wochen bis Open Source)
 
-🔗 [Lean PRD öffnen](https://github.com/renewenaweser/Design_system/blob/main/weslam-drift-detector-prd.html)
+🔗 [Lean PRD öffnen](https://htmlpreview.github.io/?https://github.com/renewenaweser/Design_system/blob/main/weslam-drift-detector-prd.html)
 
 ---
 
@@ -64,7 +64,7 @@ Strategische Analyse und Produktentwicklung rund um den Service **"AI-Ready Desi
 - "Unsere App sieht auf jeder Seite anders aus"
 - u.v.m.
 
-🔗 [AI-Readiness Deep Dive öffnen](https://github.com/renewenaweser/Design_system/blob/main/weslam-ai-readiness-deep-dive.html)
+🔗 [AI-Readiness Deep Dive öffnen](https://htmlpreview.github.io/?https://github.com/renewenaweser/Design_system/blob/main/weslam-ai-readiness-deep-dive.html)
 
 ---
 
