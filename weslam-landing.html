@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WeSlam — AI-Ready Design Systems</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --mint: #C3EBE6;
+  --mint-light: #D4F0ED;
+  --mint-dark: #A4D9D3;
+  --white: #FFFFFF;
+  --black: #0A0A0A;
+  --text: #1A1A1A;
+  --muted: #5C6B6A;
+  --border: #B8DEDA;
+  --dark: #0F0F0F;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--mint);
+  color: var(--text);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── GLOBAL NAV ── */
+.g-nav {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--mint);
+  border-bottom: 1px solid var(--mint-dark);
+  padding: 0 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 64px;
+}
+.g-nav-logo {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 800; font-size: 17px;
+  color: var(--black); text-decoration: none;
+  letter-spacing: 0.02em;
+}
+.g-nav-links { display: flex; gap: 28px; list-style: none; }
+.g-nav-links a {
+  font-size: 14px; font-weight: 500;
+  color: var(--text); text-decoration: none;
+  opacity: 0.65; transition: opacity 0.15s;
+}
+.g-nav-links a:hover { opacity: 1; }
+.g-nav-cta {
+  background: var(--black); color: #fff;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600; font-size: 14px;
+  padding: 9px 20px; border-radius: 8px;
+  text-decoration: none; transition: background 0.15s;
+}
+.g-nav-cta:hover { background: #2a2a2a; }
+
+/* ── HERO ── */
+.hero {
+  padding: 96px 48px 72px;
+  max-width: 1080px; margin: 0 auto;
+  text-align: center;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--black); color: #fff;
+  font-size: 11px; font-weight: 700;
+  padding: 5px 14px; border-radius: 20px;
+  margin-bottom: 28px; letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.hero h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(44px, 6.5vw, 76px);
+  font-weight: 800; line-height: 1.04;
+  letter-spacing: -0.03em; color: var(--black);
+  margin-bottom: 24px;
+}
+.hero h1 em { font-style: normal; }
+.hero-sub {
+  font-size: 18px; color: var(--muted);
+  max-width: 520px; margin: 0 auto 40px;
+  line-height: 1.7;
+}
+.hero-btns {
+  display: flex; gap: 12px;
+  justify-content: center; flex-wrap: wrap;
+  margin-bottom: 48px;
+}
+.btn-dark {
+  background: var(--black); color: #fff;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700; font-size: 15px;
+  padding: 13px 26px; border-radius: 10px;
+  text-decoration: none; transition: background 0.15s;
+  display: inline-block;
+}
+.btn-dark:hover { background: #2a2a2a; }
+.btn-outline {
+  background: transparent; color: var(--black);
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700; font-size: 15px;
+  padding: 13px 26px; border-radius: 10px;
+  border: 2px solid var(--black);
+  text-decoration: none; transition: all 0.15s;
+  display: inline-block;
+}
+.btn-outline:hover { background: var(--black); color: #fff; }
+.hero-chips {
+  display: flex; gap: 10px;
+  justify-content: center; flex-wrap: wrap;
+}
+.chip {
+  background: rgba(255,255,255,0.65);
+  border: 1px solid var(--border);
+  border-radius: 20px; padding: 7px 16px;
+  font-size: 13px; font-weight: 500; color: var(--text);
+}
+
+/* ── LOGOS ── */
+.logos-bar {
+  border-top: 1px solid var(--mint-dark);
+  border-bottom: 1px solid var(--mint-dark);
+  padding: 20px 48px;
+  display: flex; gap: 40px;
+  justify-content: center; align-items: center;
+  flex-wrap: wrap; opacity: 0.55;
+}
+.logos-bar span {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 800; font-size: 13px;
+  letter-spacing: 0.08em; color: var(--black);
+  text-transform: uppercase;
+}
+
+/* ── SECTIONS ── */
+.s { padding: 88px 48px; }
+.s-white { background: var(--white); }
+.s-dark { background: var(--dark); color: #e0e0e0; }
+.s-inner { max-width: 1080px; margin: 0 auto; }
+.s-label {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--muted); margin-bottom: 14px;
+}
+.s-dark .s-label { color: #555; }
+.s-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(30px, 4vw, 46px);
+  font-weight: 800; line-height: 1.08;
+  letter-spacing: -0.025em; color: var(--black);
+  margin-bottom: 16px; max-width: 680px;
+}
+.s-dark .s-title { color: #fff; }
+.s-lead {
+  font-size: 16px; color: var(--muted);
+  max-width: 560px; line-height: 1.75; margin-bottom: 48px;
+}
+.s-dark .s-lead { color: #999; }
+
+/* ── PROBLEM ── */
+.problem-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px; margin-top: 8px;
+}
+.p-card {
+  background: var(--mint-light);
+  border: 1px solid var(--mint-dark);
+  border-radius: 16px; padding: 28px;
+}
+.p-card .p-icon { font-size: 26px; margin-bottom: 14px; }
+.p-card .p-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 17px; font-weight: 700;
+  color: var(--black); margin-bottom: 10px;
+}
+.p-card .p-text { font-size: 14px; color: var(--muted); line-height: 1.65; margin-bottom: 14px; }
+.code-blk {
+  background: #111; border-radius: 10px;
+  padding: 16px 18px;
+  font-family: 'Fira Code', 'Courier New', monospace;
+  font-size: 12.5px; line-height: 1.7;
+}
+.c-bad { color: #f87171; }
+.c-good { color: #4ade80; }
+.c-dim { color: #4b5563; }
+.c-warn { color: #f59e0b; }
+
+/* ── SCORE ── */
+.score-wrap {
+  display: flex; gap: 32px;
+  flex-wrap: wrap; align-items: flex-start;
+  margin-bottom: 40px;
+}
+.score-big-box {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 20px; padding: 32px 36px;
+  text-align: center; min-width: 200px;
+}
+.score-num-big {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 80px; font-weight: 800;
+  color: var(--black); line-height: 1;
+}
+.score-bar-outer {
+  height: 8px; background: var(--mint-dark);
+  border-radius: 4px; overflow: hidden; margin: 12px 0 8px;
+}
+.score-bar-fill {
+  height: 100%; background: var(--black);
+  border-radius: 4px; width: 27%;
+}
+.score-sub { font-size: 13px; color: var(--muted); }
+.score-desc-box { flex: 1; min-width: 280px; padding-top: 4px; }
+.score-desc-box p {
+  font-size: 15px; color: var(--muted);
+  line-height: 1.75; margin-bottom: 14px;
+}
+.score-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+.sc-item {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px; padding: 18px 20px;
+  display: flex; gap: 12px; align-items: flex-start;
+}
+.sc-n {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 20px; font-weight: 800;
+  color: var(--black); opacity: 0.12; min-width: 24px;
+}
+.sc-t { font-weight: 700; font-size: 14px; color: var(--black); margin-bottom: 3px; }
+.sc-s { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+/* ── SERVICES ── */
+.svc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 18px; margin-top: 8px;
+}
+.svc-card {
+  background: var(--mint-light);
+  border: 1px solid var(--mint-dark);
+  border-radius: 20px; padding: 36px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.svc-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.07);
+}
+.svc-card.feat {
+  background: var(--black); border-color: var(--black);
+}
+.svc-phase {
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--muted); margin-bottom: 10px;
+}
+.svc-card.feat .svc-phase { color: #555; }
+.svc-icon { font-size: 30px; margin-bottom: 16px; }
+.svc-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 22px; font-weight: 700;
+  color: var(--black); margin-bottom: 12px;
+}
+.svc-card.feat .svc-title { color: #fff; }
+.svc-desc { font-size: 14px; color: var(--muted); line-height: 1.7; margin-bottom: 24px; }
+.svc-card.feat .svc-desc { color: #888; }
+.svc-list { list-style: none; margin-bottom: 28px; }
+.svc-list li {
+  font-size: 13px; color: var(--text);
+  padding: 7px 0 7px 20px;
+  border-bottom: 1px solid var(--border);
+  position: relative; line-height: 1.4;
+}
+.svc-card.feat .svc-list li { color: #ccc; border-bottom-color: #1e1e1e; }
+.svc-list li::before { content: '→'; position: absolute; left: 0; color: var(--black); font-weight: 700; }
+.svc-card.feat .svc-list li::before { color: #a78bfa; }
+.svc-price {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 22px; font-weight: 800;
+  color: var(--black); margin-bottom: 4px;
+}
+.svc-card.feat .svc-price { color: #fff; }
+.svc-dur { font-size: 12px; color: var(--muted); }
+.svc-card.feat .svc-dur { color: #555; }
+
+/* ── DRIFT ── */
+.drift-wrap {
+  background: #111;
+  border-radius: 20px; padding: 52px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px; align-items: center;
+  margin-top: 8px;
+}
+.d-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #1a1a1a; border: 1px solid #2a2a2a;
+  border-radius: 20px; padding: 5px 14px;
+  font-size: 11px; font-weight: 700;
+  color: #4ade80; margin-bottom: 18px;
+  letter-spacing: 0.05em; text-transform: uppercase;
+}
+.d-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 34px; font-weight: 800;
+  color: #fff; line-height: 1.1;
+  letter-spacing: -0.02em; margin-bottom: 14px;
+}
+.d-text { font-size: 15px; color: #888; line-height: 1.75; margin-bottom: 28px; }
+.d-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn-dark-sm {
+  background: #fff; color: #111;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700; font-size: 13px;
+  padding: 10px 20px; border-radius: 8px;
+  text-decoration: none; transition: background 0.15s;
+  display: inline-block;
+}
+.btn-dark-sm:hover { background: #ddd; }
+.btn-ghost-sm {
+  background: transparent; color: #666;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600; font-size: 13px;
+  padding: 10px 20px; border-radius: 8px;
+  border: 1px solid #333; text-decoration: none;
+  transition: all 0.15s; display: inline-block;
+}
+.btn-ghost-sm:hover { border-color: #666; color: #ccc; }
+.drift-code {
+  background: #0d0d0d;
+  border: 1px solid #1e1e1e;
+  border-radius: 14px; padding: 24px;
+  font-family: 'Fira Code', 'Courier New', monospace;
+  font-size: 13px; line-height: 1.8;
+  overflow-x: auto;
+}
+
+/* ── WHY ── */
+.why-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px; margin-top: 8px;
+}
+.why-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px; padding: 28px;
+  transition: transform 0.15s;
+}
+.why-card:hover { transform: translateY(-2px); }
+.why-icon { font-size: 26px; margin-bottom: 14px; }
+.why-t {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 17px; font-weight: 700;
+  color: var(--black); margin-bottom: 8px;
+}
+.why-p { font-size: 13px; color: var(--muted); line-height: 1.65; }
+
+
+
+/* ── CTA ── */
+.cta-s {
+  padding: 100px 48px;
+  text-align: center;
+}
+.cta-inner { max-width: 640px; margin: 0 auto; }
+.cta-inner h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(34px, 5vw, 54px);
+  font-weight: 800; letter-spacing: -0.025em;
+  color: var(--black); line-height: 1.08; margin-bottom: 18px;
+}
+.cta-inner p { font-size: 17px; color: var(--muted); margin-bottom: 32px; line-height: 1.65; }
+.cta-note { margin-top: 14px; font-size: 12px; color: var(--muted); }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--black); color: #555;
+  padding: 28px 48px;
+  display: flex; justify-content: space-between;
+  align-items: center; flex-wrap: wrap; gap: 16px;
+}
+.f-logo {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 800; font-size: 15px; color: #fff;
+}
+.f-links { display: flex; gap: 24px; }
+.f-links a { font-size: 13px; color: #555; text-decoration: none; transition: color 0.15s; }
+.f-links a:hover { color: #ccc; }
+
+@media (max-width: 760px) {
+  .g-nav { padding: 0 20px; }
+  .g-nav-links { display: none; }
+  .hero, .s, .cta-s, .logos-bar { padding-left: 20px; padding-right: 20px; }
+  .drift-wrap { grid-template-columns: 1fr; padding: 32px 24px; }
+  footer { padding: 24px 20px; flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<!-- GLOBAL NAV -->
+<nav class="g-nav">
+  <a href="weslam-landing.html" class="g-nav-logo">WE SLAM</a>
+  <ul class="g-nav-links">
+    <li><a href="#problem">Problem</a></li>
+    <li><a href="#score">AI-Score</a></li>
+    <li><a href="#services">Services</a></li>
+  </ul>
+  <a href="mailto:rene.wenaweser@gmail.com" class="g-nav-cta">Let's talk →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">✦ New Service &nbsp;·&nbsp; AI-Ready Design Systems</div>
+  <h1>Make your Design<br>System AI-Ready.</h1>
+  <p class="hero-sub">AI coding tools are powerful. But they don't know your design system. WeSlam closes the gap — for Swiss enterprises that take design quality seriously.</p>
+  <div class="hero-btns">
+    <a href="mailto:rene.wenaweser@gmail.com" class="btn-dark">Book a Discovery Call</a>
+  </div>
+  <div class="hero-chips">
+    <span class="chip">57% mehr strategische Arbeit (Figma 2025)</span>
+    <span class="chip">AI-Readiness Score 0–100</span>
+    <span class="chip">4-Week Sprint</span>
+    <span class="chip">Swiss Enterprise Focus</span>
+  </div>
+</section>
+
+<!-- LOGOS -->
+<div class="logos-bar">
+  <span>Migros</span>
+  <span>SRF</span>
+  <span>JobCloud</span>
+  <span>SBB</span>
+  <span>Swisscom</span>
+  <span>PostFinance</span>
+</div>
+
+<!-- PROBLEM -->
+<section class="s s-white" id="problem">
+  <div class="s-inner">
+    <div class="s-label">Das Problem</div>
+    <h2 class="s-title">AI schreibt Code. Aber kennt euer Design System nicht.</h2>
+    <p class="s-lead">Cursor, Copilot, Claude — AI-Coding-Tools sind beeindruckend produktiv. Aber sie arbeiten an eurer Codebasis vorbei. PR für PR verliert euer Design System seinen Grip.</p>
+    <div class="problem-grid">
+      <div class="p-card">
+        <div class="p-icon">🎨</div>
+        <div class="p-title">Tokens werden ignoriert</div>
+        <p class="p-text">AI kennt eure Token-Hierarchie nicht. Sie schreibt Rohwerte statt Token-Referenzen.</p>
+        <div class="code-blk">
+          <div class="c-dim">// AI generiert:</div>
+          <div class="c-bad">background: #3B82F6;</div>
+          <div class="c-dim">// Sollte sein:</div>
+          <div class="c-good">background: var(--color-primary);</div>
+        </div>
+      </div>
+      <div class="p-card">
+        <div class="p-icon">🧩</div>
+        <div class="p-title">Komponenten werden umgangen</div>
+        <p class="p-text">Ohne Code Connect generiert AI generic HTML statt Design-System-Komponenten.</p>
+        <div class="code-blk">
+          <div class="c-dim">// AI generiert:</div>
+          <div class="c-bad">&lt;button style="padding:8px 16px"&gt;</div>
+          <div class="c-dim">// Sollte sein:</div>
+          <div class="c-good">&lt;Button variant="primary"&gt;</div>
+        </div>
+      </div>
+      <div class="p-card">
+        <div class="p-icon">📉</div>
+        <div class="p-title">Das System driftet</div>
+        <p class="p-text">Jeder PR fügt Inkonsistenz hinzu — still, unbemerkt, bis das Design System faktisch tot ist.</p>
+        <div class="code-blk">
+          <div class="c-dim">// Nach 3 Monaten AI-Coding:</div>
+          <div class="c-warn">47 hardcoded color values</div>
+          <div class="c-warn">23 custom button implementations</div>
+          <div class="c-warn">DS adoption: 34% ↓</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SCORE -->
+<section class="s" id="score">
+  <div class="s-inner">
+    <div class="s-label">Der WeSlam AI-Readiness Score</div>
+    <h2 class="s-title">Wir messen, was AI braucht.</h2>
+    <p class="s-lead">Bevor wir handeln, messen wir. Der AI-Readiness Score (0–100) bewertet euer Design System in 8 Dimensionen. Die meisten Swiss Enterprises starten bei 15–35.</p>
+    <div class="score-wrap">
+      <div class="score-big-box">
+        <div class="score-num-big">27</div>
+        <div class="score-bar-outer"><div class="score-bar-fill"></div></div>
+        <div class="score-sub">Ø Swiss Enterprise heute</div>
+      </div>
+      <div class="score-desc-box">
+        <p>Ein Score unter 40: AI-Tools können euer Design System nicht nutzen. Sie generieren Code, der täglich mehr Inkonsistenz einbringt.</p>
+        <p>Ein Score über 75: AI versteht euer Design System und nutzt automatisch eure Tokens, Komponenten und Patterns. Coding-Speed steigt, Qualität bleibt.</p>
+        <a href="mailto:rene.wenaweser@gmail.com" class="btn-dark" style="font-size:14px;padding:11px 22px">Jetzt Score ermitteln →</a>
+      </div>
+    </div>
+    <div class="score-grid">
+      <div class="sc-item"><div class="sc-n">C1</div><div><div class="sc-t">Token-Architektur</div><div class="sc-s">W3C DTCG Standard, 3-Ebenen-Hierarchie</div></div></div>
+      <div class="sc-item"><div class="sc-n">C2</div><div><div class="sc-t">Naming Conventions</div><div class="sc-s">Konsistenz & Maschinenlesbarkeit</div></div></div>
+      <div class="sc-item"><div class="sc-n">C3</div><div><div class="sc-t">Dokumentationsqualität</div><div class="sc-s">AI-lesbare Component Docs</div></div></div>
+      <div class="sc-item"><div class="sc-n">C4</div><div><div class="sc-t">Code Connect</div><div class="sc-s">Figma-zu-Code Mapping</div></div></div>
+      <div class="sc-item"><div class="sc-n">C5</div><div><div class="sc-t">MCP / AI-Integration</div><div class="sc-s">Figma MCP Server Setup</div></div></div>
+      <div class="sc-item"><div class="sc-n">C6</div><div><div class="sc-t">CI/CD Token Pipeline</div><div class="sc-s">Style Dictionary, Auto-Build</div></div></div>
+      <div class="sc-item"><div class="sc-n">C7</div><div><div class="sc-t">Governance</div><div class="sc-s">Ownership, Prozesse, Swiss Compliance</div></div></div>
+      <div class="sc-item"><div class="sc-n">C8</div><div><div class="sc-t">Team AI-Kompetenz</div><div class="sc-s">Prompting, Output-Verifikation</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="s s-white" id="services">
+  <div class="s-inner">
+    <div class="s-label">Der WeSlam Service</div>
+    <h2 class="s-title">Von 27 auf 80+. In 7 Wochen.</h2>
+    <p class="s-lead">Drei Phasen, ein Ziel: ein Design System, das AI-Tools verstehen und automatisch korrekt nutzen.</p>
+    <div class="svc-grid">
+      <div class="svc-card">
+        <div class="svc-phase">Phase 1 · 3 Wochen</div>
+        <div class="svc-icon">🔍</div>
+        <div class="svc-title">AI-Readiness Audit</div>
+        <p class="svc-desc">Wir analysieren euer Design System in allen 8 Dimensionen und liefern einen klaren Score mit priorisierten Handlungsempfehlungen.</p>
+        <ul class="svc-list">
+          <li>Score-Ermittlung (0–100)</li>
+          <li>Token-Struktur Analyse</li>
+          <li>Lücken-Identifikation</li>
+          <li>Priorisierter Massnahmenplan</li>
+        </ul>
+        <div class="svc-price">CHF 5k – 8k</div>
+        <div class="svc-dur">Deliverable: Audit-Report + Score</div>
+      </div>
+      <div class="svc-card feat">
+        <div class="svc-phase">Phase 2 · 4–6 Wochen</div>
+        <div class="svc-icon">🚀</div>
+        <div class="svc-title">Implementation Sprint</div>
+        <p class="svc-desc">Wir implementieren die kritischen Lücken: Token-Migration, Code Connect Setup, MCP-Konfiguration, CI/CD Pipeline und Drift Detector.</p>
+        <ul class="svc-list">
+          <li>W3C DTCG Token-Migration</li>
+          <li>Code Connect für alle Komponenten</li>
+          <li>Figma MCP Server Setup</li>
+          <li>Style Dictionary Pipeline</li>
+          <li>Drift Detector Integration</li>
+        </ul>
+        <div class="svc-price">CHF 25k – 40k</div>
+        <div class="svc-dur">Deliverable: AI-Ready Design System</div>
+      </div>
+      <div class="svc-card">
+        <div class="svc-phase">Phase 3 · Ongoing</div>
+        <div class="svc-icon">♻️</div>
+        <div class="svc-title">Ongoing Retainer</div>
+        <p class="svc-desc">Wir bleiben als strategischer Partner — Drift Monitoring, Quarterly Audits, Team-Workshops und kontinuierliche Optimierung.</p>
+        <ul class="svc-list">
+          <li>Monthly Drift Report</li>
+          <li>Quarterly Score Review</li>
+          <li>AI-Prompting Workshops</li>
+          <li>New Component Rollout</li>
+        </ul>
+        <div class="svc-price">CHF 5k – 8k / Monat</div>
+        <div class="svc-dur">Kündbar mit 1 Monat Frist</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DRIFT DETECTOR -->
+<section class="s" id="drift">
+  <div class="s-inner">
+    <div class="s-label">Open-Source Tool</div>
+    <h2 class="s-title">Drift Detector.</h2>
+    <p class="s-lead">Eine GitHub Action die jeden PR scannt und AI-generierte Workarounds erkennt — bevor sie in die Codebasis mergen.</p>
+    <div class="drift-wrap">
+      <div>
+        <div class="d-badge">⬡ Open Source · GitHub Action</div>
+        <div class="d-title">Catch AI drift<br>before it ships.</div>
+        <p class="d-text">Figma beschreibt das Problem in ihrem 2025-Report: Teams brauchen Tracking für AI-Workarounds. Der WeSlam Drift Detector ist das Tool, das Figma beschreibt — aber nicht anbietet.</p>
+        <div class="d-btns">
+          <a href="mailto:rene.wenaweser@gmail.com" class="btn-dark-sm">Mehr erfahren →</a>
+          <a href="https://github.com/renewenaweser/Design_system" target="_blank" class="btn-ghost-sm">GitHub →</a>
+        </div>
+      </div>
+      <div class="drift-code">
+<span class="c-dim"># .driftrc.yml</span>
+<span style="color:#a78bfa">tokens</span>: <span class="c-good">./tokens/tokens.json</span>
+<span style="color:#a78bfa">threshold</span>: <span class="c-good">95</span>
+<span style="color:#a78bfa">failOn</span>: <span class="c-good">hardcoded-colors</span>
+
+<span class="c-dim"># PR Comment (auto-generated):</span>
+<span class="c-warn">⚠ Drift Score: 78/100</span>
+<span class="c-warn">  3 hardcoded values found</span>
+<span class="c-warn">  → background: #3B82F6 (line 42)</span>
+<span class="c-warn">  → color: #1F2937 (line 67)</span>
+<span class="c-good">✓ 94 token references correct</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY WESLAM -->
+<section class="s s-white">
+  <div class="s-inner">
+    <div class="s-label">Warum WeSlam</div>
+    <h2 class="s-title">Swiss. Figma-validiert. Messbar.</h2>
+    <p class="s-lead">Kein generisches Consulting. WeSlam ist spezialisiert auf Design-System-Infrastruktur für den Schweizer Markt.</p>
+    <div class="why-grid">
+      <div class="why-card">
+        <div class="why-icon">🇨🇭</div>
+        <div class="why-t">Swiss Market Expertise</div>
+        <p class="why-p">FINMA, nDSG, Multi-Brand. Wir kennen die Swiss Enterprise Landschaft von Swisscom bis SBB — und was lokale Compliance bedeutet.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">✅</div>
+        <div class="why-t">Figma-validierter Ansatz</div>
+        <p class="why-p">Figma bestätigt in ihrem 2025-Report exakt unseren Ansatz: DTCG Tokens, Code Connect, MCP Server. Wir implementieren, was der Marktführer empfiehlt.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">📐</div>
+        <div class="why-t">Messbares Framework</div>
+        <p class="why-p">Der AI-Readiness Score ist ein reproduzierbares Framework. Kein Consulting-Bullshit — ihr seht genau wo ihr steht und wo ihr hinkommt.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">⚡</div>
+        <div class="why-t">Sprint-basiert & schnell</div>
+        <p class="why-p">Audit in 3 Wochen. Sprint in 4–6 Wochen. Erste Ergebnisse in Wochen, nicht Quartalen. Kein 12-Monate-Projekt.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">🔓</div>
+        <div class="why-t">Open Source Tools</div>
+        <p class="why-p">Der Drift Detector ist Open Source. Kein Vendor Lock-in. Euer Team besitzt die Infrastruktur und kann sie selbst weiterentwickeln.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">🤝</div>
+        <div class="why-t">Side-by-Side</div>
+        <p class="why-p">Kein Schwarze-Box-Consulting. Wir arbeiten direkt mit euren Design- und Dev-Teams — und transferieren das Know-how gezielt.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-s">
+  <div class="cta-inner">
+    <h2>Bereit für ein AI-Ready Design System?</h2>
+    <p>Ein 30-minütiges Discovery Call reicht, um euren aktuellen Stand zu verstehen und den nächsten Schritt zu definieren.</p>
+    <a href="mailto:rene.wenaweser@gmail.com" class="btn-dark" style="font-size:17px;padding:15px 34px">Let's talk →</a>
+    <div class="cta-note">Keine Kosten. Kein Commitment. Nur ein gutes Gespräch.</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="f-logo">WE SLAM</span>
+  <div class="f-links">
+    <a href="https://www.weslam.com" target="_blank">weslam.com</a>
+    <a href="https://github.com/renewenaweser/Design_system" target="_blank">GitHub</a>
+    <a href="mailto:rene.wenaweser@gmail.com">rene.wenaweser@gmail.com</a>
+  </div>
+</footer>
+
+</body>
+</html>

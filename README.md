@@ -2,9 +2,18 @@
 
 Strategische Analyse und Produktentwicklung rund um den Service **"AI-Ready Design System"** für Schweizer Enterprise-Kunden.
 
+🔗 **[→ Landing Page öffnen](https://renewenaweser.github.io/Design_system/weslam-landing.html)**
+
 ---
 
 ## 📄 Dokumente
+
+### 0. Landing Page
+Öffentliche Service-Landingpage im WeSlam Design mit Hero, Problem, AI-Score, Services, Drift Detector, und Links zu allen Research-Docs.
+
+🔗 [Landing Page öffnen](https://renewenaweser.github.io/Design_system/weslam-landing.html)
+
+---
 
 ### 1. Service Blueprint
 Die initiale Service-Konzeption — Hypothese, Zielkunden, Marktanalyse, Service-Modell und Pricing.
