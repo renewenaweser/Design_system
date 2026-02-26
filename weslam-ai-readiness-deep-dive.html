@@ -2,17 +2,19 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WeSlam — AI-Readiness Score Deep Dive</title>
 <style>
   :root {
-    --black: #0A0A0A;
+    --black: #C3EBE6;
     --white: #FFFFFF;
     --accent: #FF4A1C;
     --accent2: #6B4EFF;
     --g100: #F5F5F5;
     --g200: #E8E8E8;
-    --g400: #9A9A9A;
+    --g400: #5C6B6A;
     --g600: #5A5A5A;
     --green: #00C27C;
     --yellow: #FFB800;
@@ -20,29 +22,29 @@
     --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: var(--font); background: var(--black); color: var(--white); line-height: 1.6; font-size: 15px; }
+  body { font-family: var(--font); background: var(--black); color: #0A0A0A; line-height: 1.6; font-size: 15px; }
 
   /* NAV */
   nav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    background: rgba(10,10,10,0.92); backdrop-filter: blur(12px);
-    border-bottom: 1px solid #1A1A1A;
+    background: rgba(255,255,255,0.95); backdrop-filter: blur(12px);
+    border-bottom: 1px solid #B8DEDA;
     display: flex; flex-direction: column;
   }
   .nav-row { display: flex; align-items: center; gap: 6px; padding: 0 24px; height: 44px; overflow-x: auto; scrollbar-width: none; }
   .nav-row::-webkit-scrollbar { display: none; }
-  .nav-row:first-child { border-bottom: 1px solid #141414; }
+  .nav-row:first-child { border: 1px solid #B8DEDA; }
   .nav-logo { font-weight: 800; font-size: 15px; letter-spacing: -0.5px; color: var(--accent); margin-right: 12px; white-space: nowrap; flex-shrink: 0; }
   .nav-btn {
-    background: none; border: none; color: var(--g400); font-size: 12px; font-weight: 500;
+    background: none; border: none; color: #5C6B6A; font-size: 12px; font-weight: 500;
     padding: 5px 10px; border-radius: 6px; cursor: pointer; transition: all 0.2s;
     white-space: nowrap; flex-shrink: 0; font-family: var(--font);
   }
-  .nav-btn:hover { color: var(--white); background: #1A1A1A; }
-  .nav-btn.active { color: var(--white); background: #1F1F1F; }
+  .nav-btn:hover { color: #0A0A0A; background: #FFFFFF; }
+  .nav-btn.active { color: #0A0A0A; background: #1F1F1F; }
   .doc-btn { font-size: 13px; font-weight: 600; padding: 6px 14px; }
-  .doc-btn.active { background: var(--accent); color: var(--white); }
-  .doc-btn:hover { background: rgba(255,74,28,0.3); color: var(--white); }
+  .doc-btn.active { background: var(--accent); color: #0A0A0A; }
+  .doc-btn:hover { background: rgba(255,74,28,0.3); color: #0A0A0A; }
 
   /* SECTIONS */
   .section { display: none; min-height: 100vh; padding: 108px 32px 64px; max-width: 960px; margin: 0 auto; }
@@ -64,19 +66,19 @@
   .gradient-text { background: linear-gradient(135deg, #FF4A1C, #6B4EFF); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
   h2 { font-size: 30px; font-weight: 800; letter-spacing: -1px; margin-bottom: 8px; }
   h3 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
-  .section-sub { color: var(--g400); font-size: 15px; margin-bottom: 36px; }
-  .hero-sub { font-size: 17px; color: var(--g400); max-width: 620px; margin-bottom: 36px; line-height: 1.7; }
+  .section-sub { color: #5C6B6A; font-size: 15px; margin-bottom: 36px; }
+  .hero-sub { font-size: 17px; color: #5C6B6A; max-width: 620px; margin-bottom: 36px; line-height: 1.7; }
 
   /* CARDS */
-  .card { background: #111; border: 1px solid #1E1E1E; border-radius: 14px; padding: 24px; margin-bottom: 16px; }
+  .card { background: #FFFFFF; border: 1px solid #B8DEDA; border-radius: 14px; padding: 24px; margin-bottom: 16px; }
   .card:hover { border-color: #333; }
   .card h3 { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
-  .card p { color: var(--g400); font-size: 14px; line-height: 1.65; }
+  .card p { color: #5C6B6A; font-size: 14px; line-height: 1.65; }
   .sup { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 6px; }
 
   /* CRITERION CARD */
   .criterion {
-    background: #111; border: 1px solid #1E1E1E; border-radius: 16px;
+    background: #FFFFFF; border: 1px solid #B8DEDA; border-radius: 16px;
     padding: 28px 28px 24px; margin-bottom: 20px;
   }
   .criterion:hover { border-color: #333; }
@@ -89,11 +91,11 @@
   }
   .crit-score.green { background: rgba(0,194,124,0.1); border-color: rgba(0,194,124,0.2); color: var(--green); }
   .crit-body { margin-bottom: 16px; }
-  .crit-body p { color: var(--g400); font-size: 14px; line-height: 1.7; }
+  .crit-body p { color: #5C6B6A; font-size: 14px; line-height: 1.7; }
 
   /* WHAT WE DO */
   .what-we-do {
-    background: #0A0A0A; border: 1px solid #1A1A1A; border-radius: 12px; padding: 20px; margin-top: 16px;
+    background: #D4F0ED; border: 1px solid #A4D9D3; border-radius: 12px; padding: 20px; margin-top: 16px;
   }
   .wwd-title { font-size: 12px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: var(--green); margin-bottom: 12px; }
   .wwd-item { display: flex; gap: 12px; padding: 8px 0; }
@@ -103,7 +105,7 @@
     display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;
   }
   .wwd-text { font-size: 13px; line-height: 1.6; color: var(--g200); }
-  .wwd-text strong { color: var(--white); }
+  .wwd-text strong { color: #0A0A0A; }
 
   /* BEFORE/AFTER */
   .ba { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
@@ -117,7 +119,7 @@
 
   /* CODE */
   .code {
-    background: #0D0D0D; border: 1px solid #1E1E1E; border-radius: 10px;
+    background: #0D0D0D; border: 1px solid #B8DEDA; border-radius: 10px;
     padding: 16px 20px; font-family: 'JetBrains Mono', 'Fira Code', monospace;
     font-size: 12px; line-height: 1.7; overflow-x: auto; margin: 12px 0; color: #E0E0E0;
   }
@@ -138,12 +140,12 @@
   .alert-purple { background: rgba(107,78,255,0.08); border: 1px solid rgba(107,78,255,0.2); }
   .alert-ico { font-size: 20px; flex-shrink: 0; }
   .alert-body h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
-  .alert-body p { font-size: 13px; color: var(--g400); line-height: 1.6; }
+  .alert-body p { font-size: 13px; color: #5C6B6A; line-height: 1.6; }
 
   /* STAT */
-  .stat-card { background: #111; border: 1px solid #1E1E1E; border-radius: 12px; padding: 20px; }
-  .stat-number { font-size: 32px; font-weight: 800; letter-spacing: -1px; color: var(--white); display: block; }
-  .stat-label { font-size: 12px; color: var(--g400); margin-top: 4px; }
+  .stat-card { background: #FFFFFF; border: 1px solid #B8DEDA; border-radius: 12px; padding: 20px; }
+  .stat-number { font-size: 32px; font-weight: 800; letter-spacing: -1px; color: #0A0A0A; display: block; }
+  .stat-label { font-size: 12px; color: #5C6B6A; margin-top: 4px; }
 
   /* VERDICT */
   .verdict-box {
@@ -151,12 +153,12 @@
     border: 1px solid rgba(255,74,28,0.25); border-radius: 16px; padding: 28px; margin-top: 28px;
   }
   .verdict-box h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin-bottom: 10px; }
-  .verdict-box p { font-size: 16px; line-height: 1.7; color: var(--white); }
+  .verdict-box p { font-size: 16px; line-height: 1.7; color: #0A0A0A; }
   .verdict-box strong { color: var(--accent); }
 
   /* PROBLEM CARD */
   .prob {
-    background: #111; border: 1px solid #1E1E1E; border-radius: 16px;
+    background: #FFFFFF; border: 1px solid #B8DEDA; border-radius: 16px;
     padding: 28px; margin-bottom: 20px; position: relative; overflow: hidden;
   }
   .prob::before {
@@ -170,7 +172,7 @@
   .prob-tag.yellow { color: var(--yellow); }
   .prob-tag.purple { color: var(--accent2); }
   .prob h3 { font-size: 19px; font-weight: 800; margin-bottom: 10px; letter-spacing: -0.5px; }
-  .prob p { color: var(--g400); font-size: 14px; line-height: 1.7; }
+  .prob p { color: #5C6B6A; font-size: 14px; line-height: 1.7; }
   .prob .quote {
     background: rgba(255,255,255,0.04); border-left: 3px solid var(--g600);
     padding: 12px 16px; margin: 14px 0; font-style: italic; font-size: 14px; color: var(--g200);
@@ -182,57 +184,294 @@
   .prob .impact-label { font-size: 11px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
   .prob .impact p { font-size: 13px; color: var(--g200); }
 
-  .divider { border: none; border-top: 1px solid #1E1E1E; margin: 32px 0; }
+  .divider { border: none; border: 1px solid #B8DEDA; margin: 32px 0; }
   .mt16 { margin-top: 16px; }
   .mt24 { margin-top: 24px; }
   .mt32 { margin-top: 32px; }
   .mb8 { margin-bottom: 8px; }
   .mb16 { margin-bottom: 16px; }
   .small { font-size: 13px; }
-  .muted { color: var(--g400); }
+  .muted { color: #5C6B6A; }
   .hi { color: var(--accent); }
+
+  
+  /* ═══════════════════════════════════════════
+     WESLAM BRAND v2  –  mint light theme
+  ═══════════════════════════════════════════ */
+
+  /* Fonts */
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  }
+  h1, h2, h3, h4 {
+    font-family: 'Space Grotesk', sans-serif !important;
+    color: #0A0A0A !important;
+  }
+
+  /* Code blocks stay dark */
+  pre, code, .code-block, .code-preview {
+    background: #1A1A1A !important;
+    color: #C3EBE6 !important;
+    border: none !important;
+  }
+  pre *, code * { color: #C3EBE6 !important; }
+
+  /* ── TYPE A: top-bar + doc-nav + section-nav ── */
+  .top-bar {
+    background: #FFFFFF !important;
+    border-bottom: 1px solid #B8DEDA !important;
+  }
+  .top-bar .brand { color: #0A0A0A !important; font-family: 'Space Grotesk', sans-serif !important; }
+  .top-bar .sep { color: #B8DEDA !important; }
+  .doc-nav button {
+    background: transparent !important;
+    border: 1px solid #B8DEDA !important;
+    color: #5C6B6A !important;
+  }
+  .doc-nav button:hover { background: #D4F0ED !important; color: #0A0A0A !important; border-color: #A4D9D3 !important; }
+  .doc-nav button.active { background: #0A0A0A !important; border-color: #0A0A0A !important; color: #FFFFFF !important; }
+
+  .section-nav {
+    background: #FFFFFF !important;
+    border-bottom: 1px solid #B8DEDA !important;
+  }
+  .section-nav button { color: #5C6B6A !important; background: none !important; border: none !important; }
+  .section-nav button:hover { color: #0A0A0A !important; }
+  .section-nav button.active {
+    color: #0A0A0A !important;
+    border-bottom: 2px solid #0A0A0A !important;
+    font-weight: 700 !important;
+  }
+
+  /* ── TYPE B: fixed nav (drift-detector, ai-readiness) ── */
+  nav {
+    background: rgba(255,255,255,0.95) !important;
+    border-bottom: 1px solid #B8DEDA !important;
+    backdrop-filter: blur(12px) !important;
+  }
+  .nav-logo, .nav-brand { color: #0A0A0A !important; }
+  .nav-btn { color: #5C6B6A !important; background: none !important; }
+  .nav-btn:hover { color: #0A0A0A !important; background: #D4F0ED !important; }
+  .nav-btn.active { color: #0A0A0A !important; background: #D4F0ED !important; font-weight: 700 !important; }
+
+  /* ── SITENAV ── */
+  .ws-sitenav {
+    background: #FFFFFF !important;
+    border-bottom: 1px solid #B8DEDA !important;
+  }
+  .ws-sitenav a { color: #5C6B6A !important; }
+  .ws-sitenav a:hover { color: #0A0A0A !important; }
+  .ws-sitenav span { color: #0A0A0A !important; font-family: 'Space Grotesk', sans-serif !important; }
+
+  /* ── CARDS / PANELS ── */
+  .card, .metric-card, .fw-card, .stat-card, .validation-card,
+  .problem-card, .tool-card, .phase-card, .week-block, .service-card,
+  .section-card, .kpi-card, .output-card, .risk-card, .tab-content,
+  .component-card, .criterion-card, .capability-card, .gap-card,
+  .phase-block, .maturity-table, .score-table, .comparison-table {
+    background: #FFFFFF !important;
+    border-color: #B8DEDA !important;
+    color: #1A1A1A !important;
+  }
+  .card *, .metric-card *, .fw-card *, .stat-card *, .validation-card *,
+  .problem-card *, .tool-card *, .phase-card *, .week-block *,
+  .component-card *, .criterion-card * {
+    color: inherit;
+  }
+  .card h3, .card h4, .metric-card h3, .fw-card h3, .phase-card h3 { color: #0A0A0A !important; }
+
+  /* ── SECTIONS & PANELS ── */
+  .section-panel, .tab-panel, .content-section,
+  .phase-section, .week-section, .table-wrapper {
+    background: #FFFFFF !important;
+    border-color: #B8DEDA !important;
+    color: #1A1A1A !important;
+  }
+
+  /* ── SOURCE / FIGMA BADGES ── */
+  .source-badge {
+    background: #EEF0FF !important;
+    border-color: #6B4EFF !important;
+    color: #3730A3 !important;
+  }
+
+  /* ── ALERT / HIGHLIGHT BOXES ── */
+  .alert, .callout, .info-box { background: #FEF3C7 !important; border-color: #F59E0B !important; color: #78350F !important; }
+  .alert-green, .success-box { background: #D4F0ED !important; border-color: #A4D9D3 !important; color: #064E3B !important; }
+  .alert-purple, .figma-box { background: #EEF0FF !important; border-color: #6B4EFF !important; color: #3730A3 !important; }
+
+  /* ── FIGMA INSIGHTS SPECIFIC ── */
+  .figma-says { background: #D4F0ED !important; color: #064E3B !important; }
+  .figma-says * { color: #064E3B !important; }
+  .weslam-does { background: #EEF0FF !important; color: #3730A3 !important; }
+  .weslam-does * { color: #3730A3 !important; }
+  .gap-card { background: #FFF8E7 !important; border-color: #F59E0B !important; color: #78350F !important; }
+  .gap-card * { color: #78350F !important; }
+
+  /* ── TAGS ── */
+  .tag, .badge { background: #D4F0ED !important; color: #064E3B !important; border: none !important; }
+  .tag-purple { background: #EEF0FF !important; color: #3730A3 !important; }
+
+  /* ── STATS ── */
+  .stat-number, .kpi-value { color: #0A0A0A !important; font-family: 'Space Grotesk', sans-serif !important; }
+  .stat-label, .kpi-label { color: #5C6B6A !important; }
+
+  /* ── TABLES ── */
+  table { background: #FFFFFF !important; border-color: #B8DEDA !important; }
+  th { background: #D4F0ED !important; color: #0A0A0A !important; border-color: #B8DEDA !important; }
+  td { background: #FFFFFF !important; color: #1A1A1A !important; border-color: #B8DEDA !important; }
+  tr:nth-child(even) td { background: #F0F9F8 !important; }
+
+  /* ── PROGRESS BARS ── */
+  .progress-track { background: #D4F0ED !important; }
+
+  /* ── HERO / HEADER SECTIONS ── */
+  .hero, .page-header, .doc-header {
+    background: #C3EBE6 !important;
+    color: #0A0A0A !important;
+  }
+  .hero *, .page-header *, .doc-header * { color: #0A0A0A !important; }
+
+  /* ── GENERAL TEXT ── */
+  p { color: #5C6B6A !important; }
+  p strong { color: #0A0A0A !important; }
+  li { color: #5C6B6A !important; }
+  li strong { color: #0A0A0A !important; }
+  .lead { color: #1A1A1A !important; }
+  label, small, .caption { color: #5C6B6A !important; }
+  a { color: #0A0A0A !important; }
+  a:hover { color: #5C6B6A !important; }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #D4F0ED; }
+  ::-webkit-scrollbar-thumb { background: #A4D9D3; border-radius: 3px; }
+
+  /* ── ADDITIONAL FIXES v3 ── */
+
+  /* Deep-analysis: dark borders on cards */
+  .stat, .tool-card, .dtree, .dec-item {
+    border-color: #B8DEDA !important;
+  }
+
+  /* Hover states */
+  .ntab:hover { background: #D4F0ED !important; color: #0A0A0A !important; }
+
+  /* Overview headers / gradient sections */
+  .overview-header {
+    background: linear-gradient(135deg, #C3EBE6 0%, #D4F0ED 100%) !important;
+    border-color: #A4D9D3 !important;
+    color: #0A0A0A !important;
+  }
+  .overview-header * { color: #0A0A0A !important; }
+
+  /* Quote blocks */
+  .quote-block {
+    background: #EEF0FF !important;
+    border-left-color: #6B4EFF !important;
+    color: #3730A3 !important;
+  }
+  .quote-block * { color: #3730A3 !important; }
+
+  /* Gradient hero backgrounds */
+  .hero-section, .intro-section, .page-hero {
+    background: #C3EBE6 !important;
+    color: #0A0A0A !important;
+  }
+
+  /* Dark footer/bottom bars */
+  footer, .footer, .page-footer {
+    background: #0A0A0A !important;
+    color: #FFFFFF !important;
+  }
+  footer *, .footer *, .page-footer * { color: #FFFFFF !important; }
+
+  /* Inline dark backgrounds */
+  [style*="background:#0D1A12"], [style*="background: #0D1A12"] {
+    background-color: #D4F0ED !important;
+  }
+  [style*="background:#1a1428"], [style*="background: #1a1428"] {
+    background-color: #EEF0FF !important;
+  }
+
+  /* Figma-insights specific remaining classes */
+  .overview-stat { background: #FFFFFF !important; border-color: #B8DEDA !important; }
+  .overview-stat * { color: #1A1A1A !important; }
+  .overview-stat .stat-num { color: #0A0A0A !important; }
+
+  /* Maturity bars */
+  .maturity-bar, .progress-track { background: #D4F0ED !important; }
+
+  /* Decision tree */
+  .dec-item { background: #FFFFFF !important; border-color: #B8DEDA !important; color: #1A1A1A !important; }
+  .dec-item * { color: #1A1A1A !important; }
+  .dec-yes { background: #D4F0ED !important; border-color: #A4D9D3 !important; color: #064E3B !important; }
+  .dec-no { background: #FEE2E2 !important; border-color: #FECACA !important; color: #7F1D1D !important; }
+
+  /* Timeline/phase connectors */
+  .timeline-line, .phase-connector { background: #B8DEDA !important; }
+
+  /* Verdict boxes */
+  .verdict-box { background: #D4F0ED !important; border-color: #A4D9D3 !important; color: #064E3B !important; }
+  .verdict-box * { color: #064E3B !important; }
+
+  /* Score backgrounds */
+  .score-bg { background: linear-gradient(135deg, #C3EBE6 0%, #D4F0ED 100%) !important; }
+
+  /* Background variants that use rgba black */
+  [style*="rgba(0,0,0"] { background-color: rgba(195,235,230,0.3) !important; }
+
 </style>
 
 
 <style>
 .ws-sitenav {
-  background: #0d0d0d;
-  border-bottom: 1px solid #222;
+  background: #FFFFFF;
+  border-bottom: 1px solid #B8DEDA;
   padding: 0 20px;
   display: flex;
   align-items: center;
   gap: 2px;
   overflow-x: auto;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Inter', -apple-system, sans-serif;
   scrollbar-width: none;
   flex-shrink: 0;
 }
 .ws-sitenav::-webkit-scrollbar { display: none; }
 .ws-sitenav-logo {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px;
   font-weight: 800;
-  font-size: 13px;
-  color: #fff;
-  text-decoration: none;
-  padding: 11px 16px 11px 0;
-  margin-right: 6px;
-  border-right: 1px solid #2a2a2a;
+  letter-spacing: 0.08em;
+  color: #0A0A0A;
+  text-transform: uppercase;
+  padding: 14px 16px 14px 4px;
   white-space: nowrap;
-  letter-spacing: 0.04em;
   flex-shrink: 0;
+  cursor: default;
+  border-right: 1px solid #B8DEDA;
+  margin-right: 8px;
 }
-.ws-sitenav a:not(.ws-sitenav-logo) {
+.ws-sitenav a {
+  display: inline-block;
+  padding: 14px 16px;
   font-size: 12px;
   font-weight: 500;
-  color: #666;
+  color: #5C6B6A;
   text-decoration: none;
-  padding: 11px 12px;
   white-space: nowrap;
-  transition: color 0.15s;
   border-bottom: 2px solid transparent;
-  flex-shrink: 0;
+  transition: color 0.15s, border-color 0.15s;
 }
-.ws-sitenav a:not(.ws-sitenav-logo):hover { color: #ccc; }
-.ws-sitenav a.ws-active { color: #fff; border-bottom-color: #7c3aed; font-weight: 600; }
+.ws-sitenav a:hover {
+  color: #0A0A0A;
+  border-bottom-color: #B8DEDA;
+}
+.ws-sitenav a.active {
+  color: #0A0A0A;
+  font-weight: 700;
+  border-bottom-color: #0A0A0A;
+}
 </style>
 
 
@@ -370,11 +609,11 @@
     <div class="crit-body">
       <p>
         Design Tokens sind die kleinsten Einheiten eures Design Systems: Farben, Abstände, Schriftgrössen, Border-Radien, Schatten.
-        Sie sind die <strong style="color:var(--white)">"Single Source of Truth"</strong> — der Ort wo definiert wird, dass euer Primärblau <code>#0066CC</code> ist
+        Sie sind die <strong style="color:#0A0A0A">"Single Source of Truth"</strong> — der Ort wo definiert wird, dass euer Primärblau <code>#0066CC</code> ist
         und euer Standard-Spacing <code>16px</code>.
       </p>
       <p style="margin-top:10px">
-        <strong style="color:var(--white)">W3C DTCG</strong> ist der neue, seit Oktober 2025 stabile Standard der definiert wie diese Tokens in einem JSON-Format
+        <strong style="color:#0A0A0A">W3C DTCG</strong> ist der neue, seit Oktober 2025 stabile Standard der definiert wie diese Tokens in einem JSON-Format
         geschrieben werden — damit jedes Tool (Figma, Style Dictionary, Supernova, euer Code) sie lesen kann. Denk an CSV für Tabellen —
         DTCG ist das universelle Format für Design-Entscheidungen.
       </p>
@@ -452,11 +691,11 @@
     <div class="crit-body">
       <p>
         Ohne Code Connect zeigt Figma Dev Mode generischen, auto-generierten Code. Mit Code Connect sieht der Entwickler (und die AI!)
-        den <strong style="color:var(--white)">echten Import-Pfad und die echten Props</strong> eurer Komponente.
+        den <strong style="color:#0A0A0A">echten Import-Pfad und die echten Props</strong> eurer Komponente.
         Statt <code>&lt;div style="background: blue"&gt;</code> zeigt es <code>&lt;Button variant="primary" size="lg" /&gt;</code>.
       </p>
       <p style="margin-top:10px">
-        Für AI-Coding ist das der <strong style="color:var(--white)">wichtigste Einzelschritt</strong>. Ohne Code Connect hat die AI keinen Hinweis
+        Für AI-Coding ist das der <strong style="color:#0A0A0A">wichtigste Einzelschritt</strong>. Ohne Code Connect hat die AI keinen Hinweis
         dass eure Codebase schon eine <code>Button</code>-Komponente hat — und baut eine neue von Grund auf.
       </p>
     </div>
@@ -540,11 +779,11 @@ figma.<span class="fn">connect</span>(Button, <span class="s">"https://figma.com
     <div class="crit-body">
       <p>
         MCP (Model Context Protocol) ist ein offener Standard der AI-Agents erlaubt, mit externen Tools zu kommunizieren.
-        Figma hat 2025 einen eigenen MCP-Server released. Das bedeutet: <strong style="color:var(--white)">Cursor, Claude oder Copilot können
+        Figma hat 2025 einen eigenen MCP-Server released. Das bedeutet: <strong style="color:#0A0A0A">Cursor, Claude oder Copilot können
         direkt auf euer Figma-File zugreifen</strong> — Komponenten lesen, Styles extrahieren, Design-Kontext verstehen.
       </p>
       <p style="margin-top:10px">
-        <strong style="color:var(--white)">Einfach erklärt:</strong> Bisher musste der Entwickler Screenshots von Figma machen und dem AI-Tool zeigen. Mit MCP
+        <strong style="color:#0A0A0A">Einfach erklärt:</strong> Bisher musste der Entwickler Screenshots von Figma machen und dem AI-Tool zeigen. Mit MCP
         kann die AI das Figma-File selbst öffnen, die Komponenten verstehen, und Code generieren der genau zum Design passt.
       </p>
     </div>
@@ -613,7 +852,7 @@ figma.<span class="fn">connect</span>(Button, <span class="s">"https://figma.com
     <div class="crit-body">
       <p>
         AI-Agents wie Cursor und Claude können "System Prompts" oder "Rules Files" lesen — Textdateien die definieren
-        <strong style="color:var(--white)">wie die AI in eurem Projekt Code schreiben soll</strong>.
+        <strong style="color:#0A0A0A">wie die AI in eurem Projekt Code schreiben soll</strong>.
         Ohne diese Regeln generiert die AI generischen Code. Mit ihnen generiert sie Code der eurer Design-System-Philosophie folgt.
       </p>
       <p style="margin-top:10px">
@@ -689,7 +928,7 @@ figma.<span class="fn">connect</span>(Button, <span class="s">"https://figma.com
     </div>
     <div class="crit-body">
       <p>
-        <strong style="color:var(--white)">Das klingt trivial — ist es aber nicht.</strong>
+        <strong style="color:#0A0A0A">Das klingt trivial — ist es aber nicht.</strong>
         In Figma heisst die Komponente "CTA / Primary / Large". Im Code heisst sie <code>ButtonPrimary</code> oder <code>PrimaryButton</code> oder <code>Btn</code>.
         Die AI kann diese Verbindung nicht herstellen. Sie sieht zwei verschiedene Dinge — und baut eine dritte Variante.
       </p>
@@ -749,8 +988,8 @@ figma.<span class="fn">connect</span>(Button, <span class="s">"https://figma.com
     </div>
     <div class="crit-body">
       <p>
-        <strong style="color:var(--white)">Primitive Tokens</strong> beschreiben den Wert: <code>blue-500</code>, <code>red-400</code>, <code>gray-100</code>.
-        <strong style="color:var(--white)">Semantische Tokens</strong> beschreiben die Bedeutung: <code>color-bg-error</code>, <code>color-text-primary</code>, <code>color-border-focus</code>.
+        <strong style="color:#0A0A0A">Primitive Tokens</strong> beschreiben den Wert: <code>blue-500</code>, <code>red-400</code>, <code>gray-100</code>.
+        <strong style="color:#0A0A0A">Semantische Tokens</strong> beschreiben die Bedeutung: <code>color-bg-error</code>, <code>color-text-primary</code>, <code>color-border-focus</code>.
       </p>
       <p style="margin-top:10px">
         Für AI ist das der Unterschied zwischen "rate mal" und "ich weiss es". Wenn die AI <code>color-bg-error</code> sieht, weiss sie:
@@ -809,9 +1048,9 @@ figma.<span class="fn">connect</span>(Button, <span class="s">"https://figma.com
     </div>
     <div class="crit-body">
       <p>
-        Ein Button hat nicht nur ein Aussehen — er hat <strong style="color:var(--white)">Varianten</strong> (primary, secondary, ghost),
-        <strong style="color:var(--white)">Grössen</strong> (sm, md, lg), <strong style="color:var(--white)">Zustände</strong> (default, hover, active, focus, disabled, loading)
-        und <strong style="color:var(--white)">Slots</strong> (Icon links, Icon rechts, nur Icon).
+        Ein Button hat nicht nur ein Aussehen — er hat <strong style="color:#0A0A0A">Varianten</strong> (primary, secondary, ghost),
+        <strong style="color:#0A0A0A">Grössen</strong> (sm, md, lg), <strong style="color:#0A0A0A">Zustände</strong> (default, hover, active, focus, disabled, loading)
+        und <strong style="color:#0A0A0A">Slots</strong> (Icon links, Icon rechts, nur Icon).
       </p>
       <p style="margin-top:10px">
         Wenn die AI diese nicht kennt, generiert sie einen Button der nur "default/medium" kann.
@@ -871,7 +1110,7 @@ figma.<span class="fn">connect</span>(Button, <span class="s">"https://figma.com
       <p>
         Heute bei den meisten Teams: Designer ändert eine Farbe in Figma → schreibt Slack-Nachricht an Dev → Dev sucht alle Stellen im Code →
         ändert manuell → vergisst 3 Stellen → nächster Sprint hat Inkonsistenzen. Dieser Handoff-Prozess ist
-        <strong style="color:var(--white)">das grösste Zeitgrab in Design-System-Teams</strong>.
+        <strong style="color:#0A0A0A">das grösste Zeitgrab in Design-System-Teams</strong>.
       </p>
       <p style="margin-top:10px">
         Die Lösung: Eine automatisierte Pipeline. Figma → Token-Export (DTCG JSON) → Style Dictionary Transform → CSS/SCSS/JS Variablen → Git Commit → PR → Review → Merge.

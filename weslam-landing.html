@@ -164,6 +164,58 @@ body {
 }
 .s-dark .s-lead { color: #999; }
 
+/* ── BEFORE/AFTER ── */
+.ba-wrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px; border-radius: 20px; overflow: hidden;
+  margin-top: 8px;
+}
+@media (max-width: 700px) { .ba-wrap { grid-template-columns: 1fr; } }
+.ba-col {
+  padding: 40px 36px;
+}
+.ba-col.before { background: #fff5f5; border: 1px solid #fecaca; border-right: none; border-radius: 20px 0 0 20px; }
+.ba-col.after  { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 0 20px 20px 0; }
+@media (max-width: 700px) {
+  .ba-col.before { border-right: 1px solid #fecaca; border-bottom: none; border-radius: 20px 20px 0 0; }
+  .ba-col.after  { border-radius: 0 0 20px 20px; }
+}
+.ba-label {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.1em; margin-bottom: 20px;
+}
+.ba-col.before .ba-label { color: #dc2626; }
+.ba-col.after  .ba-label { color: #16a34a; }
+.ba-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 20px; font-weight: 800;
+  color: var(--black); margin-bottom: 20px; line-height: 1.2;
+}
+.ba-list { list-style: none; }
+.ba-list li {
+  font-size: 14px; line-height: 1.6;
+  padding: 9px 0 9px 26px;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  position: relative; color: var(--text);
+}
+.ba-list li:last-child { border-bottom: none; }
+.ba-col.before .ba-list li::before { content: '✕'; position: absolute; left: 0; color: #dc2626; font-weight: 700; font-size: 12px; top: 10px; }
+.ba-col.after  .ba-list li::before { content: '✓'; position: absolute; left: 0; color: #16a34a; font-weight: 700; font-size: 12px; top: 10px; }
+.ba-stat {
+  margin-top: 20px;
+  background: rgba(0,0,0,0.04);
+  border-radius: 10px; padding: 14px 16px;
+  font-size: 13px; color: var(--muted); line-height: 1.5;
+}
+.ba-stat strong {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 26px; font-weight: 800;
+  display: block; margin-bottom: 4px;
+}
+.ba-col.before .ba-stat strong { color: #dc2626; }
+.ba-col.after  .ba-stat strong { color: #16a34a; }
+
 /* ── PROBLEM ── */
 .problem-grid {
   display: grid;
@@ -425,16 +477,16 @@ footer {
 
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-badge">✦ New Service &nbsp;·&nbsp; AI-Ready Design Systems</div>
-  <h1>Make your Design<br>System AI-Ready.</h1>
-  <p class="hero-sub">AI coding tools are powerful. But they don't know your design system. WeSlam closes the gap — for Swiss enterprises that take design quality seriously.</p>
+  <div class="hero-badge">✦ AI-Ready Design Systems für Swiss Enterprises</div>
+  <h1>AI schreibt Code.<br>Euer Team<br>korrigiert ihn.</h1>
+  <p class="hero-sub">Entwickler nutzen Cursor, Copilot oder Claude. AI ignoriert euer Design System. Designer finden Fehler. Entwickler korrigieren. Sprint für Sprint. Das ist kein Fortschritt — das ist Rework in gross.</p>
   <div class="hero-btns">
-    <a href="mailto:rene.wenaweser@gmail.com" class="btn-dark">Book a Discovery Call</a>
+    <a href="mailto:rene.wenaweser@gmail.com" class="btn-dark">Discovery Call buchen</a>
   </div>
   <div class="hero-chips">
-    <span class="chip">57% mehr strategische Arbeit (Figma 2025)</span>
-    <span class="chip">AI-Readiness Score 0–100</span>
-    <span class="chip">4-Week Sprint</span>
+    <span class="chip">Kein Rework mehr</span>
+    <span class="chip">AI trifft direkt eure Standards</span>
+    <span class="chip">Design-Budget geht in Features</span>
     <span class="chip">Swiss Enterprise Focus</span>
   </div>
 </section>
@@ -449,43 +501,86 @@ footer {
   <span>PostFinance</span>
 </div>
 
-<!-- PROBLEM -->
+<!-- BEFORE / AFTER -->
 <section class="s s-white" id="problem">
   <div class="s-inner">
     <div class="s-label">Das Problem</div>
-    <h2 class="s-title">AI schreibt Code. Aber kennt euer Design System nicht.</h2>
-    <p class="s-lead">Cursor, Copilot, Claude — AI-Coding-Tools sind beeindruckend produktiv. Aber sie arbeiten an eurer Codebasis vorbei. PR für PR verliert euer Design System seinen Grip.</p>
+    <h2 class="s-title">Den Rework-Loop kennt jedes Team.</h2>
+    <p class="s-lead">AI macht euer Team schneller. Aber irgendjemand muss den Code danach noch richtigstellen. Dieser Loop ist teuer — und vermeidbar.</p>
+    <div class="ba-wrap">
+      <div class="ba-col before">
+        <div class="ba-label">Ohne AI-Ready Design System</div>
+        <div class="ba-title">AI generiert. Euer Team korrigiert.</div>
+        <ul class="ba-list">
+          <li>AI wählt falsche Komponenten — Entwickler baut nach</li>
+          <li>Hardcoded Values statt Tokens — Designer korrigiert</li>
+          <li>Jeder Review-Zyklus dauert länger als nötig</li>
+          <li>Gleiche Fehler tauchen Sprint für Sprint auf</li>
+          <li>Design-Budget verpufft in Korrekturen</li>
+          <li>Der Speed-Gain der AI wird durch Rework aufgefressen</li>
+        </ul>
+        <div class="ba-stat">
+          <strong>30–40%</strong>
+          der AI-generierten PRs lösen einen Korrektur-Zyklus aus
+        </div>
+      </div>
+      <div class="ba-col after">
+        <div class="ba-label">Mit AI-Ready Design System</div>
+        <div class="ba-title">AI generiert. Euer Team shippt.</div>
+        <ul class="ba-list">
+          <li>AI wählt direkt die richtige Komponente</li>
+          <li>Tokens werden automatisch korrekt referenziert</li>
+          <li>Designer reviewen Features — keine Korrekturen mehr</li>
+          <li>Entwickler shippen schneller, ohne Nacharbeit</li>
+          <li>Design-Investment zahlt sich mit jedem Commit aus</li>
+          <li>Brand-Qualität skaliert mit der Coding-Speed</li>
+        </ul>
+        <div class="ba-stat">
+          <strong>57%</strong>
+          mehr Zeit für strategische Arbeit — statt operative Korrekturen (Figma, 2025)
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM DETAIL -->
+<section class="s" style="padding-top:0;padding-bottom:88px;">
+  <div class="s-inner">
+    <div class="s-label">Warum es passiert</div>
+    <h2 class="s-title">AI kennt euer Design System nicht. Noch nicht.</h2>
+    <p class="s-lead">Drei konkrete Stellen, wo AI am Design System vorbeischreibt — und was dahinter steckt.</p>
     <div class="problem-grid">
       <div class="p-card">
         <div class="p-icon">🎨</div>
-        <div class="p-title">Tokens werden ignoriert</div>
-        <p class="p-text">AI kennt eure Token-Hierarchie nicht. Sie schreibt Rohwerte statt Token-Referenzen.</p>
+        <div class="p-title">Tokens? Unbekannt.</div>
+        <p class="p-text">AI kennt keine Token-Hierarchie. Sie schreibt Rohwerte — und euer Designer korrigiert jeden einzelnen davon.</p>
         <div class="code-blk">
-          <div class="c-dim">// AI generiert:</div>
+          <div class="c-dim">// AI schreibt:</div>
           <div class="c-bad">background: #3B82F6;</div>
-          <div class="c-dim">// Sollte sein:</div>
+          <div class="c-dim">// Euer Standard:</div>
           <div class="c-good">background: var(--color-primary);</div>
         </div>
       </div>
       <div class="p-card">
         <div class="p-icon">🧩</div>
-        <div class="p-title">Komponenten werden umgangen</div>
-        <p class="p-text">Ohne Code Connect generiert AI generic HTML statt Design-System-Komponenten.</p>
+        <div class="p-title">Komponenten? Ignoriert.</div>
+        <p class="p-text">Ohne Code Connect baut AI generic HTML. Euer Entwickler baut danach die richtige Komponente — von Hand.</p>
         <div class="code-blk">
-          <div class="c-dim">// AI generiert:</div>
+          <div class="c-dim">// AI schreibt:</div>
           <div class="c-bad">&lt;button style="padding:8px 16px"&gt;</div>
-          <div class="c-dim">// Sollte sein:</div>
+          <div class="c-dim">// Euer Standard:</div>
           <div class="c-good">&lt;Button variant="primary"&gt;</div>
         </div>
       </div>
       <div class="p-card">
         <div class="p-icon">📉</div>
-        <div class="p-title">Das System driftet</div>
-        <p class="p-text">Jeder PR fügt Inkonsistenz hinzu — still, unbemerkt, bis das Design System faktisch tot ist.</p>
+        <div class="p-title">Design System? Erodiert.</div>
+        <p class="p-text">Kein einzelner Fehler bricht das System. Aber nach 3 Monaten AI-Coding sieht es so aus:</p>
         <div class="code-blk">
-          <div class="c-dim">// Nach 3 Monaten AI-Coding:</div>
+          <div class="c-dim">// Status nach Q1:</div>
           <div class="c-warn">47 hardcoded color values</div>
-          <div class="c-warn">23 custom button implementations</div>
+          <div class="c-warn">23 eigene Button-Varianten</div>
           <div class="c-warn">DS adoption: 34% ↓</div>
         </div>
       </div>
@@ -497,8 +592,8 @@ footer {
 <section class="s" id="score">
   <div class="s-inner">
     <div class="s-label">Der WeSlam AI-Readiness Score</div>
-    <h2 class="s-title">Wir messen, was AI braucht.</h2>
-    <p class="s-lead">Bevor wir handeln, messen wir. Der AI-Readiness Score (0–100) bewertet euer Design System in 8 Dimensionen. Die meisten Swiss Enterprises starten bei 15–35.</p>
+    <h2 class="s-title">Wie AI-ready ist euer Design System?</h2>
+    <p class="s-lead">Wir messen es. Der AI-Readiness Score (0–100) zeigt in 8 Kriterien, wo ihr steht — und wo der grösste Hebel gegen Rework liegt.</p>
     <div class="score-wrap">
       <div class="score-big-box">
         <div class="score-num-big">27</div>
@@ -506,9 +601,10 @@ footer {
         <div class="score-sub">Ø Swiss Enterprise heute</div>
       </div>
       <div class="score-desc-box">
-        <p>Ein Score unter 40: AI-Tools können euer Design System nicht nutzen. Sie generieren Code, der täglich mehr Inkonsistenz einbringt.</p>
-        <p>Ein Score über 75: AI versteht euer Design System und nutzt automatisch eure Tokens, Komponenten und Patterns. Coding-Speed steigt, Qualität bleibt.</p>
-        <a href="mailto:rene.wenaweser@gmail.com" class="btn-dark" style="font-size:14px;padding:11px 22px">Jetzt Score ermitteln →</a>
+        <p><strong style="color:var(--black)">Score unter 40:</strong> AI arbeitet aktiv gegen euer Design System. Jeder generierte PR ist ein potenzieller Rework-Kandidat.</p>
+        <p><strong style="color:var(--black)">Score über 75:</strong> AI nutzt automatisch eure Tokens und Komponenten. Designer reviewen Features — nicht Korrekturen. Entwickler shippen, ohne nachzubessern.</p>
+        <p style="font-size:13px;color:var(--muted);background:rgba(0,0,0,0.04);border-radius:10px;padding:12px 14px;margin-top:4px;">Die meisten Swiss Enterprises starten bei 15–35. Der Gap zu 75+ ist real — aber in 7 Wochen schliessbar.</p>
+        <a href="mailto:rene.wenaweser@gmail.com" class="btn-dark" style="font-size:14px;padding:11px 22px;margin-top:16px;display:inline-block">Score ermitteln →</a>
       </div>
     </div>
     <div class="score-grid">
@@ -528,19 +624,19 @@ footer {
 <section class="s s-white" id="services">
   <div class="s-inner">
     <div class="s-label">Der WeSlam Service</div>
-    <h2 class="s-title">Von 27 auf 80+. In 7 Wochen.</h2>
-    <p class="s-lead">Drei Phasen, ein Ziel: ein Design System, das AI-Tools verstehen und automatisch korrekt nutzen.</p>
+    <h2 class="s-title">Wir beenden den Rework-Loop. In 7 Wochen.</h2>
+    <p class="s-lead">Danach generiert AI Code der eure Standards direkt erfüllt. Kein Nachkorrigieren. Kein doppeltes Reviewen. Euer Team arbeitet — statt zu korrigieren.</p>
     <div class="svc-grid">
       <div class="svc-card">
         <div class="svc-phase">Phase 1 · 3 Wochen</div>
         <div class="svc-icon">🔍</div>
         <div class="svc-title">AI-Readiness Audit</div>
-        <p class="svc-desc">Wir analysieren euer Design System in allen 8 Dimensionen und liefern einen klaren Score mit priorisierten Handlungsempfehlungen.</p>
+        <p class="svc-desc">Wir messen euren Score in allen 8 Dimensionen. Ihr seht genau, wo AI heute scheitert — und wo der grösste Rework-Hebel liegt.</p>
         <ul class="svc-list">
           <li>Score-Ermittlung (0–100)</li>
-          <li>Token-Struktur Analyse</li>
-          <li>Lücken-Identifikation</li>
+          <li>Rework-Analyse pro Kriterium</li>
           <li>Priorisierter Massnahmenplan</li>
+          <li>Klare Empfehlung für Sprint</li>
         </ul>
         <div class="svc-price">CHF 5k – 8k</div>
         <div class="svc-dur">Deliverable: Audit-Report + Score</div>
@@ -549,7 +645,7 @@ footer {
         <div class="svc-phase">Phase 2 · 4–6 Wochen</div>
         <div class="svc-icon">🚀</div>
         <div class="svc-title">Implementation Sprint</div>
-        <p class="svc-desc">Wir implementieren die kritischen Lücken: Token-Migration, Code Connect Setup, MCP-Konfiguration, CI/CD Pipeline und Drift Detector.</p>
+        <p class="svc-desc">Wir schliessen die Lücken. Nach dem Sprint weiss AI, welche Tokens und Komponenten zu verwenden sind — automatisch, bei jedem generierten Code.</p>
         <ul class="svc-list">
           <li>W3C DTCG Token-Migration</li>
           <li>Code Connect für alle Komponenten</li>
@@ -558,13 +654,13 @@ footer {
           <li>Drift Detector Integration</li>
         </ul>
         <div class="svc-price">CHF 25k – 40k</div>
-        <div class="svc-dur">Deliverable: AI-Ready Design System</div>
+        <div class="svc-dur">= 2–3 Wochen Senior-Dev · Kein Rework mehr</div>
       </div>
       <div class="svc-card">
         <div class="svc-phase">Phase 3 · Ongoing</div>
         <div class="svc-icon">♻️</div>
         <div class="svc-title">Ongoing Retainer</div>
-        <p class="svc-desc">Wir bleiben als strategischer Partner — Drift Monitoring, Quarterly Audits, Team-Workshops und kontinuierliche Optimierung.</p>
+        <p class="svc-desc">Wir bleiben dran. Neues Feature, neue Komponente, neues AI-Tool — wir stellen sicher, dass der Rework-Loop nicht wieder aufkommt.</p>
         <ul class="svc-list">
           <li>Monthly Drift Report</li>
           <li>Quarterly Score Review</li>
@@ -583,12 +679,12 @@ footer {
   <div class="s-inner">
     <div class="s-label">Open-Source Tool</div>
     <h2 class="s-title">Drift Detector.</h2>
-    <p class="s-lead">Eine GitHub Action die jeden PR scannt und AI-generierte Workarounds erkennt — bevor sie in die Codebasis mergen.</p>
+    <p class="s-lead">AI-Workarounds erkennen, bevor sie mergen. Automatisch. Bei jedem PR.</p>
     <div class="drift-wrap">
       <div>
         <div class="d-badge">⬡ Open Source · GitHub Action</div>
-        <div class="d-title">Catch AI drift<br>before it ships.</div>
-        <p class="d-text">Figma beschreibt das Problem in ihrem 2025-Report: Teams brauchen Tracking für AI-Workarounds. Der WeSlam Drift Detector ist das Tool, das Figma beschreibt — aber nicht anbietet.</p>
+        <div class="d-title">Kein Rework mehr<br>nach dem Merge.</div>
+        <p class="d-text">Was Figma in ihrem 2025-Report als dringendes Problem beschreibt, haben wir als Tool gebaut. Der Drift Detector scannt jeden PR auf AI-Workarounds und rapportiert direkt im Pull Request — bevor der Code in die Codebasis kommt.</p>
         <div class="d-btns">
           <a href="mailto:rene.wenaweser@gmail.com" class="btn-dark-sm">Mehr erfahren →</a>
           <a href="https://github.com/renewenaweser/Design_system" target="_blank" class="btn-ghost-sm">GitHub →</a>
@@ -600,12 +696,12 @@ footer {
 <span style="color:#a78bfa">threshold</span>: <span class="c-good">95</span>
 <span style="color:#a78bfa">failOn</span>: <span class="c-good">hardcoded-colors</span>
 
-<span class="c-dim"># PR Comment (auto-generated):</span>
+<span class="c-dim"># Automatischer PR-Kommentar:</span>
 <span class="c-warn">⚠ Drift Score: 78/100</span>
-<span class="c-warn">  3 hardcoded values found</span>
+<span class="c-warn">  3 hardcoded values gefunden</span>
 <span class="c-warn">  → background: #3B82F6 (line 42)</span>
 <span class="c-warn">  → color: #1F2937 (line 67)</span>
-<span class="c-good">✓ 94 token references correct</span>
+<span class="c-good">✓ 94 Token-Referenzen korrekt</span>
       </div>
     </div>
   </div>
@@ -615,38 +711,38 @@ footer {
 <section class="s s-white">
   <div class="s-inner">
     <div class="s-label">Warum WeSlam</div>
-    <h2 class="s-title">Swiss. Figma-validiert. Messbar.</h2>
-    <p class="s-lead">Kein generisches Consulting. WeSlam ist spezialisiert auf Design-System-Infrastruktur für den Schweizer Markt.</p>
+    <h2 class="s-title">Swiss. Schnell. Messbar.</h2>
+    <p class="s-lead">Kein generisches Consulting. Kein 12-Monate-Projekt. WeSlam ist auf Design-System-Infrastruktur spezialisiert — und kennt den Schweizer Markt.</p>
     <div class="why-grid">
+      <div class="why-card">
+        <div class="why-icon">🎯</div>
+        <div class="why-t">Fokus auf Rework-Eliminierung</div>
+        <p class="why-p">Unser einziges Ziel: AI generiert Code, den euer Team nicht mehr nachkorrigieren muss. Nicht mehr, nicht weniger.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">📐</div>
+        <div class="why-t">Messbares Ergebnis</div>
+        <p class="why-p">Ihr startet mit einem Score. Ihr endet mit einem Score. Der Unterschied ist messbar — in Zahlen, nicht in Gefühlen.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">⚡</div>
+        <div class="why-t">7 Wochen, nicht 7 Monate</div>
+        <p class="why-p">Audit in 3 Wochen. Sprint in 4–6 Wochen. Erste Ergebnisse schnell, nicht in Quartalen.</p>
+      </div>
       <div class="why-card">
         <div class="why-icon">🇨🇭</div>
         <div class="why-t">Swiss Market Expertise</div>
-        <p class="why-p">FINMA, nDSG, Multi-Brand. Wir kennen die Swiss Enterprise Landschaft von Swisscom bis SBB — und was lokale Compliance bedeutet.</p>
+        <p class="why-p">FINMA, nDSG, Multi-Brand. Wir kennen die lokalen Anforderungen von Swisscom bis SBB.</p>
       </div>
       <div class="why-card">
         <div class="why-icon">✅</div>
         <div class="why-t">Figma-validierter Ansatz</div>
-        <p class="why-p">Figma bestätigt in ihrem 2025-Report exakt unseren Ansatz: DTCG Tokens, Code Connect, MCP Server. Wir implementieren, was der Marktführer empfiehlt.</p>
-      </div>
-      <div class="why-card">
-        <div class="why-icon">📐</div>
-        <div class="why-t">Messbares Framework</div>
-        <p class="why-p">Der AI-Readiness Score ist ein reproduzierbares Framework. Kein Consulting-Bullshit — ihr seht genau wo ihr steht und wo ihr hinkommt.</p>
-      </div>
-      <div class="why-card">
-        <div class="why-icon">⚡</div>
-        <div class="why-t">Sprint-basiert & schnell</div>
-        <p class="why-p">Audit in 3 Wochen. Sprint in 4–6 Wochen. Erste Ergebnisse in Wochen, nicht Quartalen. Kein 12-Monate-Projekt.</p>
+        <p class="why-p">Figma bestätigt in ihrem 2025-Report exakt diesen Ansatz: Tokens, Code Connect, MCP Server. Wir implementieren, was der Marktführer empfiehlt.</p>
       </div>
       <div class="why-card">
         <div class="why-icon">🔓</div>
-        <div class="why-t">Open Source Tools</div>
-        <p class="why-p">Der Drift Detector ist Open Source. Kein Vendor Lock-in. Euer Team besitzt die Infrastruktur und kann sie selbst weiterentwickeln.</p>
-      </div>
-      <div class="why-card">
-        <div class="why-icon">🤝</div>
-        <div class="why-t">Side-by-Side</div>
-        <p class="why-p">Kein Schwarze-Box-Consulting. Wir arbeiten direkt mit euren Design- und Dev-Teams — und transferieren das Know-how gezielt.</p>
+        <div class="why-t">Kein Vendor Lock-in</div>
+        <p class="why-p">Der Drift Detector ist Open Source. Euer Team besitzt die Infrastruktur und kann sie selbst weiterentwickeln.</p>
       </div>
     </div>
   </div>
@@ -655,10 +751,10 @@ footer {
 <!-- CTA -->
 <section class="cta-s">
   <div class="cta-inner">
-    <h2>Bereit für ein AI-Ready Design System?</h2>
-    <p>Ein 30-minütiges Discovery Call reicht, um euren aktuellen Stand zu verstehen und den nächsten Schritt zu definieren.</p>
+    <h2>Hört der Rework-Loop<br>bei euch auf?</h2>
+    <p>Ein 30-Minuten-Call reicht. Wir schauen gemeinsam, wo euer Team heute steht — und was es braucht, damit AI direkt eure Standards trifft.</p>
     <a href="mailto:rene.wenaweser@gmail.com" class="btn-dark" style="font-size:17px;padding:15px 34px">Let's talk →</a>
-    <div class="cta-note">Keine Kosten. Kein Commitment. Nur ein gutes Gespräch.</div>
+    <div class="cta-note">Keine Kosten. Kein Commitment.</div>
   </div>
 </section>
 

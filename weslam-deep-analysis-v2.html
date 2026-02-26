@@ -2,22 +2,24 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WeSlam — Tiefenanalyse v2: Tool vs. Coaching & Swiss Advantage</title>
 <style>
   :root {
-    --black: #080808;
-    --white: #F8F8F8;
+    --black: #C3EBE6;
+    --white: #0A0A0A;
     --accent: #FF4A1C;
     --accent2: #6B4EFF;
     --green: #00C27C;
     --yellow: #FFB800;
     --red: #FF3B30;
-    --gray-100: #141414;
-    --gray-200: #1C1C1C;
-    --gray-300: #2A2A2A;
-    --gray-400: #888;
-    --gray-500: #555;
+    --gray-100: #FFFFFF;
+    --gray-200: #F0F9F8;
+    --gray-300: #D4F0ED;
+    --gray-400: #5C6B6A;
+    --gray-500: #3A4A49;
     --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -26,7 +28,7 @@
   body {
     font-family: var(--font);
     background: var(--black);
-    color: var(--white);
+    color: #0A0A0A;
     font-size: 14px;
     line-height: 1.65;
   }
@@ -36,7 +38,7 @@
     position: fixed; top: 0; left: 0; right: 0; z-index: 200;
     background: rgba(8,8,8,0.95);
     backdrop-filter: blur(16px);
-    border-bottom: 1px solid #161616;
+    border: 1px solid #B8DEDA;
     height: 52px;
     display: flex;
     align-items: center;
@@ -55,10 +57,10 @@
     flex-shrink: 0;
     white-space: nowrap;
   }
-  .nav-sep { width: 1px; height: 20px; background: #222; margin: 0 8px; flex-shrink: 0; }
+  .nav-sep { width: 1px; height: 20px; background: #FFFFFF; margin: 0 8px; flex-shrink: 0; }
   .ntab {
     background: none; border: none;
-    color: var(--gray-400);
+    color: #5C6B6A;
     font: 500 12px/1 var(--font);
     padding: 5px 10px;
     border-radius: 6px;
@@ -66,8 +68,8 @@
     transition: all 0.15s;
     white-space: nowrap; flex-shrink: 0;
   }
-  .ntab:hover { color: var(--white); background: #181818; }
-  .ntab.on { color: var(--white); background: #1E1E1E; }
+  .ntab:hover { color: #0A0A0A; background: #D4F0ED; }
+  .ntab.on { color: #0A0A0A; background: #F0F9F8; }
 
   /* ═══ LAYOUT ═══ */
   .page { display: none; padding: 72px 0 80px; }
@@ -82,9 +84,9 @@
 
   .grad { background: linear-gradient(120deg, #FF4A1C 0%, #FF8A00 40%, #6B4EFF 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
   .sup { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: var(--accent); margin-bottom: 6px; display: block; }
-  .muted { color: var(--gray-400); }
+  .muted { color: #5C6B6A; }
   .small { font-size: 12px; }
-  strong.hi { color: var(--white); }
+  strong.hi { color: #0A0A0A; }
 
   /* ═══ SPACING ═══ */
   .mt8 { margin-top: 8px; }
@@ -96,12 +98,12 @@
   .mb8 { margin-bottom: 8px; }
   .mb16 { margin-bottom: 16px; }
   .mb24 { margin-bottom: 24px; }
-  .hr { height: 1px; background: #161616; margin: 36px 0; }
+  .hr { height: 1px; background: #F0F9F8; margin: 36px 0; }
 
   /* ═══ CARDS ═══ */
   .card {
     background: var(--gray-100);
-    border: 1px solid #1E1E1E;
+    border: 1px solid #B8DEDA;
     border-radius: 12px;
     padding: 20px 22px;
     transition: border-color 0.2s;
@@ -121,10 +123,10 @@
 
   /* ═══ TABLE ═══ */
   .tbl { width: 100%; border-collapse: collapse; }
-  .tbl th { text-align: left; font: 700 11px/1 var(--font); text-transform: uppercase; letter-spacing: 0.8px; color: var(--gray-400); padding: 10px 14px; border-bottom: 1px solid #1C1C1C; }
-  .tbl td { padding: 13px 14px; font-size: 13px; border-bottom: 1px solid #111; vertical-align: top; color: var(--gray-400); }
+  .tbl th { text-align: left; font: 700 11px/1 var(--font); text-transform: uppercase; letter-spacing: 0.8px; color: #5C6B6A; padding: 10px 14px; border: 1px solid #B8DEDA; }
+  .tbl td { padding: 13px 14px; font-size: 13px; border-bottom: 1px solid #111; vertical-align: top; color: #5C6B6A; }
   .tbl tr:last-child td { border: none; }
-  .tbl td.name { color: var(--white); font-weight: 500; }
+  .tbl td.name { color: #0A0A0A; font-weight: 500; }
   .tbl tr.hl td { background: rgba(255,74,28,0.05); }
   .tbl tr.hl td.name { color: var(--accent); font-weight: 700; }
 
@@ -134,7 +136,7 @@
   .b-g { background: rgba(0,194,124,0.15); color: #00C27C; }
   .b-y { background: rgba(255,184,0,0.15); color: #FFB800; }
   .b-p { background: rgba(107,78,255,0.15); color: #9B8AFF; }
-  .b-gr { background: #1E1E1E; color: var(--gray-400); }
+  .b-gr { background: #F0F9F8; color: #5C6B6A; }
 
   /* ═══ ALERT BOX ═══ */
   .alert { display: flex; gap: 12px; border-radius: 10px; padding: 14px 18px; margin: 16px 0; }
@@ -144,7 +146,7 @@
   .alert.success { background: rgba(0,194,124,0.08); border: 1px solid rgba(0,194,124,0.25); }
   .alert-ico { font-size: 18px; flex-shrink: 0; line-height: 1.4; }
   .alert-body h4 { font-size: 13px; margin-bottom: 3px; }
-  .alert-body p { font-size: 12.5px; color: var(--gray-400); line-height: 1.6; }
+  .alert-body p { font-size: 12.5px; color: #5C6B6A; line-height: 1.6; }
 
   /* ═══ HERO ═══ */
   .hero-meta { font: 700 11px/1 var(--font); text-transform: uppercase; letter-spacing: 1.5px; color: var(--accent); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
@@ -153,53 +155,53 @@
 
   /* ═══ STAT ROW ═══ */
   .stats { display: flex; gap: 12px; flex-wrap: wrap; margin: 24px 0; }
-  .stat { background: var(--gray-100); border: 1px solid #1E1E1E; border-radius: 10px; padding: 16px 20px; flex: 1; min-width: 140px; }
-  .stat-n { font-size: 28px; font-weight: 900; letter-spacing: -1.5px; color: var(--white); display: block; }
-  .stat-l { font-size: 11px; color: var(--gray-400); margin-top: 3px; line-height: 1.4; }
+  .stat { background: var(--gray-100); border: 1px solid #B8DEDA; border-radius: 10px; padding: 16px 20px; flex: 1; min-width: 140px; }
+  .stat-n { font-size: 28px; font-weight: 900; letter-spacing: -1.5px; color: #0A0A0A; display: block; }
+  .stat-l { font-size: 11px; color: #5C6B6A; margin-top: 3px; line-height: 1.4; }
 
   /* ═══ VERDICT ═══ */
   .verdict { background: linear-gradient(135deg, rgba(255,74,28,0.07), rgba(107,78,255,0.07)); border: 1px solid rgba(255,74,28,0.2); border-radius: 14px; padding: 28px; margin: 24px 0; }
   .verdict .label { font: 700 10px/1 var(--font); letter-spacing: 1.2px; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
-  .verdict p { font-size: 16px; line-height: 1.65; color: var(--white); }
+  .verdict p { font-size: 16px; line-height: 1.65; color: #0A0A0A; }
 
   /* ═══ DECISION MATRIX ═══ */
-  .dec-item { display: flex; gap: 14px; padding: 16px 0; border-bottom: 1px solid #141414; }
+  .dec-item { display: flex; gap: 14px; padding: 16px 0; border: 1px solid #B8DEDA; }
   .dec-item:last-child { border: none; }
   .dec-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
   .dec-dot.g { background: var(--green); }
   .dec-dot.r { background: var(--red); }
   .dec-dot.y { background: var(--yellow); }
   .dec-body h4 { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
-  .dec-body p { font-size: 12.5px; color: var(--gray-400); line-height: 1.6; }
+  .dec-body p { font-size: 12.5px; color: #5C6B6A; line-height: 1.6; }
 
   /* ═══ TOOL CARD ═══ */
-  .tool-card { background: var(--gray-100); border: 1px solid #1E1E1E; border-radius: 12px; padding: 18px 20px; }
+  .tool-card { background: var(--gray-100); border: 1px solid #B8DEDA; border-radius: 12px; padding: 18px 20px; }
   .tool-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-  .tool-name { font: 700 14px/1 var(--font); color: var(--white); }
-  .tool-body { font-size: 12.5px; color: var(--gray-400); line-height: 1.6; }
+  .tool-name { font: 700 14px/1 var(--font); color: #0A0A0A; }
+  .tool-body { font-size: 12.5px; color: #5C6B6A; line-height: 1.6; }
   .tool-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
-  .tool-tag { background: #1C1C1C; border-radius: 4px; padding: 2px 8px; font: 600 10px/1.8 var(--font); color: var(--gray-400); }
+  .tool-tag { background: #F0F9F8; border-radius: 4px; padding: 2px 8px; font: 600 10px/1.8 var(--font); color: #5C6B6A; }
 
   /* ═══ QUOTE ═══ */
   .quote { border-left: 2px solid var(--accent2); padding: 12px 16px; background: rgba(107,78,255,0.05); border-radius: 0 8px 8px 0; margin: 14px 0; }
-  .quote p { font-size: 13.5px; font-style: italic; color: #aaa; line-height: 1.7; }
-  .quote cite { font-size: 11px; color: var(--gray-500); margin-top: 6px; display: block; }
+  .quote p { font-size: 13.5px; font-style: italic; color: #5C6B6A; line-height: 1.7; }
+  .quote cite { font-size: 11px; color: #3A4A49; margin-top: 6px; display: block; }
 
   /* ═══ PHASE ═══ */
   .phase-wrap { position: relative; }
   .phase-row { display: flex; gap: 16px; }
   .phase-left { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
-  .phase-num { width: 36px; height: 36px; border-radius: 50%; border: 1px solid #2A2A2A; background: #141414; display: flex; align-items: center; justify-content: center; font: 800 13px/1 var(--font); color: var(--white); position: relative; z-index: 1; }
-  .phase-line { flex: 1; width: 1px; background: #1C1C1C; min-height: 20px; margin: 4px 0; }
+  .phase-num { width: 36px; height: 36px; border-radius: 50%; border: 1px solid #B8DEDA; background: #FFFFFF; display: flex; align-items: center; justify-content: center; font: 800 13px/1 var(--font); color: #0A0A0A; position: relative; z-index: 1; }
+  .phase-line { flex: 1; width: 1px; background: #F0F9F8; min-height: 20px; margin: 4px 0; }
   .phase-content { flex: 1; padding-bottom: 20px; }
   .phase-meta { font: 700 10px/1 var(--font); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
 
   /* ═══ TABS ═══ */
-  .subtabs { display: flex; gap: 4px; border-bottom: 1px solid #161616; margin-bottom: 24px; overflow-x: auto; scrollbar-width: none; }
+  .subtabs { display: flex; gap: 4px; border: 1px solid #B8DEDA; margin-bottom: 24px; overflow-x: auto; scrollbar-width: none; }
   .subtabs::-webkit-scrollbar { display: none; }
-  .stab { background: none; border: none; border-bottom: 2px solid transparent; color: var(--gray-400); font: 500 12px/1 var(--font); padding: 8px 14px 10px; cursor: pointer; transition: all 0.15s; white-space: nowrap; flex-shrink: 0; }
-  .stab:hover { color: var(--white); }
-  .stab.on { color: var(--white); border-bottom-color: var(--accent); }
+  .stab { background: none; border: none; border-bottom: 2px solid transparent; color: #5C6B6A; font: 500 12px/1 var(--font); padding: 8px 14px 10px; cursor: pointer; transition: all 0.15s; white-space: nowrap; flex-shrink: 0; }
+  .stab:hover { color: #0A0A0A; }
+  .stab.on { color: #0A0A0A; border-bottom-color: var(--accent); }
   .stab-pane { display: none; }
   .stab-pane.on { display: block; }
 
@@ -207,66 +209,303 @@
   .score-row { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid #111; }
   .score-row:last-child { border: none; }
   .score-label { font-size: 12.5px; flex: 1; }
-  .score-bar { width: 80px; height: 3px; background: #1E1E1E; border-radius: 2px; overflow: hidden; }
+  .score-bar { width: 80px; height: 3px; background: #F0F9F8; border-radius: 2px; overflow: hidden; }
   .score-fill { height: 100%; border-radius: 2px; }
   .fill-r { background: var(--red); }
   .fill-y { background: var(--yellow); }
   .fill-g { background: var(--green); }
-  .score-pct { font-size: 11px; color: var(--gray-400); min-width: 30px; text-align: right; }
+  .score-pct { font-size: 11px; color: #5C6B6A; min-width: 30px; text-align: right; }
 
   /* ═══ DECISION TREE ═══ */
-  .dtree { background: var(--gray-100); border: 1px solid #1E1E1E; border-radius: 12px; padding: 24px; }
-  .dtree-q { font: 700 15px/1.4 var(--font); color: var(--white); margin-bottom: 16px; }
+  .dtree { background: var(--gray-100); border: 1px solid #B8DEDA; border-radius: 12px; padding: 24px; }
+  .dtree-q { font: 700 15px/1.4 var(--font); color: #0A0A0A; margin-bottom: 16px; }
   .dtree-opts { display: flex; gap: 10px; flex-wrap: wrap; }
-  .dtree-opt { background: #1C1C1C; border: 1px solid #2A2A2A; border-radius: 8px; padding: 10px 14px; font-size: 12.5px; cursor: pointer; transition: all 0.15s; flex: 1; min-width: 180px; }
+  .dtree-opt { background: #F0F9F8; border: 1px solid #B8DEDA; border-radius: 8px; padding: 10px 14px; font-size: 12.5px; cursor: pointer; transition: all 0.15s; flex: 1; min-width: 180px; }
   .dtree-opt:hover { border-color: var(--accent); }
-  .dtree-opt .opt-label { font-weight: 700; color: var(--white); margin-bottom: 4px; }
-  .dtree-opt .opt-body { color: var(--gray-400); font-size: 11.5px; line-height: 1.5; }
+  .dtree-opt .opt-label { font-weight: 700; color: #0A0A0A; margin-bottom: 4px; }
+  .dtree-opt .opt-body { color: #5C6B6A; font-size: 11.5px; line-height: 1.5; }
   .dtree-answer { margin-top: 16px; display: none; }
   .dtree-answer.show { display: block; }
+
+
+  
+  /* ═══════════════════════════════════════════
+     WESLAM BRAND v2  –  mint light theme
+  ═══════════════════════════════════════════ */
+
+  /* Fonts */
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  }
+  h1, h2, h3, h4 {
+    font-family: 'Space Grotesk', sans-serif !important;
+    color: #0A0A0A !important;
+  }
+
+  /* Code blocks stay dark */
+  pre, code, .code-block, .code-preview {
+    background: #1A1A1A !important;
+    color: #C3EBE6 !important;
+    border: none !important;
+  }
+  pre *, code * { color: #C3EBE6 !important; }
+
+  /* ── TYPE A: top-bar + doc-nav + section-nav ── */
+  .top-bar {
+    background: #FFFFFF !important;
+    border-bottom: 1px solid #B8DEDA !important;
+  }
+  .top-bar .brand { color: #0A0A0A !important; font-family: 'Space Grotesk', sans-serif !important; }
+  .top-bar .sep { color: #B8DEDA !important; }
+  .doc-nav button {
+    background: transparent !important;
+    border: 1px solid #B8DEDA !important;
+    color: #5C6B6A !important;
+  }
+  .doc-nav button:hover { background: #D4F0ED !important; color: #0A0A0A !important; border-color: #A4D9D3 !important; }
+  .doc-nav button.active { background: #0A0A0A !important; border-color: #0A0A0A !important; color: #FFFFFF !important; }
+
+  .section-nav {
+    background: #FFFFFF !important;
+    border-bottom: 1px solid #B8DEDA !important;
+  }
+  .section-nav button { color: #5C6B6A !important; background: none !important; border: none !important; }
+  .section-nav button:hover { color: #0A0A0A !important; }
+  .section-nav button.active {
+    color: #0A0A0A !important;
+    border-bottom: 2px solid #0A0A0A !important;
+    font-weight: 700 !important;
+  }
+
+  /* ── TYPE B: fixed nav (drift-detector, ai-readiness) ── */
+  nav {
+    background: rgba(255,255,255,0.95) !important;
+    border-bottom: 1px solid #B8DEDA !important;
+    backdrop-filter: blur(12px) !important;
+  }
+  .nav-logo, .nav-brand { color: #0A0A0A !important; }
+  .nav-btn { color: #5C6B6A !important; background: none !important; }
+  .nav-btn:hover { color: #0A0A0A !important; background: #D4F0ED !important; }
+  .nav-btn.active { color: #0A0A0A !important; background: #D4F0ED !important; font-weight: 700 !important; }
+
+  /* ── SITENAV ── */
+  .ws-sitenav {
+    background: #FFFFFF !important;
+    border-bottom: 1px solid #B8DEDA !important;
+  }
+  .ws-sitenav a { color: #5C6B6A !important; }
+  .ws-sitenav a:hover { color: #0A0A0A !important; }
+  .ws-sitenav span { color: #0A0A0A !important; font-family: 'Space Grotesk', sans-serif !important; }
+
+  /* ── CARDS / PANELS ── */
+  .card, .metric-card, .fw-card, .stat-card, .validation-card,
+  .problem-card, .tool-card, .phase-card, .week-block, .service-card,
+  .section-card, .kpi-card, .output-card, .risk-card, .tab-content,
+  .component-card, .criterion-card, .capability-card, .gap-card,
+  .phase-block, .maturity-table, .score-table, .comparison-table {
+    background: #FFFFFF !important;
+    border-color: #B8DEDA !important;
+    color: #1A1A1A !important;
+  }
+  .card *, .metric-card *, .fw-card *, .stat-card *, .validation-card *,
+  .problem-card *, .tool-card *, .phase-card *, .week-block *,
+  .component-card *, .criterion-card * {
+    color: inherit;
+  }
+  .card h3, .card h4, .metric-card h3, .fw-card h3, .phase-card h3 { color: #0A0A0A !important; }
+
+  /* ── SECTIONS & PANELS ── */
+  .section-panel, .tab-panel, .content-section,
+  .phase-section, .week-section, .table-wrapper {
+    background: #FFFFFF !important;
+    border-color: #B8DEDA !important;
+    color: #1A1A1A !important;
+  }
+
+  /* ── SOURCE / FIGMA BADGES ── */
+  .source-badge {
+    background: #EEF0FF !important;
+    border-color: #6B4EFF !important;
+    color: #3730A3 !important;
+  }
+
+  /* ── ALERT / HIGHLIGHT BOXES ── */
+  .alert, .callout, .info-box { background: #FEF3C7 !important; border-color: #F59E0B !important; color: #78350F !important; }
+  .alert-green, .success-box { background: #D4F0ED !important; border-color: #A4D9D3 !important; color: #064E3B !important; }
+  .alert-purple, .figma-box { background: #EEF0FF !important; border-color: #6B4EFF !important; color: #3730A3 !important; }
+
+  /* ── FIGMA INSIGHTS SPECIFIC ── */
+  .figma-says { background: #D4F0ED !important; color: #064E3B !important; }
+  .figma-says * { color: #064E3B !important; }
+  .weslam-does { background: #EEF0FF !important; color: #3730A3 !important; }
+  .weslam-does * { color: #3730A3 !important; }
+  .gap-card { background: #FFF8E7 !important; border-color: #F59E0B !important; color: #78350F !important; }
+  .gap-card * { color: #78350F !important; }
+
+  /* ── TAGS ── */
+  .tag, .badge { background: #D4F0ED !important; color: #064E3B !important; border: none !important; }
+  .tag-purple { background: #EEF0FF !important; color: #3730A3 !important; }
+
+  /* ── STATS ── */
+  .stat-number, .kpi-value { color: #0A0A0A !important; font-family: 'Space Grotesk', sans-serif !important; }
+  .stat-label, .kpi-label { color: #5C6B6A !important; }
+
+  /* ── TABLES ── */
+  table { background: #FFFFFF !important; border-color: #B8DEDA !important; }
+  th { background: #D4F0ED !important; color: #0A0A0A !important; border-color: #B8DEDA !important; }
+  td { background: #FFFFFF !important; color: #1A1A1A !important; border-color: #B8DEDA !important; }
+  tr:nth-child(even) td { background: #F0F9F8 !important; }
+
+  /* ── PROGRESS BARS ── */
+  .progress-track { background: #D4F0ED !important; }
+
+  /* ── HERO / HEADER SECTIONS ── */
+  .hero, .page-header, .doc-header {
+    background: #C3EBE6 !important;
+    color: #0A0A0A !important;
+  }
+  .hero *, .page-header *, .doc-header * { color: #0A0A0A !important; }
+
+  /* ── GENERAL TEXT ── */
+  p { color: #5C6B6A !important; }
+  p strong { color: #0A0A0A !important; }
+  li { color: #5C6B6A !important; }
+  li strong { color: #0A0A0A !important; }
+  .lead { color: #1A1A1A !important; }
+  label, small, .caption { color: #5C6B6A !important; }
+  a { color: #0A0A0A !important; }
+  a:hover { color: #5C6B6A !important; }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #D4F0ED; }
+  ::-webkit-scrollbar-thumb { background: #A4D9D3; border-radius: 3px; }
+
+  /* ── ADDITIONAL FIXES v3 ── */
+
+  /* Deep-analysis: dark borders on cards */
+  .stat, .tool-card, .dtree, .dec-item {
+    border-color: #B8DEDA !important;
+  }
+
+  /* Hover states */
+  .ntab:hover { background: #D4F0ED !important; color: #0A0A0A !important; }
+
+  /* Overview headers / gradient sections */
+  .overview-header {
+    background: linear-gradient(135deg, #C3EBE6 0%, #D4F0ED 100%) !important;
+    border-color: #A4D9D3 !important;
+    color: #0A0A0A !important;
+  }
+  .overview-header * { color: #0A0A0A !important; }
+
+  /* Quote blocks */
+  .quote-block {
+    background: #EEF0FF !important;
+    border-left-color: #6B4EFF !important;
+    color: #3730A3 !important;
+  }
+  .quote-block * { color: #3730A3 !important; }
+
+  /* Gradient hero backgrounds */
+  .hero-section, .intro-section, .page-hero {
+    background: #C3EBE6 !important;
+    color: #0A0A0A !important;
+  }
+
+  /* Dark footer/bottom bars */
+  footer, .footer, .page-footer {
+    background: #0A0A0A !important;
+    color: #FFFFFF !important;
+  }
+  footer *, .footer *, .page-footer * { color: #FFFFFF !important; }
+
+  /* Inline dark backgrounds */
+  [style*="background:#0D1A12"], [style*="background: #0D1A12"] {
+    background-color: #D4F0ED !important;
+  }
+  [style*="background:#1a1428"], [style*="background: #1a1428"] {
+    background-color: #EEF0FF !important;
+  }
+
+  /* Figma-insights specific remaining classes */
+  .overview-stat { background: #FFFFFF !important; border-color: #B8DEDA !important; }
+  .overview-stat * { color: #1A1A1A !important; }
+  .overview-stat .stat-num { color: #0A0A0A !important; }
+
+  /* Maturity bars */
+  .maturity-bar, .progress-track { background: #D4F0ED !important; }
+
+  /* Decision tree */
+  .dec-item { background: #FFFFFF !important; border-color: #B8DEDA !important; color: #1A1A1A !important; }
+  .dec-item * { color: #1A1A1A !important; }
+  .dec-yes { background: #D4F0ED !important; border-color: #A4D9D3 !important; color: #064E3B !important; }
+  .dec-no { background: #FEE2E2 !important; border-color: #FECACA !important; color: #7F1D1D !important; }
+
+  /* Timeline/phase connectors */
+  .timeline-line, .phase-connector { background: #B8DEDA !important; }
+
+  /* Verdict boxes */
+  .verdict-box { background: #D4F0ED !important; border-color: #A4D9D3 !important; color: #064E3B !important; }
+  .verdict-box * { color: #064E3B !important; }
+
+  /* Score backgrounds */
+  .score-bg { background: linear-gradient(135deg, #C3EBE6 0%, #D4F0ED 100%) !important; }
+
+  /* Background variants that use rgba black */
+  [style*="rgba(0,0,0"] { background-color: rgba(195,235,230,0.3) !important; }
 
 </style>
 
 
 <style>
 .ws-sitenav {
-  background: #0d0d0d;
-  border-bottom: 1px solid #222;
+  background: #FFFFFF;
+  border-bottom: 1px solid #B8DEDA;
   padding: 0 20px;
   display: flex;
   align-items: center;
   gap: 2px;
   overflow-x: auto;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Inter', -apple-system, sans-serif;
   scrollbar-width: none;
   flex-shrink: 0;
 }
 .ws-sitenav::-webkit-scrollbar { display: none; }
 .ws-sitenav-logo {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px;
   font-weight: 800;
-  font-size: 13px;
-  color: #fff;
-  text-decoration: none;
-  padding: 11px 16px 11px 0;
-  margin-right: 6px;
-  border-right: 1px solid #2a2a2a;
+  letter-spacing: 0.08em;
+  color: #0A0A0A;
+  text-transform: uppercase;
+  padding: 14px 16px 14px 4px;
   white-space: nowrap;
-  letter-spacing: 0.04em;
   flex-shrink: 0;
+  cursor: default;
+  border-right: 1px solid #B8DEDA;
+  margin-right: 8px;
 }
-.ws-sitenav a:not(.ws-sitenav-logo) {
+.ws-sitenav a {
+  display: inline-block;
+  padding: 14px 16px;
   font-size: 12px;
   font-weight: 500;
-  color: #666;
+  color: #5C6B6A;
   text-decoration: none;
-  padding: 11px 12px;
   white-space: nowrap;
-  transition: color 0.15s;
   border-bottom: 2px solid transparent;
-  flex-shrink: 0;
+  transition: color 0.15s, border-color 0.15s;
 }
-.ws-sitenav a:not(.ws-sitenav-logo):hover { color: #ccc; }
-.ws-sitenav a.ws-active { color: #fff; border-bottom-color: #7c3aed; font-weight: 600; }
+.ws-sitenav a:hover {
+  color: #0A0A0A;
+  border-bottom-color: #B8DEDA;
+}
+.ws-sitenav a.active {
+  color: #0A0A0A;
+  font-weight: 700;
+  border-bottom-color: #0A0A0A;
+}
 </style>
 
 
@@ -572,15 +811,15 @@
       <strong class="hi">Was fehlt:</strong> Ein GitHub Action / GitLab CI Plugin, das auf jedem PR scannt und flaggt: "Diese Zeile nutzt #3B82F6 statt color.primary.500". Ähnlich wie Salesforce's Lightning Linter, aber framework-agnostisch und open-source.
     </p>
     <div class="g3">
-      <div style="background:#0D1A12;border:1px solid rgba(0,194,124,0.2);border-radius:8px;padding:12px">
+      <div style="background:#D4F0ED;border:1px solid #A4D9D3;border-radius:8px;padding:12px">
         <div style="font:700 10px/1 var(--font);color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Markt-Lücke</div>
         <p class="small muted">Kein generisches Open-Source-Tool existiert heute. Salesforce hat eines für ihr eigenes System — niemand hat das Problem allgemein gelöst.</p>
       </div>
-      <div style="background:#0D1A12;border:1px solid rgba(0,194,124,0.2);border-radius:8px;padding:12px">
+      <div style="background:#D4F0ED;border:1px solid #A4D9D3;border-radius:8px;padding:12px">
         <div style="font:700 10px/1 var(--font);color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Bauaufwand</div>
         <p class="small muted">Moderat. CSS/JS-Linting ist gelöstes Problem. Design-Token-Integration + Figma API = 6–8 Wochen für ein funktionsfähiges MVP.</p>
       </div>
-      <div style="background:#0D1A12;border:1px solid rgba(0,194,124,0.2);border-radius:8px;padding:12px">
+      <div style="background:#D4F0ED;border:1px solid #A4D9D3;border-radius:8px;padding:12px">
         <div style="font:700 10px/1 var(--font);color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Strategie</div>
         <p class="small muted">Open Source auf GitHub = Community, Reputation, Lead Gen. WeSlam monetarisiert mit Setup-Service + Enterprise-Support. Tool ist Marketing, nicht Produkt.</p>
       </div>
@@ -660,7 +899,7 @@
   <h2>Build, Buy<br><span class="grad">oder Consulting?</span></h2>
   <p class="muted mt8 mb32" style="max-width:540px">Eine ehrliche Bewertung: Was sollte WeSlam selbst bauen, was integrieren, und wo ist reines Consulting der überlegene Ansatz?</p>
 
-  <div style="background:var(--gray-100);border:1px solid #1E1E1E;border-radius:12px;overflow:hidden;margin-bottom:24px">
+  <div style="background:var(--gray-100);border:1px solid #B8DEDA;border-radius:12px;overflow:hidden;margin-bottom:24px">
     <table class="tbl">
       <thead>
         <tr>
@@ -800,14 +1039,14 @@
       <div class="dec-dot g"></div>
       <div class="dec-body">
         <h4>🏆 Stärkstes Argument: Pre-Approved Vendor Status</h4>
-        <p>WeSlam ist bereits Lieferant bei Swisscom, Migros, Homegate und weiteren. Ein neuer Offshore-Anbieter muss durch den Vendor-Approval-Prozess grosser Schweizer Unternehmen — das dauert <strong style="color:var(--white)">6–18 Monate</strong>, kostet Zeit und ist risikobehaftet. WeSlam kann morgen ein Proposal schicken. Das ist kein Marketing-Argument — das ist harter Wettbewerbsvorteil.</p>
+        <p>WeSlam ist bereits Lieferant bei Swisscom, Migros, Homegate und weiteren. Ein neuer Offshore-Anbieter muss durch den Vendor-Approval-Prozess grosser Schweizer Unternehmen — das dauert <strong style="color:#0A0A0A">6–18 Monate</strong>, kostet Zeit und ist risikobehaftet. WeSlam kann morgen ein Proposal schicken. Das ist kein Marketing-Argument — das ist harter Wettbewerbsvorteil.</p>
       </div>
     </div>
     <div class="dec-item">
       <div class="dec-dot g"></div>
       <div class="dec-body">
         <h4>🏆 nDSG / Datenschutz für strategisch sensible Systeme</h4>
-        <p>Ein Design System enthält mehr als nur Farben: Component-Architektur, Produkt-Roadmap (welche Features sind im Aufbau), Brand-Strategie, UX-Entscheidungen. Schweizer Unternehmen, insbesondere die FINMA-regulierten (Banken, Versicherungen), haben Legal-Teams die <strong style="color:var(--white)">externe Cloud-Zugänge auf Figma-Repos und Codebases kritisch prüfen</strong>. Eine Schweizer Firma unter CH-Recht ist ein 100x einfacherer Vendor-Review als ein Anbieter aus Indien oder Polen.</p>
+        <p>Ein Design System enthält mehr als nur Farben: Component-Architektur, Produkt-Roadmap (welche Features sind im Aufbau), Brand-Strategie, UX-Entscheidungen. Schweizer Unternehmen, insbesondere die FINMA-regulierten (Banken, Versicherungen), haben Legal-Teams die <strong style="color:#0A0A0A">externe Cloud-Zugänge auf Figma-Repos und Codebases kritisch prüfen</strong>. Eine Schweizer Firma unter CH-Recht ist ein 100x einfacherer Vendor-Review als ein Anbieter aus Indien oder Polen.</p>
       </div>
     </div>
     <div class="dec-item">
@@ -877,28 +1116,28 @@
     <div class="card accent mt8">
       <span class="sup">Der entscheidende Test</span>
       <h3 class="mb12">Warum würde ein CFO/CTO WeSlam wählen statt 40% günstigere Offshore-Agentur?</h3>
-      <div class="dec-item" style="border-color:#2A2A2A">
+      <div class="dec-item" style="border-color:#B8DEDA">
         <div class="dec-dot g"></div>
         <div class="dec-body">
           <h4>Weil sie bereits Vendor bei uns sind (kein 12-Monats-Onboarding)</h4>
           <p>Dieser Faktor allein macht WeSlam für bestehende Kunden unschlagbar schnell.</p>
         </div>
       </div>
-      <div class="dec-item" style="border-color:#2A2A2A">
+      <div class="dec-item" style="border-color:#B8DEDA">
         <div class="dec-dot g"></div>
         <div class="dec-body">
           <h4>Weil unser Legal-Team keinen 80-seitigen Offshore-Vendor-Vertrag prüfen muss</h4>
           <p>Schweizer Recht, bekannte Vertragsstruktur, nDSG-konform by default. Für FINMA-regulierte Kunden ist das entscheidend.</p>
         </div>
       </div>
-      <div class="dec-item" style="border-color:#2A2A2A">
+      <div class="dec-item" style="border-color:#B8DEDA">
         <div class="dec-dot g"></div>
         <div class="dec-body">
           <h4>Weil wir bereits die GenAI-Integration gemacht haben — der Service ist ein Upsell</h4>
           <p>WeSlam kennt das Team, die Codebase, die Kultur. Kein Kontext-Aufbau nötig. Das ist ein massiver Effizienzgewinn.</p>
         </div>
       </div>
-      <div class="dec-item" style="border-color:#2A2A2A;border-bottom:none">
+      <div class="dec-item" style="border-color:#B8DEDA;border-bottom:none">
         <div class="dec-dot g"></div>
         <div class="dec-body">
           <h4>Weil der letzte Offshore-Versuch 18 Monate verloren hat</h4>
@@ -941,7 +1180,7 @@
 
   <h3 class="mb16">Revenue-Modell: Wie skaliert das?</h3>
 
-  <div style="background:var(--gray-100);border:1px solid #1E1E1E;border-radius:12px;overflow:hidden">
+  <div style="background:var(--gray-100);border:1px solid #B8DEDA;border-radius:12px;overflow:hidden">
     <table class="tbl">
       <thead>
         <tr>
@@ -1156,7 +1395,7 @@
     </div>
   </div>
 
-  <div style="margin-top:48px;padding-top:20px;border-top:1px solid #141414;display:flex;justify-content:space-between;font-size:11px;color:#333">
+  <div style="margin-top:48px;padding-top:20px;border-top:1px solid #B8DEDA;display:flex;justify-content:space-between;font-size:11px;color:#5C6B6A">
     <span>WeSlam Deep Analysis V2 · Confidential · Feb 2026</span>
     <span>Research: Supernova Blog, Figma Dev Docs, VentureBeat, Zipdo 2025, iclg.com/Switzerland</span>
   </div>
