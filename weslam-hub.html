@@ -1,0 +1,3380 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WeSlam — AI-Ready Design System · Research Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & BASE ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #C3EBE6;
+  color: #1A1A1A;
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+/* ── CSS VARIABLES ── */
+:root {
+  --mint:       #C3EBE6;
+  --mint-light: #D4F0ED;
+  --mint-dark:  #A4D9D3;
+  --white:      #FFFFFF;
+  --black:      #0A0A0A;
+  --muted:      #5C6B6A;
+  --border:     #B8DEDA;
+  --accent:     #FF4A1C;
+  --purple:     #6B4EFF;
+  --green:      #00C27C;
+  --yellow:     #FFB800;
+  --font-head:  'Space Grotesk', sans-serif;
+}
+
+/* ── TOP NAV (doc switcher) ── */
+.top-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 300;
+  height: 48px;
+  background: #FFFFFF;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.top-nav::-webkit-scrollbar { display: none; }
+.top-nav-logo {
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--black);
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding-right: 20px;
+  margin-right: 8px;
+  border-right: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.doc-tab {
+  height: 48px;
+  padding: 0 16px;
+  border: none;
+  background: transparent;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+.doc-tab:hover { color: var(--black); }
+.doc-tab.active {
+  color: var(--black);
+  font-weight: 700;
+  border-bottom-color: var(--black);
+}
+
+/* ── SECTION NAV (within-doc) ── */
+.sec-nav {
+  position: fixed;
+  top: 48px; left: 0; right: 0;
+  z-index: 200;
+  height: 44px;
+  background: var(--mint-light);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 2px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.sec-nav::-webkit-scrollbar { display: none; }
+.sec-btn {
+  height: 44px;
+  padding: 0 14px;
+  border: none;
+  background: transparent;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+}
+.sec-btn:hover { color: var(--black); }
+.sec-btn.active {
+  color: var(--black);
+  font-weight: 700;
+  border-bottom-color: var(--black);
+}
+
+/* ── CONTENT AREA ── */
+.content {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 116px 24px 80px;
+}
+
+/* ── SECTIONS ── */
+.doc  { display: none; }
+.doc.active { display: block; }
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* ── TYPOGRAPHY ── */
+h1 { font-family: var(--font-head); font-size: clamp(28px, 5vw, 44px); font-weight: 800; color: var(--black); line-height: 1.15; margin-bottom: 12px; }
+h2 { font-family: var(--font-head); font-size: clamp(20px, 3vw, 28px); font-weight: 700; color: var(--black); margin: 32px 0 16px; }
+h3 { font-family: var(--font-head); font-size: 17px; font-weight: 700; color: var(--black); margin: 24px 0 10px; }
+h4 { font-family: var(--font-head); font-size: 14px; font-weight: 700; color: var(--black); margin: 16px 0 8px; }
+p  { color: var(--muted); margin-bottom: 14px; line-height: 1.7; }
+p strong { color: var(--black); }
+ul, ol { padding-left: 20px; color: var(--muted); margin-bottom: 14px; }
+li { margin-bottom: 6px; }
+li strong { color: var(--black); }
+a { color: var(--black); text-decoration: underline; }
+.lead { font-size: 17px; color: #1A1A1A; line-height: 1.7; margin-bottom: 24px; }
+
+/* ── CARDS ── */
+.card, .metric-card, .fw-card, .stat-card, .validation-card,
+.problem-card, .tool-card, .phase-card, .week-block,
+.component-card, .criterion-card, .capability-card,
+.output-card, .risk-card, .gap-card, .service-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.card h3, .metric-card h3, .fw-card h3 { margin-top: 0; }
+
+/* ── HERO / STATS ── */
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(255,74,28,0.1); border: 1px solid rgba(255,74,28,0.2);
+  border-radius: 20px; padding: 6px 14px; font-size: 12px;
+  font-weight: 600; color: var(--accent); margin-bottom: 20px;
+}
+.dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{ opacity:1 } 50%{ opacity:0.4 } }
+.hero-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin: 24px 0; }
+.stat-card { text-align: center; padding: 20px; }
+.stat-number { display: block; font-family: var(--font-head); font-size: 36px; font-weight: 800; color: var(--black); }
+.stat-label { display: block; font-size: 12px; color: var(--muted); margin-top: 4px; line-height: 1.4; }
+.hero-sub { font-size: 17px; color: #1A1A1A; max-width: 640px; margin-bottom: 24px; line-height: 1.7; }
+.section-sub { color: var(--muted); font-size: 15px; margin-bottom: 28px; }
+
+/* ── VERDICT / ALERT BOXES ── */
+.verdict-box {
+  background: var(--mint-light); border: 1px solid var(--mint-dark);
+  border-radius: 12px; padding: 24px; margin: 24px 0;
+}
+.verdict-box h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin-bottom: 10px; }
+.verdict-box p { color: #1A1A1A; font-size: 16px; }
+.alert {
+  background: #FEF3C7; border: 1px solid #F59E0B;
+  border-radius: 10px; padding: 16px 20px; margin: 16px 0;
+  font-size: 14px; color: #78350F; display: flex; gap: 12px; align-items: flex-start;
+}
+.alert-green { background: #D4F0ED; border-color: var(--mint-dark); color: #064E3B; }
+.alert-purple { background: #EEF0FF; border-color: #6B4EFF; color: #3730A3; }
+.alert-icon { flex-shrink: 0; font-size: 18px; }
+
+/* ── TAGS / BADGES ── */
+.tag {
+  display: inline-block; padding: 3px 10px; border-radius: 20px;
+  font-size: 11px; font-weight: 700; background: var(--mint-light);
+  color: #064E3B; margin: 2px;
+}
+.tag-purple { background: #EEF0FF; color: #3730A3; }
+.tag-red { background: #FEE2E2; color: #991B1B; }
+.tag-yellow { background: #FEF3C7; color: #92400E; }
+
+/* ── TABLES ── */
+table { width: 100%; border-collapse: collapse; margin: 16px 0; background: #FFFFFF; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
+th { background: var(--mint-light); color: var(--black); font-family: var(--font-head); font-size: 13px; font-weight: 700; padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+td { padding: 10px 14px; font-size: 13px; color: #1A1A1A; border-bottom: 1px solid var(--border); }
+tr:last-child td { border-bottom: none; }
+tr:nth-child(even) td { background: #F6FFFE; }
+
+/* ── GRID LAYOUTS ── */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+@media (max-width: 640px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+/* ── MISC ── */
+.gradient-text { background: linear-gradient(135deg, #FF4A1C, #6B4EFF); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.section-footer { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); border-top: 1px solid var(--border); padding-top: 16px; margin-top: 32px; }
+pre, code { background: #1A1A1A; color: #C3EBE6; border-radius: 8px; padding: 12px 16px; font-size: 13px; overflow-x: auto; display: block; margin: 12px 0; }
+.source-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: #EEF0FF; border: 1px solid #6B4EFF;
+  border-radius: 8px; padding: 8px 14px; margin-bottom: 24px;
+  font-size: 12px; color: #3730A3; font-weight: 600;
+}
+.figma-says { background: var(--mint-light); border-left: 3px solid var(--mint-dark); border-radius: 0 10px 10px 0; padding: 14px 16px; margin-bottom: 12px; }
+.figma-says strong { color: #064E3B; }
+.figma-says p { color: #064E3B; }
+.weslam-does { background: #EEF0FF; border-left: 3px solid #6B4EFF; border-radius: 0 10px 10px 0; padding: 14px 16px; }
+.weslam-does p { color: #3730A3; }
+.weslam-does strong { color: #3730A3; }
+.fw-card { border-left: 3px solid var(--mint-dark); }
+.score-bar-track { background: var(--mint-light); border-radius: 4px; height: 8px; margin-top: 8px; }
+.score-bar { background: linear-gradient(90deg, var(--accent), var(--purple)); border-radius: 4px; height: 8px; }
+.phase-num { width: 32px; height: 32px; border-radius: 50%; background: var(--black); color: #fff; display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-size: 13px; font-weight: 800; flex-shrink: 0; }
+.phase-card { display: flex; gap: 16px; align-items: flex-start; }
+.phase-card .phase-content { flex: 1; }
+.dec-yes { background: #D4F0ED; border-color: var(--mint-dark); color: #064E3B; padding: 8px 14px; border-radius: 8px; display: inline-block; font-size: 13px; font-weight: 600; margin: 4px; }
+.dec-no { background: #FEE2E2; border-color: #FECACA; color: #991B1B; padding: 8px 14px; border-radius: 8px; display: inline-block; font-size: 13px; font-weight: 600; margin: 4px; }
+.overview-header { background: linear-gradient(135deg, var(--mint) 0%, var(--mint-light) 100%); border: 1px solid var(--mint-dark); border-radius: 14px; padding: 28px; margin-bottom: 28px; }
+.overview-header h1 { font-size: 24px; }
+.overview-stat { background: #FFFFFF; border-radius: 10px; border: 1px solid var(--border); padding: 16px; text-align: center; }
+.stat-num { font-family: var(--font-head); font-size: 28px; font-weight: 800; color: var(--black); }
+.validation-card .figma-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #5C6B6A; margin-bottom: 4px; }
+.ntab { height: 44px; padding: 0 16px; border: none; background: transparent; font-size: 13px; font-weight: 500; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s; }
+.ntab.active { color: var(--black); border-bottom-color: var(--black); font-weight: 700; }
+.ntab:hover { color: var(--black); background: var(--mint-light); }
+.nav-tabs { display: flex; overflow-x: auto; border-bottom: 1px solid var(--border); margin-bottom: 24px; scrollbar-width: none; }
+.tool-card .tc-name { font-size: 15px; font-weight: 700; color: var(--black); }
+.tool-card .tc-type { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; }
+.tool-card .tc-verdict { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); font-size: 13px; }
+.model-section { background: #FFFFFF; border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+.model-tier { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.model-tier:last-child { border-bottom: none; }
+.tier-name { font-weight: 600; color: var(--black); }
+.tier-price { font-family: var(--font-head); font-weight: 700; color: var(--accent); }
+.tier-desc { font-size: 13px; color: var(--muted); }
+.phase-section { background: #FFFFFF; border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+.week-block { border-left: 3px solid var(--mint-dark); }
+.week-title { font-family: var(--font-head); font-weight: 700; color: var(--black); margin-bottom: 4px; }
+.output-tag { display: inline-block; background: var(--mint-light); color: #064E3B; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; margin: 2px; }
+.criterion-card { border-left: 3px solid var(--mint-dark); }
+.c-score { font-family: var(--font-head); font-size: 22px; font-weight: 800; color: var(--black); }
+.c-label { font-size: 11px; color: var(--muted); }
+.what-we-do { background: var(--mint-light); border: 1px solid var(--mint-dark); border-radius: 12px; padding: 20px; margin-top: 16px; }
+.wwd-title { font-size: 12px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: var(--green); margin-bottom: 12px; }
+
+  /* ── from weslam-deep-analysis-v2.html ── */
+/* ═══ NAV ═══ */
+  
+  
+  .nav-brand {
+    font-weight: 900;
+    font-size: 14px;
+    color: var(--accent);
+    letter-spacing: -0.3px;
+    margin-right: 12px;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .nav-sep { width: 1px; height: 20px; background: #FFFFFF; margin: 0 8px; flex-shrink: 0; }
+  .ntab {
+    background: none; border: none;
+    color: #5C6B6A;
+    font: 500 12px/1 var(--font);
+    padding: 5px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap; flex-shrink: 0;
+  }
+  .ntab:hover { color: #0A0A0A; background: #D4F0ED; }
+  .ntab.on { color: #0A0A0A; background: #F0F9F8; }
+
+  /* ═══ LAYOUT ═══ */
+  .page { display: none; padding: 72px 0 80px; }
+  .page.on { display: block; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 28px; }
+
+  /* ═══ TYPOGRAPHY ═══ */
+  h1 { font-size: clamp(32px, 5vw, 52px); font-weight: 900; letter-spacing: -2px; line-height: 1.05; }
+  h2 { font-size: 26px; font-weight: 800; letter-spacing: -1px; line-height: 1.15; }
+  h3 { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
+  h4 { font-size: 13px; font-weight: 600; }
+
+  .grad { background: linear-gradient(120deg, #FF4A1C 0%, #FF8A00 40%, #6B4EFF 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .sup { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: var(--accent); margin-bottom: 6px; display: block; }
+  .muted { color: #5C6B6A; }
+  .small { font-size: 12px; }
+  strong.hi { color: #0A0A0A; }
+
+  /* ═══ SPACING ═══ */
+  .mt8 { margin-top: 8px; }
+  .mt12 { margin-top: 12px; }
+  .mt16 { margin-top: 16px; }
+  .mt24 { margin-top: 24px; }
+  .mt32 { margin-top: 32px; }
+  .mt48 { margin-top: 48px; }
+  .mb8 { margin-bottom: 8px; }
+  .mb16 { margin-bottom: 16px; }
+  .mb24 { margin-bottom: 24px; }
+  .hr { height: 1px; background: #F0F9F8; margin: 36px 0; }
+
+  /* ═══ CARDS ═══ */
+  .card {
+    background: var(--gray-100);
+    border: 1px solid #B8DEDA;
+    border-radius: 12px;
+    padding: 20px 22px;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: #2C2C2C; }
+  .card.accent { border-color: rgba(255,74,28,0.3); background: rgba(255,74,28,0.04); }
+  .card.green { border-color: rgba(0,194,124,0.3); background: rgba(0,194,124,0.04); }
+  .card.purple { border-color: rgba(107,78,255,0.3); background: rgba(107,78,255,0.04); }
+  .card.yellow { border-color: rgba(255,184,0,0.3); background: rgba(255,184,0,0.04); }
+  .card.red { border-color: rgba(255,59,48,0.3); background: rgba(255,59,48,0.04); }
+
+  /* ═══ GRIDS ═══ */
+  .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .g4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; }
+  @media(max-width:640px){.g2,.g3,.g4{grid-template-columns:1fr;}}
+
+  /* ═══ TABLE ═══ */
+  .tbl { width: 100%; border-collapse: collapse; }
+  .tbl th { text-align: left; font: 700 11px/1 var(--font); text-transform: uppercase; letter-spacing: 0.8px; color: #5C6B6A; padding: 10px 14px; border: 1px solid #B8DEDA; }
+  .tbl td { padding: 13px 14px; font-size: 13px; border-bottom: 1px solid #111; vertical-align: top; color: #5C6B6A; }
+  .tbl tr:last-child td { border: none; }
+  .tbl td.name { color: #0A0A0A; font-weight: 500; }
+  .tbl tr.hl td { background: rgba(255,74,28,0.05); }
+  .tbl tr.hl td.name { color: var(--accent); font-weight: 700; }
+
+  /* ═══ BADGES ═══ */
+  .b { display: inline-block; font: 700 10px/1 var(--font); padding: 3px 8px; border-radius: 100px; letter-spacing: 0.4px; text-transform: uppercase; }
+  .b-r { background: rgba(255,59,48,0.15); color: #FF5E54; }
+  .b-g { background: rgba(0,194,124,0.15); color: #00C27C; }
+  .b-y { background: rgba(255,184,0,0.15); color: #FFB800; }
+  .b-p { background: rgba(107,78,255,0.15); color: #9B8AFF; }
+  .b-gr { background: #F0F9F8; color: #5C6B6A; }
+
+  /* ═══ ALERT BOX ═══ */
+  .alert { display: flex; gap: 12px; border-radius: 10px; padding: 14px 18px; margin: 16px 0; }
+  .alert.warn { background: rgba(255,184,0,0.08); border: 1px solid rgba(255,184,0,0.25); }
+  .alert.danger { background: rgba(255,59,48,0.08); border: 1px solid rgba(255,59,48,0.25); }
+  .alert.info { background: rgba(107,78,255,0.08); border: 1px solid rgba(107,78,255,0.25); }
+  .alert.success { background: rgba(0,194,124,0.08); border: 1px solid rgba(0,194,124,0.25); }
+  .alert-ico { font-size: 18px; flex-shrink: 0; line-height: 1.4; }
+  .alert-body h4 { font-size: 13px; margin-bottom: 3px; }
+  .alert-body p { font-size: 12.5px; color: #5C6B6A; line-height: 1.6; }
+
+  /* ═══ HERO ═══ */
+  .hero-meta { font: 700 11px/1 var(--font); text-transform: uppercase; letter-spacing: 1.5px; color: var(--accent); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+  .pulsedot { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; animation: pd 2s infinite; }
+  @keyframes pd { 0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.8)} }
+
+  /* ═══ STAT ROW ═══ */
+  .stats { display: flex; gap: 12px; flex-wrap: wrap; margin: 24px 0; }
+  .stat { background: var(--gray-100); border: 1px solid #B8DEDA; border-radius: 10px; padding: 16px 20px; flex: 1; min-width: 140px; }
+  .stat-n { font-size: 28px; font-weight: 900; letter-spacing: -1.5px; color: #0A0A0A; display: block; }
+  .stat-l { font-size: 11px; color: #5C6B6A; margin-top: 3px; line-height: 1.4; }
+
+  /* ═══ VERDICT ═══ */
+  .verdict { background: linear-gradient(135deg, rgba(255,74,28,0.07), rgba(107,78,255,0.07)); border: 1px solid rgba(255,74,28,0.2); border-radius: 14px; padding: 28px; margin: 24px 0; }
+  .verdict .label { font: 700 10px/1 var(--font); letter-spacing: 1.2px; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+  .verdict p { font-size: 16px; line-height: 1.65; color: #0A0A0A; }
+
+  /* ═══ DECISION MATRIX ═══ */
+  .dec-item { display: flex; gap: 14px; padding: 16px 0; border: 1px solid #B8DEDA; }
+  .dec-item:last-child { border: none; }
+  .dec-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+  .dec-dot.g { background: var(--green); }
+  .dec-dot.r { background: var(--red); }
+  .dec-dot.y { background: var(--yellow); }
+  .dec-body h4 { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+  .dec-body p { font-size: 12.5px; color: #5C6B6A; line-height: 1.6; }
+
+  /* ═══ TOOL CARD ═══ */
+  .tool-card { background: var(--gray-100); border: 1px solid #B8DEDA; border-radius: 12px; padding: 18px 20px; }
+  .tool-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+  .tool-name { font: 700 14px/1 var(--font); color: #0A0A0A; }
+  .tool-
+  .tool-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+  .tool-tag { background: #F0F9F8; border-radius: 4px; padding: 2px 8px; font: 600 10px/1.8 var(--font); color: #5C6B6A; }
+
+  /* ═══ QUOTE ═══ */
+  .quote { border-left: 2px solid var(--accent2); padding: 12px 16px; background: rgba(107,78,255,0.05); border-radius: 0 8px 8px 0; margin: 14px 0; }
+  .quote p { font-size: 13.5px; font-style: italic; color: #5C6B6A; line-height: 1.7; }
+  .quote cite { font-size: 11px; color: #3A4A49; margin-top: 6px; display: block; }
+
+  /* ═══ PHASE ═══ */
+  .phase-wrap { position: relative; }
+  .phase-row { display: flex; gap: 16px; }
+  .phase-left { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+  .phase-num { width: 36px; height: 36px; border-radius: 50%; border: 1px solid #B8DEDA; background: #FFFFFF; display: flex; align-items: center; justify-content: center; font: 800 13px/1 var(--font); color: #0A0A0A; position: relative; z-index: 1; }
+  .phase-line { flex: 1; width: 1px; background: #F0F9F8; min-height: 20px; margin: 4px 0; }
+  .phase-content { flex: 1; padding-bottom: 20px; }
+  .phase-meta { font: 700 10px/1 var(--font); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+
+  /* ═══ TABS ═══ */
+  .subtabs { display: flex; gap: 4px; border: 1px solid #B8DEDA; margin-bottom: 24px; overflow-x: auto; scrollbar-width: none; }
+  .subtabs::-webkit-scrollbar { display: none; }
+  .stab { background: none; border: none; border-bottom: 2px solid transparent; color: #5C6B6A; font: 500 12px/1 var(--font); padding: 8px 14px 10px; cursor: pointer; transition: all 0.15s; white-space: nowrap; flex-shrink: 0; }
+  .stab:hover { color: #0A0A0A; }
+  .stab.on { color: #0A0A0A; border-bottom-color: var(--accent); }
+  .stab-pane { display: none; }
+  .stab-pane.on { display: block; }
+
+  /* ═══ SCORE BAR ═══ */
+  .score-row { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid #111; }
+  .score-row:last-child { border: none; }
+  .score-label { font-size: 12.5px; flex: 1; }
+  .score-bar { width: 80px; height: 3px; background: #F0F9F8; border-radius: 2px; overflow: hidden; }
+  .score-fill { height: 100%; border-radius: 2px; }
+  .fill-r { background: var(--red); }
+  .fill-y { background: var(--yellow); }
+  .fill-g { background: var(--green); }
+  .score-pct { font-size: 11px; color: #5C6B6A; min-width: 30px; text-align: right; }
+
+  /* ═══ DECISION TREE ═══ */
+  .dtree { background: var(--gray-100); border: 1px solid #B8DEDA; border-radius: 12px; padding: 24px; }
+  .dtree-q { font: 700 15px/1.4 var(--font); color: #0A0A0A; margin-bottom: 16px; }
+  .dtree-opts { display: flex; gap: 10px; flex-wrap: wrap; }
+  .dtree-opt { background: #F0F9F8; border: 1px solid #B8DEDA; border-radius: 8px; padding: 10px 14px; font-size: 12.5px; cursor: pointer; transition: all 0.15s; flex: 1; min-width: 180px; }
+  .dtree-opt:hover { border-color: var(--accent); }
+  .dtree-opt .opt-label { font-weight: 700; color: #0A0A0A; margin-bottom: 4px; }
+  .dtree-opt .opt-
+  .dtree-answer { margin-top: 16px; display: none; }
+  .dtree-answer.show { display: block; }
+
+  /* ── from weslam-drift-detector-prd.html ── */
+/* NAV */
+  
+  
+  .nav-logo {
+    font-weight: 800;
+    font-size: 16px;
+    letter-spacing: -0.5px;
+    color: var(--accent);
+    margin-right: 16px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .nav-btn {
+    background: none;
+    border: none;
+    color: #5C6B6A;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+    font-family: var(--font);
+  }
+  .nav-btn:hover { color: #0A0A0A; background: #FFFFFF; }
+  .nav-btn.active { color: #0A0A0A; background: #1F1F1F; }
+
+  /* SECTIONS */
+  .section {
+    display: none;
+    min-height: 100vh;
+    padding: 80px 32px 64px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  .section.visible { display: block; }
+
+  /* HERO */
+  .hero { padding-top: 100px; padding-bottom: 60px; }
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,74,28,0.12);
+    border: 1px solid rgba(255,74,28,0.3);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 100px;
+    margin-bottom: 28px;
+  }
+  .dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.4} }
+
+  h1 {
+    font-size: clamp(36px, 6vw, 56px);
+    font-weight: 800;
+    letter-spacing: -2px;
+    line-height: 1.05;
+    margin-bottom: 24px;
+  }
+  .gradient-text {
+    background: linear-gradient(135deg, #FF4A1C, #6B4EFF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-sub {
+    font-size: 18px;
+    color: #5C6B6A;
+    max-width: 620px;
+    margin-bottom: 40px;
+    line-height: 1.7;
+  }
+
+  h2 {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 8px;
+  }
+  h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .section-sub {
+    color: #5C6B6A;
+    font-size: 15px;
+    margin-bottom: 40px;
+  }
+
+  /* CARDS */
+  .card {
+    background: #FFFFFF;
+    border: 1px solid #B8DEDA;
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+  .card:hover { border-color: #333; }
+  .card-tag {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  .card h3 { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+  .card p { color: #5C6B6A; font-size: 14px; line-height: 1.6; }
+
+  /* GRID */
+  .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  @media (max-width: 768px) { .g2, .g3 { grid-template-columns: 1fr; } }
+
+  /* BADGES */
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .badge-green { background: rgba(0,194,124,0.15); color: var(--green); }
+  .badge-orange { background: rgba(255,74,28,0.15); color: var(--accent); }
+  .badge-purple { background: rgba(107,78,255,0.15); color: var(--accent2); }
+  .badge-yellow { background: rgba(255,184,0,0.15); color: var(--yellow); }
+  .badge-red { background: rgba(255,74,28,0.15); color: var(--red); }
+
+  /* STAT CARDS */
+  .stat-card {
+    background: #FFFFFF;
+    border: 1px solid #B8DEDA;
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .stat-number {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    color: #0A0A0A;
+    display: block;
+  }
+  .stat-label { font-size: 12px; color: #5C6B6A; margin-top: 4px; }
+
+  /* VERDICT BOX */
+  .verdict-box {
+    background: linear-gradient(135deg, rgba(255,74,28,0.08), rgba(107,78,255,0.08));
+    border: 1px solid rgba(255,74,28,0.25);
+    border-radius: 16px;
+    padding: 32px;
+    margin-top: 32px;
+  }
+  .verdict-box h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin-bottom: 12px; }
+  .verdict-box p { font-size: 16px; line-height: 1.7; color: #0A0A0A; }
+  .verdict-box strong { color: var(--accent); }
+
+  /* CODE BLOCK */
+  .code-block {
+    background: #0D0D0D;
+    border: 1px solid #B8DEDA;
+    border-radius: 10px;
+    padding: 20px;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    overflow-x: auto;
+    margin: 16px 0;
+    color: #E0E0E0;
+  }
+  .code-block .comment { color: #5A5A5A; }
+  .code-block .key { color: #FF6B6B; }
+  .code-block .string { color: #98C379; }
+  .code-block .number { color: #D19A66; }
+  .code-block .keyword { color: #C678DD; }
+  .code-block .fn { color: #61AFEF; }
+
+  /* ALERT */
+  .alert {
+    display: flex;
+    gap: 14px;
+    padding: 16px 20px;
+    border-radius: 10px;
+    margin: 16px 0;
+  }
+  .alert-green { background: rgba(0,194,124,0.08); border: 1px solid rgba(0,194,124,0.2); }
+  .alert-orange { background: rgba(255,74,28,0.08); border: 1px solid rgba(255,74,28,0.2); }
+  .alert-purple { background: rgba(107,78,255,0.08); border: 1px solid rgba(107,78,255,0.2); }
+  .alert-yellow { background: rgba(255,184,0,0.08); border: 1px solid rgba(255,184,0,0.2); }
+  .alert-ico { font-size: 20px; flex-shrink: 0; }
+  .alert-body h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .alert-body p { font-size: 13px; color: #5C6B6A; line-height: 1.6; }
+
+  /* TABLE */
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+  th { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #5C6B6A; text-align: left; padding: 8px 12px; border: 1px solid #B8DEDA; }
+  td { padding: 10px 12px; border-bottom: 1px solid #111; font-size: 14px; color: #5C6B6A; }
+  td:first-child { color: #0A0A0A; font-weight: 600; }
+  tr:hover td { background: #D4F0ED; }
+
+  /* FLOW DIAGRAM */
+  .flow { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin: 24px 0; }
+  .flow-step {
+    background: #FFFFFF;
+    border: 1px solid #B8DEDA;
+    border-radius: 10px;
+    padding: 14px 18px;
+    text-align: center;
+    min-width: 120px;
+  }
+  .flow-step .step-num { font-size: 11px; color: var(--accent); font-weight: 700; letter-spacing: 1px; }
+  .flow-step .step-label { font-size: 13px; font-weight: 600; margin-top: 4px; }
+  .flow-arrow { color: var(--gray-600); font-size: 20px; }
+
+  /* USER STORY */
+  .story {
+    background: #FFFFFF;
+    border: 1px solid #B8DEDA;
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin-bottom: 12px;
+  }
+  .story-persona {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .story-persona.dev { color: var(--green); }
+  .story-persona.lead { color: var(--accent2); }
+  .story-persona.head { color: var(--accent); }
+  .story q {
+    font-size: 15px;
+    color: #0A0A0A;
+    font-style: italic;
+    line-height: 1.6;
+  }
+  .story .acceptance {
+    margin-top: 10px;
+    font-size: 12px;
+    color: #5C6B6A;
+    line-height: 1.7;
+  }
+  .story .acceptance strong { color: var(--gray-200); }
+
+  /* PRIORITY */
+  .prio-must { color: var(--red); font-weight: 700; }
+  .prio-should { color: var(--yellow); font-weight: 700; }
+  .prio-nice { color: #5C6B6A; font-weight: 700; }
+
+  /* TIMELINE */
+  .timeline { margin: 24px 0; }
+  .tl-phase {
+    display: flex;
+    gap: 20px;
+    padding: 20px 0;
+    border-left: 2px solid #1E1E1E;
+    margin-left: 20px;
+    padding-left: 24px;
+    position: relative;
+  }
+  .tl-phase::before {
+    content: '';
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    position: absolute;
+    left: -7px;
+    top: 24px;
+  }
+  .tl-phase.phase-1::before { background: var(--green); }
+  .tl-phase.phase-2::before { background: var(--accent2); }
+  .tl-phase.phase-3::before { background: var(--accent); }
+  .tl-phase.phase-4::before { background: var(--yellow); }
+  .tl-content { flex: 1; }
+  .tl-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .tl-label.green { color: var(--green); }
+  .tl-label.purple { color: var(--accent2); }
+  .tl-label.orange { color: var(--accent); }
+  .tl-label.yellow { color: var(--yellow); }
+
+  /* MISC */
+  .mt16 { margin-top: 16px; }
+  .mt24 { margin-top: 24px; }
+  .mt32 { margin-top: 32px; }
+  .mb8 { margin-bottom: 8px; }
+  .mb16 { margin-bottom: 16px; }
+  .small { font-size: 13px; }
+  .muted { color: #5C6B6A; }
+  .hi { color: var(--accent); }
+  .divider { border: none; border: 1px solid #B8DEDA; margin: 32px 0; }
+  .sup { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 6px; }
+
+  /* META INFO */
+  .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin: 24px 0;
+  }
+  @media (max-width: 768px) { .meta-grid { grid-template-columns: 1fr 1fr; } }
+  .meta-item {
+    background: #FFFFFF;
+    border: 1px solid #B8DEDA;
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .meta-label { font-size: 11px; color: #5C6B6A; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; }
+  .meta-value { font-size: 15px; font-weight: 700; }
+
+  /* ── from weslam-ai-readiness-deep-dive.html ── */
+/* NAV */
+  
+  .nav-row { display: flex; align-items: center; gap: 6px; padding: 0 24px; height: 44px; overflow-x: auto; scrollbar-width: none; }
+  .nav-row::-webkit-scrollbar { display: none; }
+  .nav-row:first-child { border: 1px solid #B8DEDA; }
+  .nav-logo { font-weight: 800; font-size: 15px; letter-spacing: -0.5px; color: var(--accent); margin-right: 12px; white-space: nowrap; flex-shrink: 0; }
+  .nav-btn {
+    background: none; border: none; color: #5C6B6A; font-size: 12px; font-weight: 500;
+    padding: 5px 10px; border-radius: 6px; cursor: pointer; transition: all 0.2s;
+    white-space: nowrap; flex-shrink: 0; font-family: var(--font);
+  }
+  .nav-btn:hover { color: #0A0A0A; background: #FFFFFF; }
+  .nav-btn.active { color: #0A0A0A; background: #1F1F1F; }
+  .doc-btn { font-size: 13px; font-weight: 600; padding: 6px 14px; }
+  .doc-btn.active { background: var(--accent); color: #0A0A0A; }
+  .doc-btn:hover { background: rgba(255,74,28,0.3); color: #0A0A0A; }
+
+  /* SECTIONS */
+  .section { display: none; min-height: 100vh; padding: 108px 32px 64px; max-width: 960px; margin: 0 auto; }
+  .section.visible { display: block; }
+
+  /* HERO */
+  .hero { padding-top: 120px; padding-bottom: 60px; }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,74,28,0.12); border: 1px solid rgba(255,74,28,0.3);
+    color: var(--accent); font-size: 12px; font-weight: 600;
+    letter-spacing: 0.8px; text-transform: uppercase;
+    padding: 5px 12px; border-radius: 100px; margin-bottom: 24px;
+  }
+  .dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.4} }
+
+  h1 { font-size: clamp(32px, 5vw, 52px); font-weight: 800; letter-spacing: -2px; line-height: 1.05; margin-bottom: 20px; }
+  .gradient-text { background: linear-gradient(135deg, #FF4A1C, #6B4EFF); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  h2 { font-size: 30px; font-weight: 800; letter-spacing: -1px; margin-bottom: 8px; }
+  h3 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+  .section-sub { color: #5C6B6A; font-size: 15px; margin-bottom: 36px; }
+  .hero-sub { font-size: 17px; color: #5C6B6A; max-width: 620px; margin-bottom: 36px; line-height: 1.7; }
+
+  /* CARDS */
+  .card { background: #FFFFFF; border: 1px solid #B8DEDA; border-radius: 14px; padding: 24px; margin-bottom: 16px; }
+  .card:hover { border-color: #333; }
+  .card h3 { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+  .card p { color: #5C6B6A; font-size: 14px; line-height: 1.65; }
+  .sup { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 6px; }
+
+  /* CRITERION CARD */
+  .criterion {
+    background: #FFFFFF; border: 1px solid #B8DEDA; border-radius: 16px;
+    padding: 28px 28px 24px; margin-bottom: 20px;
+  }
+  .criterion:hover { border-color: #333; }
+  .crit-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+  .crit-score {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255,74,28,0.1); border: 1px solid rgba(255,74,28,0.2);
+    padding: 4px 12px; border-radius: 8px; font-size: 13px; font-weight: 700; color: var(--accent);
+    flex-shrink: 0;
+  }
+  .crit-score.green { background: rgba(0,194,124,0.1); border-color: rgba(0,194,124,0.2); color: var(--green); }
+  .crit-
+  .crit-body p { color: #5C6B6A; font-size: 14px; line-height: 1.7; }
+
+  /* WHAT WE DO */
+  .what-we-do {
+    background: #D4F0ED; border: 1px solid #A4D9D3; border-radius: 12px; padding: 20px; margin-top: 16px;
+  }
+  .wwd-title { font-size: 12px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: var(--green); margin-bottom: 12px; }
+  .wwd-item { display: flex; gap: 12px; padding: 8px 0; }
+  .wwd-num {
+    width: 24px; height: 24px; border-radius: 6px; background: rgba(0,194,124,0.12);
+    color: var(--green); font-size: 12px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;
+  }
+  .wwd-text { font-size: 13px; line-height: 1.6; color: var(--g200); }
+  .wwd-text strong { color: #0A0A0A; }
+
+  /* BEFORE/AFTER */
+  .ba { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  @media (max-width: 768px) { .ba { grid-template-columns: 1fr; } }
+  .ba-box { border-radius: 10px; padding: 16px; font-size: 13px; line-height: 1.6; }
+  .ba-before { background: rgba(255,74,28,0.06); border: 1px solid rgba(255,74,28,0.15); }
+  .ba-after { background: rgba(0,194,124,0.06); border: 1px solid rgba(0,194,124,0.15); }
+  .ba-label { font-size: 11px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 8px; }
+  .ba-label.red { color: var(--red); }
+  .ba-label.green { color: var(--green); }
+
+  /* CODE */
+  .code {
+    background: #0D0D0D; border: 1px solid #B8DEDA; border-radius: 10px;
+    padding: 16px 20px; font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 12px; line-height: 1.7; overflow-x: auto; margin: 12px 0; color: #E0E0E0;
+  }
+  .code .cm { color: #5A5A5A; }
+  .code .k { color: #FF6B6B; }
+  .code .s { color: #98C379; }
+  .code .fn { color: #61AFEF; }
+
+  /* GRID */
+  .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  @media (max-width: 768px) { .g2, .g3 { grid-template-columns: 1fr; } }
+
+  /* ALERT */
+  .alert { display: flex; gap: 14px; padding: 16px 20px; border-radius: 10px; margin: 16px 0; }
+  .alert-green { background: rgba(0,194,124,0.08); border: 1px solid rgba(0,194,124,0.2); }
+  .alert-orange { background: rgba(255,74,28,0.08); border: 1px solid rgba(255,74,28,0.2); }
+  .alert-purple { background: rgba(107,78,255,0.08); border: 1px solid rgba(107,78,255,0.2); }
+  .alert-ico { font-size: 20px; flex-shrink: 0; }
+  .alert-body h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .alert-body p { font-size: 13px; color: #5C6B6A; line-height: 1.6; }
+
+  /* STAT */
+  .stat-card { background: #FFFFFF; border: 1px solid #B8DEDA; border-radius: 12px; padding: 20px; }
+  .stat-number { font-size: 32px; font-weight: 800; letter-spacing: -1px; color: #0A0A0A; display: block; }
+  .stat-label { font-size: 12px; color: #5C6B6A; margin-top: 4px; }
+
+  /* VERDICT */
+  .verdict-box {
+    background: linear-gradient(135deg, rgba(255,74,28,0.08), rgba(107,78,255,0.08));
+    border: 1px solid rgba(255,74,28,0.25); border-radius: 16px; padding: 28px; margin-top: 28px;
+  }
+  .verdict-box h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin-bottom: 10px; }
+  .verdict-box p { font-size: 16px; line-height: 1.7; color: #0A0A0A; }
+  .verdict-box strong { color: var(--accent); }
+
+  /* PROBLEM CARD */
+  .prob {
+    background: #FFFFFF; border: 1px solid #B8DEDA; border-radius: 16px;
+    padding: 28px; margin-bottom: 20px; position: relative; overflow: hidden;
+  }
+  .prob::before {
+    content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+  }
+  .prob.p-red::before { background: var(--red); }
+  .prob.p-yellow::before { background: var(--yellow); }
+  .prob.p-purple::before { background: var(--accent2); }
+  .prob-tag { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+  .prob-tag.red { color: var(--red); }
+  .prob-tag.yellow { color: var(--yellow); }
+  .prob-tag.purple { color: var(--accent2); }
+  .prob h3 { font-size: 19px; font-weight: 800; margin-bottom: 10px; letter-spacing: -0.5px; }
+  .prob p { color: #5C6B6A; font-size: 14px; line-height: 1.7; }
+  .prob .quote {
+    background: rgba(255,255,255,0.04); border-left: 3px solid var(--g600);
+    padding: 12px 16px; margin: 14px 0; font-style: italic; font-size: 14px; color: var(--g200);
+  }
+  .prob .impact {
+    margin-top: 14px; padding: 14px 16px; border-radius: 10px;
+    background: rgba(255,74,28,0.06); border: 1px solid rgba(255,74,28,0.12);
+  }
+  .prob .impact-label { font-size: 11px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+  .prob .impact p { font-size: 13px; color: var(--g200); }
+
+  .divider { border: none; border: 1px solid #B8DEDA; margin: 32px 0; }
+  .mt16 { margin-top: 16px; }
+  .mt24 { margin-top: 24px; }
+  .mt32 { margin-top: 32px; }
+  .mb8 { margin-bottom: 8px; }
+  .mb16 { margin-bottom: 16px; }
+  .small { font-size: 13px; }
+  .muted { color: #5C6B6A; }
+  .hi { color: var(--accent); }
+
+  /* ── from weslam-figma-insights.html ── */
+/* TOP NAV */
+  
+  
+  
+  
+  
+  
+
+  /* SECTION NAV */
+  .section-
+  
+  
+  
+
+  /* CONTENT */
+  .content { max-width: 900px; margin: 0 auto; padding: 100px 24px 80px; }
+  .section { display: none; }
+  .section.active { display: block; }
+
+  h1 { font-size: 28px; font-weight: 700; color: #0A0A0A; margin-bottom: 8px; line-height: 1.3; }
+  h2 { font-size: 20px; font-weight: 700; color: #1A1A1A; margin-bottom: 16px; margin-top: 32px; }
+  h3 { font-size: 15px; font-weight: 700; color: #1A1A1A; margin-bottom: 10px; margin-top: 24px; }
+  p { font-size: 15px; line-height: 1.7; color: #5C6B6A; margin-bottom: 14px; }
+  .lead { font-size: 17px; color: #5C6B6A; line-height: 1.7; margin-bottom: 24px; }
+
+  /* SOURCE BADGE */
+  .source-badge { display: inline-flex; align-items: center; gap: 8px; background: #EEF0FF; border: 1px solid #B8DEDA; border-radius: 8px; padding: 8px 14px; margin-bottom: 28px; font-size: 12px; color: #a78bfa; font-weight: 600; }
+  .source-badge::before { content: "📄"; }
+
+  /* STAT CARDS */
+  .stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin: 24px 0; }
+  .stat-card { background: #FFFFFF; border: 1px solid #B8DEDA; border-radius: 10px; padding: 20px; text-align: center; }
+  .stat-card .num { font-size: 36px; font-weight: 800; color: #a78bfa; display: block; }
+  .stat-card .label { font-size: 12px; color: #777; margin-top: 4px; line-height: 1.5; }
+
+  /* QUOTE */
+  .quote-block { background: #EEF0FF; border-left: 3px solid #7c3aed; border-radius: 0 10px 10px 0; padding: 20px 24px; margin: 24px 0; }
+  .quote-block .quote-text { font-size: 16px; color: #1A1A1A; font-style: italic; line-height: 1.7; margin-bottom: 10px; }
+  .quote-block .quote-src { font-size: 12px; color: #7c3aed; font-weight: 600; }
+
+  /* VALIDATION CARDS */
+  .validation-card { background: #FFFFFF; border: 1px solid #B8DEDA; border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+  .validation-card .vc-header { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 16px; }
+  .validation-card .vc-icon { font-size: 24px; flex-shrink: 0; }
+  .validation-card .vc-title { font-size: 16px; font-weight: 700; color: #0A0A0A; }
+  .validation-card .vc-sub { font-size: 12px; color: #7c3aed; font-weight: 600; margin-top: 2px; }
+  .figma-says { background: #0d1117; border: 1px solid #B8DEDA; border-radius: 8px; padding: 14px 16px; margin-bottom: 12px; }
+  .figma-says .fs-label { font-size: 10px; color: #4ade80; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
+  .figma-says .fs-text { font-size: 14px; color: #bbb; line-height: 1.6; }
+  .weslam-does { background: #0d0d1a; border: 1px solid #B8DEDA; border-radius: 8px; padding: 14px 16px; }
+  .weslam-does .wd-label { font-size: 10px; color: #a78bfa; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
+  .weslam-does .wd-text { font-size: 14px; color: #bbb; line-height: 1.6; }
+
+  /* FRAMEWORK */
+  .framework-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+  @media (max-width: 600px) { .framework-row { grid-template-columns: 1fr; } }
+  .fw-card { background: #FFFFFF; border: 1px solid #B8DEDA; border-radius: 10px; padding: 18px; }
+  .fw-card .fw-label { font-size: 11px; color: #5C6B6A; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; font-weight: 600; }
+  .fw-card .fw-title { font-size: 15px; font-weight: 700; color: #1A1A1A; margin-bottom: 8px; }
+  .fw-card p { font-size: 13px; color: #5C6B6A; line-height: 1.6; margin: 0; }
+
+  /* TAG LIST */
+  .tag-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+  .tag { background: #1e1e2e; border: 1px solid #B8DEDA; color: #a78bfa; font-size: 12px; padding: 4px 12px; border-radius: 20px; font-weight: 600; }
+  .tag.green { background: #0d1f17; border-color: #1a4a2a; color: #4ade80; }
+  .tag.red { background: #1f0d0d; border-color: #4a1a1a; color: #f87171; }
+
+  /* FEATURE TABLE */
+  .feature-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+  .feature-table th { background: #FFFFFF; color: #5C6B6A; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; padding: 10px 14px; text-align: left; border-bottom: 1px solid #B8DEDA; }
+  .feature-table td { padding: 12px 14px; font-size: 13px; color: #bbb; border: 1px solid #B8DEDA; vertical-align: top; }
+  .feature-table tr:hover td { background: #F0F9F8; }
+  .check { color: #4ade80; font-weight: 700; }
+  .cross { color: #f87171; font-weight: 700; }
+
+  /* CHECKLIST */
+  .checklist { list-style: none; margin: 14px 0; }
+  .checklist li { font-size: 14px; color: #5C6B6A; padding: 6px 0 6px 26px; border: 1px solid #B8DEDA; position: relative; line-height: 1.5; }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist li::before { content: "✓"; position: absolute; left: 0; color: #4ade80; font-weight: 700; }
+  .checklist li.warn::before { content: "!"; color: #f59e0b; }
+
+  /* PILL ROW */
+  .pill-row { display: flex; gap: 10px; flex-wrap: wrap; margin: 16px 0; }
+  .pill { background: #F0F9F8; border: 1px solid #B8DEDA; border-radius: 6px; padding: 8px 14px; font-size: 13px; color: #5C6B6A; }
+  .pill strong { color: #a78bfa; }
+
+  /* DIVIDER */
+  .divider { border: none; border-top: 1px solid #222; margin: 32px 0; }
+
+  /* ALERT */
+  .alert { background: #1a1208; border: 1px solid #B8DEDA; border-radius: 10px; padding: 16px 20px; margin: 20px 0; font-size: 14px; color: #fcd34d; line-height: 1.6; }
+  .alert-green { background: #0a1f12; border-color: #14532d; color: #86efac; }
+  .alert-purple { background: #130f1e; border-color: #4c1d95; color: #c4b5fd; }
+
+  /* OVERLAP MAP */
+  .overlap-item { display: flex; gap: 16px; padding: 16px 0; border: 1px solid #B8DEDA; align-items: flex-start; }
+  .overlap-item:last-child { border-bottom: none; }
+  .overlap-icon { font-size: 22px; flex-shrink: 0; width: 36px; text-align: center; }
+  .overlap-content .ot { font-size: 14px; font-weight: 700; color: #1A1A1A; margin-bottom: 4px; }
+  .overlap-content .os { font-size: 13px; color: #5C6B6A; line-height: 1.5; }
+  .overlap-content .op { font-size: 12px; color: #7c3aed; font-weight: 600; margin-top: 4px; }
+
+  /* OVERVIEW HEADER */
+  .overview-header { background: linear-gradient(135deg, #C3EBE6 0%, #D4F0ED 100%); border: 1px solid #B8DEDA; border-radius: 14px; padding: 32px; margin-bottom: 32px; }
+  .overview-header h1 { font-size: 26px; margin-bottom: 10px; }
+  .overview-header .subtitle { font-size: 14px; color: #8a7aaa; line-height: 1.6; }
+
+  /* GAP CARD */
+  .gap-card { background: #FFFFFF; border: 1px solid #B8DEDA; border-left: 3px solid #f59e0b; border-radius: 0 10px 10px 0; padding: 18px 20px; margin-bottom: 14px; }
+  .gap-card .gc-title { font-size: 14px; font-weight: 700; color: #fcd34d; margin-bottom: 6px; }
+  .gap-card .gc-text { font-size: 13px; color: #5C6B6A; line-height: 1.6; }
+
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+     TOP NAV — Document Switcher
+════════════════════════════════════════ -->
+<nav class="top-nav">
+  <span class="top-nav-logo">WE SLAM</span>
+  <button class="doc-tab active"  onclick="showDoc('blueprint')">Blueprint</button>
+  <button class="doc-tab"         onclick="showDoc('analyse')">Tiefenanalyse</button>
+  <button class="doc-tab"         onclick="showDoc('drift')">Drift Detector</button>
+  <button class="doc-tab"         onclick="showDoc('airead')">AI-Readiness</button>
+  <button class="doc-tab"         onclick="showDoc('figma')">Figma Report</button>
+</nav>
+
+<!-- ═══════════════════════════════════════
+     SECTION NAV — switches per doc
+════════════════════════════════════════ -->
+<div class="sec-nav" id="secnav-blueprint">
+  <button class="sec-btn active" onclick="showPanel('blueprint','bp-overview',this)">Übersicht</button>
+  <button class="sec-btn"        onclick="showPanel('blueprint','bp-service',this)">Service-Details</button>
+  <button class="sec-btn"        onclick="showPanel('blueprint','bp-pricing',this)">Pricing</button>
+  <button class="sec-btn"        onclick="showPanel('blueprint','bp-validation',this)">Validierung</button>
+</div>
+<div class="sec-nav" id="secnav-analyse" style="display:none">
+  <button class="sec-btn active" onclick="showPanel('analyse','ta-tools',this)">Tool-Landscape</button>
+  <button class="sec-btn"        onclick="showPanel('analyse','ta-buildvsbuy',this)">Build vs. Buy</button>
+  <button class="sec-btn"        onclick="showPanel('analyse','ta-swiss',this)">Swiss Advantage</button>
+  <button class="sec-btn"        onclick="showPanel('analyse','ta-verdict',this)">Verdict</button>
+</div>
+<div class="sec-nav" id="secnav-drift" style="display:none">
+  <button class="sec-btn active" onclick="showPanel('drift','dr-overview',this)">Übersicht</button>
+  <button class="sec-btn"        onclick="showPanel('drift','dr-problem',this)">Problem</button>
+  <button class="sec-btn"        onclick="showPanel('drift','dr-scope',this)">MVP Scope</button>
+  <button class="sec-btn"        onclick="showPanel('drift','dr-arch',this)">Architektur</button>
+</div>
+<div class="sec-nav" id="secnav-airead" style="display:none">
+  <button class="sec-btn active" onclick="showPanel('airead','ai-overview',this)">Übersicht</button>
+  <button class="sec-btn"        onclick="showPanel('airead','ai-c1',this)">1 · Token-Struktur</button>
+  <button class="sec-btn"        onclick="showPanel('airead','ai-c2',this)">2 · Code Connect</button>
+  <button class="sec-btn"        onclick="showPanel('airead','ai-c3',this)">3 · MCP Server</button>
+  <button class="sec-btn"        onclick="showPanel('airead','ai-c4',this)">4 · AI-Docs</button>
+  <button class="sec-btn"        onclick="showPanel('airead','ai-c5',this)">5 · Naming</button>
+  <button class="sec-btn"        onclick="showPanel('airead','ai-c6',this)">6 · Semantic</button>
+  <button class="sec-btn"        onclick="showPanel('airead','ai-c7',this)">7 · States</button>
+  <button class="sec-btn"        onclick="showPanel('airead','ai-c8',this)">8 · Handoff</button>
+</div>
+<div class="sec-nav" id="secnav-figma" style="display:none">
+  <button class="sec-btn active" onclick="showPanel('figma','fi-overview',this)">Übersicht</button>
+  <button class="sec-btn"        onclick="showPanel('figma','fi-validation',this)">Validierung WeSlam</button>
+  <button class="sec-btn"        onclick="showPanel('figma','fi-actions',this)">Konsequenzen</button>
+</div>
+
+<!-- ═══════════════════════════════════════
+     CONTENT AREA
+════════════════════════════════════════ -->
+<div class="content">
+
+  <!-- ── BLUEPRINT ── -->
+  <div id="doc-blueprint" class="doc active">
+    <div id="bp-overview" class="panel active">
+      <div class="hero-tag">
+    <span class="dot"></span>
+    Service Blueprint — Research Preview · Feb 2026
+  </div>
+
+  <h1>Dein Design System<br>spricht noch kein <span class="gradient-text">AI.</span></h1>
+
+  <p class="hero-sub">Schweizer Enterprises investieren Millionen in AI-Coding-Tools — aber ihr Design System wurde vor der KI-Ära gebaut. Wir machen das ready.</p>
+
+  <div class="hero-stats">
+    <div class="stat-card">
+      <span class="stat-number">62%</span>
+      <span class="stat-label">der Devs machen Design-Arbeit nochmal, weil KI falsch generiert</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-number">0</span>
+      <span class="stat-label">Schweizer Agenturen, die diesen Service heute anbieten</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-number">2025</span>
+      <span class="stat-label">Figma MCP + Code Connect als Game-Changer released</span>
+    </div>
+  </div>
+
+  <div class="verdict-box">
+    <h3>🎯 Service-Verdict</h3>
+    <p>
+      Der Service heisst: <strong>AI-Ready Design System Sprint.</strong><br><br>
+      WeSlam hilft Schweizer Enterprise-Teams, ihr bestehendes Design System so zu strukturieren und zu verbinden, dass AI-Coding-Tools (Cursor, Claude, Copilot) konsistenten, token-basierten Code generieren — statt Design-Chaos zu produzieren. Das ist eine weisse Fläche im Markt. Heute. Jetzt.
+    </p>
+  </div>
+
+  <div class="section-footer">
+    <span>WeSlam Service Blueprint · Confidential</span>
+    <span>Alle Daten aus öffentlichen Quellen — Feb 2026</span>
+  </div>
+    </div>
+    <div id="bp-service" class="panel">
+      <h2>Der <span class="gradient-text">Service.</span></h2>
+  <p class="section-sub">AI-Ready Design System Sprint — in drei klaren Phasen.</p>
+
+  <div class="verdict-box" style="margin-bottom: 40px;">
+    <h3>Service-Name (Vorschlag)</h3>
+    <p style="font-size: 22px; font-weight: 800; letter-spacing: -0.8px;">"AI-Ready Design System Sprint" <br><span style="font-size: 15px; font-weight: 400; color:#5C6B6A;">Von Legacy-System zur AI-Coding-Grundlage — in 6–8 Wochen.</span></p>
+  </div>
+
+  <div class="phase-container">
+
+    <div class="phase">
+      <div>
+        <div class="phase-number" style="background: rgba(255,74,28,0.15); border-color: rgba(255,74,28,0.4);">1</div>
+        <div class="phase-line"></div>
+      </div>
+      <div class="phase-content">
+        <div class="phase-duration">Phase 1 · 1–2 Wochen</div>
+        <h3>AI Readiness Audit</h3>
+        <p>Wir analysieren das bestehende Design System systematisch gegen einen klaren Kriterien-Katalog. Output: AI-Readiness-Score (0–100) + priorisierter Findings-Report.</p>
+        <div style="margin-top: 12px;">
+          <div class="evidence-item" style="padding: 10px 0;">
+            <div class="evidence-icon orange-bg" style="width: 28px; height: 28px; font-size: 13px;">🔍</div>
+            <div class="evidence-content"><h4 style="font-size: 13px;">Token-Struktur Analyse</h4><p>Sind Tokens W3C-konform? Semantisch? Konsistent benannt?</p></div>
+          </div>
+          <div class="evidence-item" style="padding: 10px 0;">
+            <div class="evidence-icon purple-bg" style="width: 28px; height: 28px; font-size: 13px;">🔍</div>
+            <div class="evidence-content"><h4 style="font-size: 13px;">Component-Library Audit</h4><p>Sind Props, States, Variants klar definiert? Figma ↔ Code-Naming konsistent?</p></div>
+          </div>
+          <div class="evidence-item" style="padding: 10px 0;">
+            <div class="evidence-icon green-bg" style="width: 28px; height: 28px; font-size: 13px;">🔍</div>
+            <div class="evidence-content"><h4 style="font-size: 13px;">Toolchain Assessment</h4><p>Figma Setup, Dev Mode, MCP-Bereitschaft, GitHub-Integration, CI/CD-Chain</p></div>
+          </div>
+        </div>
+        <div class="deliverable-list">
+          <span class="deliverable-chip">AI-Readiness-Score (0–100)</span>
+          <span class="deliverable-chip">Gap-Analysis Report</span>
+          <span class="deliverable-chip">Priorisierter Fix-Backlog</span>
+          <span class="deliverable-chip">ROI-Schätzung</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div>
+        <div class="phase-number" style="background: rgba(107,78,255,0.15); border-color: rgba(107,78,255,0.4);">2</div>
+        <div class="phase-line"></div>
+      </div>
+      <div class="phase-content">
+        <div class="phase-duration" style="color: #9B8AFF;">Phase 2 · 4–6 Wochen</div>
+        <h3>AI Readiness Sprint</h3>
+        <p>Gemeinsam mit dem Design-System-Team bauen wir die AI-Readiness ein. Fokus: grösste Hebel zuerst. Kein Big Bang — agiler Sprint-Ansatz mit wöchentlichen Deployments.</p>
+        <div style="margin-top: 12px;">
+          <div class="evidence-item" style="padding: 10px 0;">
+            <div class="evidence-icon purple-bg" style="width: 28px; height: 28px; font-size: 13px;">⚡</div>
+            <div class="evidence-content"><h4 style="font-size: 13px;">Token-Restrukturierung</h4><p>W3C-Standard, semantische Aliase, Export-Pipeline zu Codebase</p></div>
+          </div>
+          <div class="evidence-item" style="padding: 10px 0;">
+            <div class="evidence-icon purple-bg" style="width: 28px; height: 28px; font-size: 13px;">⚡</div>
+            <div class="evidence-content"><h4 style="font-size: 13px;">Code Connect Setup</h4><p>Mapping der Top-20 Komponenten zwischen Figma und Codebase</p></div>
+          </div>
+          <div class="evidence-item" style="padding: 10px 0;">
+            <div class="evidence-icon purple-bg" style="width: 28px; height: 28px; font-size: 13px;">⚡</div>
+            <div class="evidence-content"><h4 style="font-size: 13px;">MCP Server + AI Rules</h4><p>Figma MCP konfigurieren, AI-Agent-Guidelines schreiben, Component Rules definieren</p></div>
+          </div>
+          <div class="evidence-item" style="padding: 10px 0;">
+            <div class="evidence-icon purple-bg" style="width: 28px; height: 28px; font-size: 13px;">⚡</div>
+            <div class="evidence-content"><h4 style="font-size: 13px;">Developer Enablement</h4><p>Dokumentation, Workflows, Best Practices für AI-Coding mit eurem Design System</p></div>
+          </div>
+        </div>
+        <div class="deliverable-list">
+          <span class="deliverable-chip">Restrukturiertes Token-Set</span>
+          <span class="deliverable-chip">Code Connect für Top-20 Components</span>
+          <span class="deliverable-chip">MCP Config + AI Rules File</span>
+          <span class="deliverable-chip">Developer Playbook</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div>
+        <div class="phase-number" style="background: rgba(0,194,124,0.15); border-color: rgba(0,194,124,0.4);">3</div>
+      </div>
+      <div class="phase-content">
+        <div class="phase-duration" style="color: #00C27C;">Phase 3 · Optional / Ongoing</div>
+        <h3>AI Governance &amp; Scale</h3>
+        <p>Nach dem Sprint: Sicherstellen, dass das Design System AI-ready bleibt während es wächst. Monatliches Health-Monitoring, Component-Erweiterung, Team-Coaching.</p>
+        <div class="deliverable-list">
+          <span class="deliverable-chip">Monatlicher AI-Readiness Health Check</span>
+          <span class="deliverable-chip">Component-Erweiterung (laufend)</span>
+          <span class="deliverable-chip">Team-Coaching (Design &amp; Dev)</span>
+          <span class="deliverable-chip">Toolchain Updates</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="card" style="border-color: rgba(0,194,124,0.3);">
+    <div class="card-tag">WeSlam Differenzierung</div>
+    <h3>Warum ist das WeSlam-DNA?</h3>
+    <p>Design Systems sind UX-Arbeit, nicht nur Dev-Arbeit. WeSlam ist UX-first — der einzige Anbieter in der Schweiz mit UX-Expertise + GenAI-Know-how + Swiss Enterprise Track Record. Grosse Consultancies (EY, PwC) denken in AI-Strategy — WeSlam denkt in Product Velocity.</p>
+  </div>
+    </div>
+    <div id="bp-pricing" class="panel">
+      <h2>Pricing <span class="gradient-text">&amp; Packaging.</span></h2>
+  <p class="section-sub">Drei klare Einstiegspunkte — skalierbar mit dem Kunden.</p>
+
+  <div class="pricing-grid">
+    <div class="price-card">
+      <div class="price-name">Quickcheck</div>
+      <div class="price-amount">CHF 0</div>
+      <div class="price-desc">Kostenloser Einstieg / Lead-Gen</div>
+      <ul class="price-features">
+        <li>90-Min Workshop mit Design-System-Team</li>
+        <li>AI-Readiness-Score (Top-5 Kriterien)</li>
+        <li>3 priorisierte Empfehlungen</li>
+        <li>Output: 2-Pager Summary</li>
+      </ul>
+    </div>
+
+    <div class="price-card featured">
+      <div class="price-name">Audit Sprint</div>
+      <div class="price-amount">CHF 15–25k</div>
+      <div class="price-desc">2 Wochen · Vollständiger Audit</div>
+      <ul class="price-features">
+        <li>Vollständige AI-Readiness-Analyse (8 Kriterien)</li>
+        <li>Score + detaillierter Gap-Report</li>
+        <li>Priorisierter Fix-Backlog mit ROI-Schätzung</li>
+        <li>Stakeholder-Präsentation (C-Level)</li>
+        <li>Sprint-Planung für Phase 2</li>
+      </ul>
+    </div>
+
+    <div class="price-card">
+      <div class="price-name">Full Sprint</div>
+      <div class="price-amount">CHF 40–80k</div>
+      <div class="price-desc">6–8 Wochen · Vollständige Umsetzung</div>
+      <ul class="price-features">
+        <li>Alles aus Audit Sprint</li>
+        <li>Token-Restrukturierung (W3C)</li>
+        <li>Code Connect: Top-20 Components</li>
+        <li>MCP Server Config + AI Rules</li>
+        <li>Developer Playbook + Enablement</li>
+        <li>4 Wochen Post-Sprint Support</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top: 16px; border-color: rgba(0,194,124,0.3);">
+    <div class="card-tag">Retainer (Optional)</div>
+    <h3>AI Governance Retainer — CHF 6–12k/Monat</h3>
+    <p>Für Kunden, die das Design System kontinuierlich AI-ready halten wollen: Monthly Health Checks, Component-Erweiterung (laufend), AI-Tool Updates, Team-Coaching. Skaliert mit Anzahl Komponenten und Team-Grösse.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="highlight-row">
+    <div class="highlight-item">
+      <div class="big" style="color: var(--accent);">CHF 80k</div>
+      <div class="small">Durchschnittliches Deal-Volumen (Audit + Sprint)</div>
+    </div>
+    <div class="highlight-item">
+      <div class="big" style="color: var(--yellow);">3–5</div>
+      <div class="small">Deals/Jahr für signifikanten Revenue Impact</div>
+    </div>
+    <div class="highlight-item">
+      <div class="big" style="color: var(--green);">10x</div>
+      <div class="small">ROI für Kunden (eingesparte Dev-Rework-Zeit)</div>
+    </div>
+  </div>
+    </div>
+    <div id="bp-validation" class="panel">
+      <h2>Nächste Schritte zur <span class="gradient-text">Validierung.</span></h2>
+  <p class="section-sub">Wie WeSlam diese Hypothese mit echten Signalen validiert — bevor gross investiert wird.</p>
+
+  <div class="alert">
+    <span class="alert-icon">🧪</span>
+    <p><strong>Validation Strategie:</strong> Keine Infrastruktur aufbauen, bevor der Markt signalisiert. 3 schnelle Experimente in 6 Wochen, die echte Zahlungsbereitschaft und Marktfit prüfen.</p>
+  </div>
+
+  <div class="exp-card">
+    <div class="exp-num">01</div>
+    <div class="exp-content">
+      <h3>Kostenloser AI-Readiness-Quickcheck — 5 Kunden</h3>
+      <p>WeSlam bietet 5 bestehenden oder Pipeline-Kunden einen kostenlosen 90-Min AI-Readiness-Quickcheck an. Ziel: Pain validieren, Score zeigen, Interesse an Folgeauftrag messen. Erfolg = 3 von 5 wollen weiterreden.</p>
+      <div class="exp-tags">
+        <span class="badge badge-yellow">Woche 1–3</span>
+        <span class="badge badge-green">Cost: 0 CHF</span>
+        <span class="badge badge-purple">Signal: Pain-Intensität</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="exp-card">
+    <div class="exp-num">02</div>
+    <div class="exp-content">
+      <h3>LinkedIn Content-Experiment: "Ist euer Design System AI-ready?"</h3>
+      <p>3–5 LinkedIn-Posts über das Thema: Konkrete Daten (62% Rework), Score-Konzept zeigen, Frage stellen "Wie AI-ready ist euer System?" Ziel: 50+ Engagements, 5+ Kommentare von Enterprise-Targets.</p>
+      <div class="exp-tags">
+        <span class="badge badge-yellow">Woche 2–4</span>
+        <span class="badge badge-green">Cost: 0 CHF</span>
+        <span class="badge badge-purple">Signal: Markt-Resonanz</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="exp-card">
+    <div class="exp-num">03</div>
+    <div class="exp-content">
+      <h3>Paid Pilot: Erster Audit-Sprint für CHF 15k</h3>
+      <p>Einen der Quickcheck-Kunden zu einem bezahlten 2-Wochen-Audit konvertieren. Ziel ist nicht maximaler Umsatz, sondern: Methode validieren, Deliverables schärfen, Case Study aufbauen. Erfolg = Kunde zufrieden + bereit für Phase 2.</p>
+      <div class="exp-tags">
+        <span class="badge badge-yellow">Woche 4–8</span>
+        <span class="badge badge-red">Revenue: CHF 15k</span>
+        <span class="badge badge-purple">Signal: Zahlungsbereitschaft</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="exp-card">
+    <div class="exp-num">04</div>
+    <div class="exp-content">
+      <h3>Talk / Workshop: Swiss Design System Meetup oder UX Camp CH</h3>
+      <p>"Making Your Design System AI-Coding Ready" als Talk-Thema einreichen. Direkter Zugang zu 50–200 Design-System-Professionals in der Schweiz. Ziel: 10+ direkte Gespräche, 3+ qualifizierte Leads.</p>
+      <div class="exp-tags">
+        <span class="badge badge-yellow">Woche 3–6</span>
+        <span class="badge badge-green">Cost: Zeit</span>
+        <span class="badge badge-purple">Signal: Community Fit</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 16px; letter-spacing: -0.5px;">Erfolgs-Kriterien nach 8 Wochen</h3>
+
+  <div class="grid-2">
+    <div class="card" style="border-color: rgba(0,194,124,0.3);">
+      <div class="card-tag" style="color: var(--green);">✅ GO Signal</div>
+      <h3>Service launchen wenn...</h3>
+      <ul class="price-features" style="list-style: none;">
+        <li style="display: flex; gap: 8px; padding: 8px 0; border-bottom: 1px solid #1A1A1A; font-size: 13px; color:#5C6B6A;">
+          <span style="color: var(--green);">→</span> 3+ bezahlte Audit-Anfragen in Pipeline
+        </li>
+        <li style="display: flex; gap: 8px; padding: 8px 0; border-bottom: 1px solid #1A1A1A; font-size: 13px; color:#5C6B6A;">
+          <span style="color: var(--green);">→</span> Erster Pilot erfolgreich &amp; Case Study fertig
+        </li>
+        <li style="display: flex; gap: 8px; padding: 8px 0; font-size: 13px; color:#5C6B6A;">
+          <span style="color: var(--green);">→</span> LinkedIn-Content erzeugt qualifizierte Inbounds
+        </li>
+      </ul>
+    </div>
+    <div class="card" style="border-color: rgba(255,74,28,0.3);">
+      <div class="card-tag">🔄 Pivot wenn...</div>
+      <h3>Service anpassen wenn...</h3>
+      <ul class="price-features" style="list-style: none;">
+        <li style="display: flex; gap: 8px; padding: 8px 0; border-bottom: 1px solid #1A1A1A; font-size: 13px; color:#5C6B6A;">
+          <span style="color: var(--accent);">→</span> Pain vorhanden, aber Buying Center ist Dev (nicht Design)
+        </li>
+        <li style="display: flex; gap: 8px; padding: 8px 0; border-bottom: 1px solid #1A1A1A; font-size: 13px; color:#5C6B6A;">
+          <span style="color: var(--accent);">→</span> Kunden wollen Tool-Empfehlung, kein Consulting
+        </li>
+        <li style="display: flex; gap: 8px; padding: 8px 0; font-size: 13px; color:#5C6B6A;">
+          <span style="color: var(--accent);">→</span> Budget sitzt auf AI-Budget, nicht Design-Budget
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="verdict-box" style="margin-top: 32px;">
+    <h3>🚀 Empfehlung</h3>
+    <p>
+      <strong>Jetzt starten.</strong> Die Infrastruktur (Figma MCP, Code Connect) ist neu genug, dass der Markt noch nicht gesättigt ist. Das Timing ist ideal. WeSlam hat alle Voraussetzungen: UX-DNA, GenAI-Expertise, Swiss Enterprise Relationships. <br><br>
+      Erster Schritt: Quickcheck-Angebot an 3 bestehende Kunden (Swisscom, Migros, Homegate) schicken. Heute.
+    </p>
+  </div>
+
+  <div class="section-footer">
+    <span>WeSlam Service Blueprint · Feb 2026</span>
+    <span>Research: Figma Blog, VentureBeat, UXPin, Figma Dev Docs</span>
+  </div>
+    </div>
+  </div>
+
+  <!-- ── TIEFENANALYSE ── -->
+  <div id="doc-analyse" class="doc">
+    <div id="ta-tools" class="panel active">
+      <div class="wrap">
+  <span class="sup mt24" style="display:block;padding-top:24px">Tool-Landschaft 2026</span>
+  <h2>Was existiert<br><span class="grad">bereits?</span></h2>
+  <p class="muted mt8 mb32" style="max-width:520px">Alle Tools, die heute im Markt sind — ehrlich bewertet. Bevor WeSlam etwas baut, muss klar sein: was ist bereits gelöst?</p>
+
+  <div class="subtabs">
+    <button class="stab on" onclick="subtab('cat1',this,'tools-tabs')">Kategorie: Documentation</button>
+    <button class="stab" onclick="subtab('cat2',this,'tools-tabs')">Kategorie: Analytics</button>
+    <button class="stab" onclick="subtab('cat3',this,'tools-tabs')">Kategorie: Token/CI</button>
+    <button class="stab" onclick="subtab('cat4',this,'tools-tabs')">Kategorie: Code Connect</button>
+  </div>
+
+  <!-- CAT 1: Documentation -->
+  <div id="cat1" class="stab-pane on" data-group="tools-tabs">
+    <div class="alert info mb16">
+      <div class="alert-ico">🏆</div>
+      <div class="alert-body">
+        <h4>Haupt-Gefahr: Supernova</h4>
+        <p>Supernova ist der gefährlichste Konkurrent für ein WeSlam-Tool. $9.2M Series A (Sept 2025), "Portal"-Feature mit Ask AI, PRD-Generierung, direkter Push zu Cursor/VS Code. Sie positionieren sich genau auf "AI-Ready Design System Platform".</p>
+      </div>
+    </div>
+    <div class="g2">
+      <div class="tool-card">
+        <div class="tool-header">
+          <div class="tool-name">Supernova.io</div>
+          <span class="b b-r">DIREKTE KONKURRENZ</span>
+        </div>
+        <div class="tool-body">
+          AI-powered Design System Documentation Platform. "Ask AI" über das Design System, PRD-Generierung aus Prototypen, Push zu Cursor/VS Code. Unified Search über Figma-Komponenten, Storybook Stories und Design Tokens.
+          <br><br>
+          <strong style="color:#FF5E54">Was das für WeSlam bedeutet:</strong> Ein SaaS-Tool in diesem Space konkurriert direkt mit Supernova. Die haben Geld, Speed und einen Vorsprung.
+        </div>
+        <div class="tool-tags">
+          <span class="tool-tag">$9.2M Series A</span>
+          <span class="tool-tag">Ask AI</span>
+          <span class="tool-tag">Cursor Integration</span>
+          <span class="tool-tag">PRD Generation</span>
+          <span class="tool-tag">Sept 2025</span>
+        </div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-header">
+          <div class="tool-name">ZeroHeight</div>
+          <span class="b b-y">TEILWEISE KONKURRENZ</span>
+        </div>
+        <div class="tool-body">
+          Design System Documentation Hub. Fokus auf Dokumentation und Guidelines, keine AI-Coding-Integration. Gut für das "Was ist diese Komponente" — nicht für "wie nutzt AI sie richtig".
+        </div>
+        <div class="tool-tags">
+          <span class="tool-tag">Dokumentation</span>
+          <span class="tool-tag">Style Guides</span>
+          <span class="tool-tag">Kein AI Focus</span>
+        </div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-header">
+          <div class="tool-name">Knapsack</div>
+          <span class="b b-gr">RANDFIGUR</span>
+        </div>
+        <div class="tool-body">
+          Design System Management mit Cross-Framework Component Testing. Enterprise-fokussiert, teuer, kleines Team. Kein AI-Coding-Fokus.
+        </div>
+        <div class="tool-tags"><span class="tool-tag">Cross-Framework</span><span class="tool-tag">Testing</span></div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-header">
+          <div class="tool-name">Storybook</div>
+          <span class="b b-gr">INFRA-LAYER</span>
+        </div>
+        <div class="tool-body">
+          De-facto Standard für Component Documentation und Visual Testing. Kein AI-Readiness-Fokus. Wird von Code Connect als Source genutzt, aber löst das Problem nicht.
+        </div>
+        <div class="tool-tags"><span class="tool-tag">Open Source</span><span class="tool-tag">Visual Testing</span><span class="tool-tag">Industrie-Standard</span></div>
+      </div>
+    </div>
+
+    <div class="alert warn mt16">
+      <div class="alert-ico">💡</div>
+      <div class="alert-body">
+        <h4>Was Supernova NICHT löst</h4>
+        <p>Supernova löst das "Documentation & Discovery"-Problem. Sie lösen NICHT: CI/CD-seitige Drift-Detection, Multi-Framework-Konsistenz-Audits, oder On-Premise-taugliche Lösungen für regulierte Schweizer Unternehmen (Banken, Telcos). Das sind die Lücken.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CAT 2: Analytics -->
+  <div id="cat2" class="stab-pane" data-group="tools-tabs">
+    <div class="g2">
+      <div class="tool-card">
+        <div class="tool-header">
+          <div class="tool-name">Luro</div>
+          <span class="b b-y">BESTEHT, LÜCKEN</span>
+        </div>
+        <div class="tool-body">
+          No-code Component Adoption Tracking. Verbindet Figma + Storybook, crawlt Live-Produkte. Misst Adoption-Rate, erkennt Legacy-Komponenten, zeigt Design-Debt.
+          <br><br>
+          <strong style="color:#FFB800">Lücke:</strong> Luro misst "wird die Komponente benutzt?" — nicht "wird sie korrekt von AI-Tools generiert?" Zwei verschiedene Fragen.
+        </div>
+        <div class="tool-tags"><span class="tool-tag">Component Tracking</span><span class="tool-tag">Adoption Analytics</span><span class="tool-tag">No-Code</span></div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-header">
+          <div class="tool-name">Figma Library Analytics</div>
+          <span class="b b-y">NATIVE, LIMITIERT</span>
+        </div>
+        <div class="tool-body">
+          Native Figma Feature (Feb 2025 Update) für Org/Enterprise-Pläne. Zeigt Styles, Variables, Component-Nutzung. Nur innerhalb Figma — kein Einblick in was AI-Coding-Tools tatsächlich generieren.
+        </div>
+        <div class="tool-tags"><span class="tool-tag">Figma Native</span><span class="tool-tag">Org/Enterprise only</span><span class="tool-tag">Kein Code-Monitoring</span></div>
+      </div>
+    </div>
+
+    <div class="card mt16">
+      <span class="sup">Echte Lücke — Analytics</span>
+      <h3>Niemand misst "AI-generated Code vs. Design System"</h3>
+      <p class="muted mt8 small">Luro und Figma Analytics messen, ob <em>Menschen</em> die Komponenten benutzen. Aber: Wenn Cursor oder Copilot Code generiert, der am Design System vorbeischiesst — das sieht heute kein Tool. Das ist eine echte, ungelöste Frage.</p>
+    </div>
+  </div>
+
+  <!-- CAT 3: Token/CI -->
+  <div id="cat3" class="stab-pane" data-group="tools-tabs">
+    <div class="g2">
+      <div class="tool-card">
+        <div class="tool-header">
+          <div class="tool-name">Tokens Studio</div>
+          <span class="b b-g">GUT, NICHT KOMPLETT</span>
+        </div>
+        <div class="tool-body">
+          Figma Plugin + Studio Platform. 23+ Token-Typen, GitHub-Integration, Multi-Tool Export. W3C-Standard-Export, bidirektionale Sync. Industrie-Standard für Token-Management.
+          <br><br>
+          <strong style="color:#00C27C">Status:</strong> Löst Token-Management gut. Löst nicht: Audit "wie AI-ready ist mein bestehendes Token-Set?"
+        </div>
+        <div class="tool-tags"><span class="tool-tag">Industrie-Standard</span><span class="tool-tag">GitHub Sync</span><span class="tool-tag">W3C Export</span></div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-header">
+          <div class="tool-name">Style Dictionary</div>
+          <span class="b b-g">INFRA-STANDARD</span>
+        </div>
+        <div class="tool-body">
+          Amazon Open Source Tool. Transformiert JSON Tokens in CSS/iOS/Android/etc. De-facto Standard für Token-Pipelines. Kein AI-spezifisches Feature.
+        </div>
+        <div class="tool-tags"><span class="tool-tag">Open Source</span><span class="tool-tag">Token Transformation</span><span class="tool-tag">CI/CD</span></div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-header">
+          <div class="tool-name">Figma Check Designs</div>
+          <span class="b b-y">NEU, BEGRENZT</span>
+        </div>
+        <div class="tool-body">
+          Oktober 2025 Feature. Flagged Variable-Missbrauch und Design-Inkonsistenzen in Figma. Nur Figma-seitig — kein Code-Monitoring.
+        </div>
+        <div class="tool-tags"><span class="tool-tag">Oktober 2025</span><span class="tool-tag">Figma Only</span><span class="tool-tag">Variable Linting</span></div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-header">
+          <div class="tool-name">Salesforce DS Linter</div>
+          <span class="b b-gr">SEHR SPEZIFISCH</span>
+        </div>
+        <div class="tool-body">
+          GitHub Action von Salesforce für das Lightning Design System. Extrem spezifisch für ihre eigenen Komponenten. Zeigt aber: Das Konzept "Design System CI-Linter" existiert — aber keine generische Lösung.
+        </div>
+        <div class="tool-tags"><span class="tool-tag">GitHub Action</span><span class="tool-tag">Salesforce Specific</span><span class="tool-tag">Proof of Concept</span></div>
+      </div>
+    </div>
+
+    <div class="card green mt16">
+      <span class="sup">Echte Lücke — CI/CD</span>
+      <h3>Kein generischer "Design System CI-Linter" für Enterprise</h3>
+      <p class="muted mt8 small">Salesforce hat für ihr eigenes System einen GitHub Action gebaut. Aber kein allgemeines Open-Source-Tool existiert, das auf jedem PR prüft: "Hat der AI-generierte Code die richtigen Tokens benutzt?" Das ist eine echte, adressierbare Lücke — mit moderatem Bauaufwand.</p>
+    </div>
+  </div>
+
+  <!-- CAT 4: Code Connect -->
+  <div id="cat4" class="stab-pane" data-group="tools-tabs">
+    <div class="g2">
+      <div class="tool-card">
+        <div class="tool-header">
+          <div class="tool-name">Figma Code Connect CLI</div>
+          <span class="b b-y">TEILWEISE LÖSUNG</span>
+        </div>
+        <div class="tool-body">
+          Hat einen eingebauten "AI Mapping Tool" (benötigt Figma AI Add-on). Setup-Wizard, interaktive CLI. Verbindet Figma-Komponenten mit React/Angular/Vue/Swift/Compose.
+          <br><br>
+          <strong style="color:#FFB800">Problem:</strong> Nur für Figma AI-Kunden. Manual mapping für hunderte Komponenten ist trotzdem zeitintensiv. Kein Audit "was fehlt noch?"
+        </div>
+        <div class="tool-tags"><span class="tool-tag">Requires Figma AI</span><span class="tool-tag">Manual Process</span><span class="tool-tag">Org/Enterprise only</span></div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-header">
+          <div class="tool-name">Code Connect UI (Figma)</div>
+          <span class="b b-y">ROLLOUT 2025</span>
+        </div>
+        <div class="tool-body">
+          Visuelles Interface innerhalb Figma, GitHub-Integration. "Automated Mapping" als geplantes Feature. Noch in Rollout — nicht alle Enterprise-Teams nutzen es.
+          <br><br>
+          <strong style="color:#FFB800">Problem:</strong> "Automated Mapping" ist angekündigt aber noch nicht GA. Hier ist WeSlams Timing-Fenster.
+        </div>
+        <div class="tool-tags"><span class="tool-tag">In Rollout</span><span class="tool-tag">Automated Mapping geplant</span><span class="tool-tag">WeSlam Fenster</span></div>
+      </div>
+    </div>
+
+    <div class="card yellow mt16">
+      <span class="sup">Timing-Fenster</span>
+      <h3>Code Connect ist da — aber Enterprise-Adoption ist bei ~5%</h3>
+      <p class="muted mt8 small">Das Tool existiert. Aber die meisten Swiss Enterprise Teams haben es noch nicht implementiert — weil es komplex ist, weil niemand die Kapazität hat, und weil "Automated Mapping" noch nicht fertig ist. Das Implementierungs-Know-how ist WeSlams Kernwert für die nächsten 18–24 Monate.</p>
+    </div>
+  </div>
+
+</div>
+    </div>
+    <div id="ta-buildvsbuy" class="panel">
+      <div class="wrap">
+  <span class="sup mt24" style="display:block;padding-top:24px">Entscheidungsrahmen</span>
+  <h2>Build, Buy<br><span class="grad">oder Consulting?</span></h2>
+  <p class="muted mt8 mb32" style="max-width:540px">Eine ehrliche Bewertung: Was sollte WeSlam selbst bauen, was integrieren, und wo ist reines Consulting der überlegene Ansatz?</p>
+
+  <div style="background:var(--gray-100);border:1px solid #B8DEDA;border-radius:12px;overflow:hidden;margin-bottom:24px">
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>Ansatz</th>
+          <th>Was es bedeutet</th>
+          <th>Vorteil</th>
+          <th>Risiko</th>
+          <th>Empfehlung</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="name">SaaS-Produkt bauen</td>
+          <td>Vollständiges Tool, Cloud, Abo-Modell</td>
+          <td>Recurring Revenue, Skalierung</td>
+          <td>Direkte Konkurrenz zu Supernova. Braucht CHF 200k+ Investment + Maintenance</td>
+          <td><span class="b b-r">NICHT JETZT</span></td>
+        </tr>
+        <tr>
+          <td class="name">Open-Source GitHub Action</td>
+          <td>CI/CD Drift-Detector, frei verfügbar</td>
+          <td>Community, Lead Gen, Reputation. Niedriges Investment</td>
+          <td>Kein direkter Umsatz. Wartungsaufwand</td>
+          <td><span class="b b-g">BAUEN — 2026</span></td>
+        </tr>
+        <tr>
+          <td class="name">Audit-Framework / Methodik</td>
+          <td>Standardisiertes Consulting-Playbook</td>
+          <td>Sofort Umsatz. Nicht kopierbar ohne Erfahrung</td>
+          <td>Skaliert nur mit Personal</td>
+          <td><span class="b b-g">SOFORT ENTWICKELN</span></td>
+        </tr>
+        <tr>
+          <td class="name">Supernova als Partner</td>
+          <td>WeSlam wird Supernova-Implementierungspartner</td>
+          <td>Schnell zum Markt. Keine Toolentwicklung</td>
+          <td>WeSlam wird zur Commodity (jeder kann Partner sein)</td>
+          <td><span class="b b-y">OPTION B</span></td>
+        </tr>
+        <tr class="hl">
+          <td class="name">Hybrid: Consulting + Open Source</td>
+          <td>Audit-Framework + GitHub Action als Lead-Gen</td>
+          <td>Bestes aus beiden Welten. Aufbau Expertise UND Community</td>
+          <td>Ressourcen auf zwei Dinge verteilt</td>
+          <td><span class="b b-g">EMPFOHLEN</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="mb16">Warum Hybrid der richtige Weg ist</h3>
+
+  <div class="phase-wrap">
+    <div class="phase-row">
+      <div class="phase-left">
+        <div class="phase-num" style="background:rgba(255,74,28,0.15);border-color:rgba(255,74,28,0.4)">1</div>
+        <div class="phase-line"></div>
+      </div>
+      <div class="phase-content">
+        <div class="phase-meta" style="color:var(--accent)">Jetzt — Monate 1–3</div>
+        <h3 class="mb8">Consulting First: 3–5 Pilot-Audits</h3>
+        <p class="muted small">Bevor WeSlam irgendetwas baut: Manuelle Audits bei 3–5 Unternehmen durchführen. Das Audit-Framework entsteht durch echte Arbeit — nicht durch Theorie. Outcome: CHF 60–120k Umsatz + Erkenntnis was wirklich weh tut.</p>
+        <div class="alert success mt12">
+          <div class="alert-ico">💡</div>
+          <div class="alert-body">
+            <h4>Warum erst Consulting, dann Tool?</h4>
+            <p>Die repetitivste, schmerzhafteste Arbeit in den manuellen Audits = der Kandidat für Toolification. Ohne die Consulting-Erfahrung baut man das falsche Tool.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase-row">
+      <div class="phase-left">
+        <div class="phase-num" style="background:rgba(0,194,124,0.15);border-color:rgba(0,194,124,0.4)">2</div>
+        <div class="phase-line"></div>
+      </div>
+      <div class="phase-content">
+        <div class="phase-meta" style="color:var(--green)">Parallel — Monate 2–4</div>
+        <h3 class="mb8">Open Source: Design System Drift Detector</h3>
+        <p class="muted small">Einen internen GitHub Action bauen der im Consulting genutzt wird. Wenn er funktioniert: Open Source auf GitHub. Ziel: Community-Aufbau, Thought Leadership, Inbound-Leads. Das Tool kostet CHF 20–30k zu bauen — und zahlt sich durch 3–5 Enterprise-Inbounds zurück.</p>
+        <div class="card mt12 small">
+          <strong class="hi">Was der Drift Detector macht:</strong><br>
+          <span class="muted">Auf jedem PR: scannt neuen Code auf hardcoded Farben/Spacings, überprüft gegen Token-Map des Design Systems, flagged Abweichungen als GitHub-Check. Konfigurierbar pro Framework (React/Angular/Vue).</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase-row">
+      <div class="phase-left">
+        <div class="phase-num" style="background:rgba(107,78,255,0.15);border-color:rgba(107,78,255,0.4)">3</div>
+      </div>
+      <div class="phase-content">
+        <div class="phase-meta" style="color:#9B8AFF">Monat 6+</div>
+        <h3 class="mb8">Entscheidung: SaaS oder nicht?</h3>
+        <p class="muted small">Nach 6 Monaten Consulting + Open Source: Datenbasierte Entscheidung ob der Drift-Detector als SaaS-Produkt skaliert werden soll. Kriterien: Anzahl GitHub Stars, Inbound-Leads, was Kunden bereit wären zu zahlen.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="hr"></div>
+
+  <div class="alert danger">
+    <div class="alert-ico">🚫</div>
+    <div class="alert-body">
+      <h4>Was WeSlam NICHT tun sollte</h4>
+      <p>Ein vollständiges SaaS-Produkt á la Supernova bauen. Das kostet CHF 200–400k, dauert 12+ Monate und tritt gegen ein gut-finanziertes Team mit Vorsprung an. Die Energie geht besser in Consulting-Tiefe und einen fokussierten Open-Source-Beitrag.</p>
+    </div>
+  </div>
+</div>
+    </div>
+    <div id="ta-swiss" class="panel">
+      <div class="wrap">
+  <span class="sup mt24" style="display:block;padding-top:24px">Swiss Advantage — Kritische Analyse</span>
+  <h2>Wieso nicht<br><span class="grad">offshore?</span></h2>
+  <p class="muted mt8 mb24" style="max-width:540px">Der ehrlichste Teil dieser Analyse. Was ist wirklich verteidigbar, was ist nur Marketing? Und welche Argumente würde ein rationaler CFO akzeptieren?</p>
+
+  <div class="alert danger mb24">
+    <div class="alert-ico">🎯</div>
+    <div class="alert-body">
+      <h4>Challenge: Warum nicht eine günstigere Agentur aus Polen oder Indien?</h4>
+      <p>Technisch gesehen kann ein gut-organisiertes Remote-Team in Polen oder Indien denselben Code Connect Setup durchführen. Tokens Studio, Style Dictionary, Figma — alles Cloud, alles remote-tauglich. Die Arbeit ist ~90% async. Was ist also der echte Unterschied?</p>
+    </div>
+  </div>
+
+  <div class="subtabs">
+    <button class="stab on" onclick="subtab('sw1',this,'swiss-tabs')">Echte Vorteile</button>
+    <button class="stab" onclick="subtab('sw2',this,'swiss-tabs')">Schlechte Argumente</button>
+    <button class="stab" onclick="subtab('sw3',this,'swiss-tabs')">Die Entscheidenden</button>
+  </div>
+
+  <!-- Echte Vorteile -->
+  <div id="sw1" class="stab-pane on" data-group="swiss-tabs">
+    <div class="dec-item">
+      <div class="dec-dot g"></div>
+      <div class="dec-body">
+        <h4>🏆 Stärkstes Argument: Pre-Approved Vendor Status</h4>
+        <p>WeSlam ist bereits Lieferant bei Swisscom, Migros, Homegate und weiteren. Ein neuer Offshore-Anbieter muss durch den Vendor-Approval-Prozess grosser Schweizer Unternehmen — das dauert <strong style="color:#0A0A0A">6–18 Monate</strong>, kostet Zeit und ist risikobehaftet. WeSlam kann morgen ein Proposal schicken. Das ist kein Marketing-Argument — das ist harter Wettbewerbsvorteil.</p>
+      </div>
+    </div>
+    <div class="dec-item">
+      <div class="dec-dot g"></div>
+      <div class="dec-body">
+        <h4>🏆 nDSG / Datenschutz für strategisch sensible Systeme</h4>
+        <p>Ein Design System enthält mehr als nur Farben: Component-Architektur, Produkt-Roadmap (welche Features sind im Aufbau), Brand-Strategie, UX-Entscheidungen. Schweizer Unternehmen, insbesondere die FINMA-regulierten (Banken, Versicherungen), haben Legal-Teams die <strong style="color:#0A0A0A">externe Cloud-Zugänge auf Figma-Repos und Codebases kritisch prüfen</strong>. Eine Schweizer Firma unter CH-Recht ist ein 100x einfacherer Vendor-Review als ein Anbieter aus Indien oder Polen.</p>
+      </div>
+    </div>
+    <div class="dec-item">
+      <div class="dec-dot g"></div>
+      <div class="dec-body">
+        <h4>🏆 Physische Präsenz und Embedded Work</h4>
+        <p>Die besten Design System Migrations passieren eingebettet — 1–2 Tage pro Woche vor Ort beim Kunden. Change Management, Stakeholder-Alignment, Workshops. Das ist mit einem Remote-Team aus Polen möglich — aber deutlich schwieriger und teurer wenn man die Travel-Kosten einrechnet. WeSlam kann in Zürich oder Genf am Dienstag vor Ort sein.</p>
+      </div>
+    </div>
+    <div class="dec-item">
+      <div class="dec-dot g"></div>
+      <div class="dec-body">
+        <h4>✅ Sprache und Kontext</h4>
+        <p>Schweiz hat 4 Sprachregionen. Für viele Kunden (SBB, Swisscom, öffentliche Hand) ist Deutsch als Arbeitssprache entscheidend. Technische Dokumentation in Deutsch, Workshops auf Deutsch, Slack-Kommunikation auf Deutsch. Das klingt trivial — aber ein Offshore-Team, das alles auf Englisch liefert, schafft Reibung die akkumuliert.</p>
+      </div>
+    </div>
+    <div class="dec-item">
+      <div class="dec-dot g"></div>
+      <div class="dec-body">
+        <h4>✅ Bestehende Kundenbeziehungen = kein Sales-Funnel</h4>
+        <p>Für einen neuen Service bei einem bestehenden Kunden braucht es kein RFP, keinen langen Sales-Prozess, keine Referenzprüfung. WeSlam geht ins nächste Quarterly Review und pitcht einen neuen Service. Das ist unbezahlbar.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Schlechte Argumente -->
+  <div id="sw2" class="stab-pane" data-group="swiss-tabs">
+    <div class="dec-item">
+      <div class="dec-dot r"></div>
+      <div class="dec-body">
+        <h4>❌ "Schweizer Qualität"</h4>
+        <p>Generisches Marketing. Ein Offshore-Team aus Estland oder Polen kann genauso guten Code schreiben. "Swiss quality" ist kein Argument das einen rationalen Einkäufer überzeugt.</p>
+      </div>
+    </div>
+    <div class="dec-item">
+      <div class="dec-dot r"></div>
+      <div class="dec-body">
+        <h4>❌ "Wir verstehen die Schweizer Unternehmenskultur"</h4>
+        <p>Zu schwach. Viele internationale Agenturen arbeiten seit Jahren mit Schweizer Unternehmen. Kulturverständnis ist ein Soft-Argument, das ein Preisunterschied von 40% schnell überwältigt.</p>
+      </div>
+    </div>
+    <div class="dec-item">
+      <div class="dec-dot r"></div>
+      <div class="dec-body">
+        <h4>❌ "Gleiche Zeitzone"</h4>
+        <p>Westeuropa-Timezones sind nur 1–2 Stunden Unterschied. Minimal. Nicht überzeugend.</p>
+      </div>
+    </div>
+    <div class="dec-item">
+      <div class="dec-dot r"></div>
+      <div class="dec-body">
+        <h4>❌ "Die Arbeit ist zu komplex für Offshore"</h4>
+        <p>Stimmt nicht mehr. Design System Arbeit (Token-Restrukturierung, Code Connect Setup) ist handwerklich anspruchsvoll aber nicht magisch. Gut organisierte Offshore-Teams können das — für 30–50% weniger.</p>
+      </div>
+    </div>
+    <div class="dec-item">
+      <div class="dec-dot y"></div>
+      <div class="dec-body">
+        <h4>⚠️ "Gesetzliche Preferenz für Schweizer Anbieter"</h4>
+        <p>Halb-wahr. Im öffentlichen Sektor gibt es unter dem WTO GPA keine legale Preferenz für lokale Anbieter. Im privaten Sektor gibt es keine gesetzliche Regelung — aber FINMA und nDSG schaffen faktische Hürden für bestimmte Datenzugänge.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Entscheidende Faktoren -->
+  <div id="sw3" class="stab-pane" data-group="swiss-tabs">
+    <div class="card accent mt8">
+      <span class="sup">Der entscheidende Test</span>
+      <h3 class="mb12">Warum würde ein CFO/CTO WeSlam wählen statt 40% günstigere Offshore-Agentur?</h3>
+      <div class="dec-item" style="border-color:#B8DEDA">
+        <div class="dec-dot g"></div>
+        <div class="dec-body">
+          <h4>Weil sie bereits Vendor bei uns sind (kein 12-Monats-Onboarding)</h4>
+          <p>Dieser Faktor allein macht WeSlam für bestehende Kunden unschlagbar schnell.</p>
+        </div>
+      </div>
+      <div class="dec-item" style="border-color:#B8DEDA">
+        <div class="dec-dot g"></div>
+        <div class="dec-body">
+          <h4>Weil unser Legal-Team keinen 80-seitigen Offshore-Vendor-Vertrag prüfen muss</h4>
+          <p>Schweizer Recht, bekannte Vertragsstruktur, nDSG-konform by default. Für FINMA-regulierte Kunden ist das entscheidend.</p>
+        </div>
+      </div>
+      <div class="dec-item" style="border-color:#B8DEDA">
+        <div class="dec-dot g"></div>
+        <div class="dec-body">
+          <h4>Weil wir bereits die GenAI-Integration gemacht haben — der Service ist ein Upsell</h4>
+          <p>WeSlam kennt das Team, die Codebase, die Kultur. Kein Kontext-Aufbau nötig. Das ist ein massiver Effizienzgewinn.</p>
+        </div>
+      </div>
+      <div class="dec-item" style="border-color:#B8DEDA;border-bottom:none">
+        <div class="dec-dot g"></div>
+        <div class="dec-body">
+          <h4>Weil der letzte Offshore-Versuch 18 Monate verloren hat</h4>
+          <p>53% der Offshore-Projekte haben laut Zipdo 2025 Data Security Probleme, 54% scheitern an kulturellen/kommunikativen Hürden. Diese Geschichte ist in jedem grossen Schweizer Enterprise schon passiert. WeSlam ist die Anti-Risk-Wahl.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert warn mt16">
+      <div class="alert-ico">⚠️</div>
+      <div class="alert-body">
+        <h4>WeSlams blinder Fleck</h4>
+        <p>Für <em>neue</em> Kunden ohne bestehende Beziehung ist der Swiss Advantage deutlich schwächer. Dann ist das entscheidende Argument Expertise-Beweis (Case Studies, Referenzen) + schnellerer Start durch kein Offshore-Onboarding. WeSlam braucht deshalb 2–3 starke Swiss Enterprise Case Studies so schnell wie möglich.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+    </div>
+    <div id="ta-verdict" class="panel">
+      <div class="wrap" style="padding-top:32px">
+  <span class="sup" style="display:block;padding-top:24px">Finales Verdict</span>
+  <h2>Die ehrliche<br><span class="grad">Empfehlung.</span></h2>
+
+  <div class="verdict mt24">
+    <div class="label">Zur Tool-Frage</div>
+    <p>
+      <strong class="hi">Kein SaaS-Produkt bauen.</strong> Supernova hat $9.2M und einen Vorsprung. WeSlam sollte sich nicht in eine Tool-Konkurrenz begeben, die es nicht gewinnen kann.<br><br>
+      <strong class="hi">Stattdessen:</strong> Consulting als Kerngeschäft. Das Audit-Framework als interne Methodik die sich mit jedem Projekt verbessert. Und <em>parallel</em> einen schlanken Open-Source GitHub Action (Drift-Detector) der Expertise demonstriert und Leads generiert — ohne gegen Supernova zu konkurrieren, weil er downstream und developer-focused ist.
+    </p>
+  </div>
+
+  <div class="verdict mt16">
+    <div class="label">Zum Swiss Advantage</div>
+    <p>
+      <strong class="hi">Der echte Moat ist nicht "Schweizer Qualität"</strong> — das ist ein schlechtes Argument das jeder rationaler Käufer mit einem 40%-Preisunterschied überwältigen kann.<br><br>
+      Der echte Moat ist: <strong class="hi">Bestehende Vendor-Beziehungen, nDSG-Compliance by default, physische Embedded-Präsenz, und die Kombination von GenAI + Design + Dev</strong> die kein Offshore-Team schnell replizieren kann.<br><br>
+      Aber: Für neue Kunden ohne bestehende Beziehung ist dieser Vorteil schwächer. Deshalb ist der <strong class="hi">schnellste Weg zu 2–3 Marquee Case Studies</strong> (z.B. SBB, Swisscom) die wichtigste strategische Priorität.
+    </p>
+  </div>
+
+  <div class="hr"></div>
+
+  <h3 class="mb16">Priorisierte Aktionen</h3>
+
+  <div class="phase-wrap">
+    <div class="phase-row">
+      <div class="phase-left">
+        <div class="phase-num" style="background:rgba(255,74,28,0.15);border-color:rgba(255,74,28,0.4)">1</div>
+        <div class="phase-line"></div>
+      </div>
+      <div class="phase-content">
+        <div class="phase-meta" style="color:var(--accent)">Diese Woche</div>
+        <h3>Quickcheck-Angebot an 3 bestehende Kunden</h3>
+        <p class="muted small mt6">Swisscom, Migros, Homegate — je ein persönliches Message: "Wir schauen kostenlos mit euch an, wie AI-ready euer Design System ist." Das validiert die Hypothese mit echten Signalen.</p>
+      </div>
+    </div>
+    <div class="phase-row">
+      <div class="phase-left">
+        <div class="phase-num" style="background:rgba(255,184,0,0.15);border-color:rgba(255,184,0,0.4)">2</div>
+        <div class="phase-line"></div>
+      </div>
+      <div class="phase-content">
+        <div class="phase-meta" style="color:var(--yellow)">Monat 1</div>
+        <h3>Buying Center klären</h3>
+        <p class="muted small mt6">In den Quickchecks aktiv herausfinden: Wer entscheidet? Wo sitzt das Budget? Head of Design, CTO, oder AI-Transformation-Budget? Das bestimmt den Pitch-Ansatz.</p>
+      </div>
+    </div>
+    <div class="phase-row">
+      <div class="phase-left">
+        <div class="phase-num" style="background:rgba(0,194,124,0.15);border-color:rgba(0,194,124,0.4)">3</div>
+        <div class="phase-line"></div>
+      </div>
+      <div class="phase-content">
+        <div class="phase-meta" style="color:var(--green)">Monate 1–3</div>
+        <h3>Ersten bezahlten Audit durchführen</h3>
+        <p class="muted small mt6">CHF 15–20k. Ziel ist nicht maximaler Umsatz — sondern das Audit-Framework schärfen und eine Case Study erstellen die als Sales-Tool dient.</p>
+      </div>
+    </div>
+    <div class="phase-row">
+      <div class="phase-left">
+        <div class="phase-num" style="background:rgba(107,78,255,0.15);border-color:rgba(107,78,255,0.4)">4</div>
+        <div class="phase-line"></div>
+      </div>
+      <div class="phase-content">
+        <div class="phase-meta" style="color:#9B8AFF">Monate 2–4 (Parallel)</div>
+        <h3>Drift-Detector GitHub Action bauen</h3>
+        <p class="muted small mt6">Intern für Consulting nutzen, dann open-sourcen. Schafft Community-Footprint ohne mit Supernova zu konkurrieren. Ziel: 100 GitHub Stars bis Ende 2026.</p>
+      </div>
+    </div>
+    <div class="phase-row">
+      <div class="phase-left">
+        <div class="phase-num" style="background:rgba(255,184,0,0.15);border-color:rgba(255,184,0,0.4)">5</div>
+      </div>
+      <div class="phase-content">
+        <div class="phase-meta" style="color:var(--yellow)">Monat 6</div>
+        <h3>Go/No-Go: Marquee Reference Client</h3>
+        <p class="muted small mt6">Nach 6 Monaten: Hat WeSlam einen Tier-1 Swiss Enterprise Client (SBB, Swisscom, UBS-Level)? Wenn ja → Service skalieren. Wenn nein → verstehen warum und adjustieren.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="hr"></div>
+
+  <div class="g3">
+    <div class="stat">
+      <span class="stat-n" style="color:var(--green)">2</span>
+      <span class="stat-l">Echte Tool-Lücken die WeSlam adressieren kann</span>
+    </div>
+    <div class="stat">
+      <span class="stat-n" style="color:var(--accent)">4</span>
+      <span class="stat-l">Verteidigbare Swiss-Advantage-Argumente</span>
+    </div>
+    <div class="stat">
+      <span class="stat-n" style="color:var(--yellow)">0</span>
+      <span class="stat-l">Gründe ein SaaS-Produkt <em>jetzt</em> zu bauen</span>
+    </div>
+  </div>
+
+  <div class="alert success mt24">
+    <div class="alert-ico">🚀</div>
+    <div class="alert-body">
+      <h4>Bottom Line</h4>
+      <p>WeSlam hat eine echte Chance — aber nicht durch ein Tool. Die Chance liegt in der einzigartigen Kombination aus bestehenden Beziehungen zu Swiss Enterprises, UX+GenAI+Dev-Kompetenz, und dem perfekten Timing (Figma MCP/Code Connect gerade ausgerollt, Supernova noch kein Schweizer Marktteilnehmer). Das Fenster ist offen — für 12–18 Monate.</p>
+    </div>
+  </div>
+
+  <div style="margin-top:48px;padding-top:20px;border-top:1px solid #B8DEDA;display:flex;justify-content:space-between;font-size:11px;color:#5C6B6A">
+    <span>WeSlam Deep Analysis V2 · Confidential · Feb 2026</span>
+    <span>Research: Supernova Blog, Figma Dev Docs, VentureBeat, Zipdo 2025, iclg.com/Switzerland</span>
+  </div>
+</div>
+    </div>
+  </div>
+
+  <!-- ── DRIFT DETECTOR ── -->
+  <div id="doc-drift" class="doc">
+    <div id="dr-overview" class="panel active">
+      <div class="hero">
+    <div class="hero-tag"><span class="dot"></span> Lean PRD v1.0</div>
+    <h1>Design System<br><span class="gradient-text">Drift Detector</span></h1>
+    <p class="hero-sub">
+      Ein Open-Source GitHub Action, der auf jedem Pull Request prüft ob AI-generierter Code die Design-System-Tokens korrekt nutzt — oder ob er Farben, Abstände und Komponenten hardcoded.
+    </p>
+
+    <div class="meta-grid">
+      <div class="meta-item">
+        <div class="meta-label">Produkt-Typ</div>
+        <div class="meta-value">Open Source GitHub Action</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Lizenz</div>
+        <div class="meta-value">MIT</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Ziel MVP</div>
+        <div class="meta-value">8 Wochen</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Budget</div>
+        <div class="meta-value">CHF 20–30k</div>
+      </div>
+    </div>
+
+    <div class="verdict-box">
+      <h3>Strategischer Zweck</h3>
+      <p>
+        Der Drift Detector ist <strong>kein SaaS-Produkt</strong> — er ist ein <strong>strategisches Marketing- und Lead-Generation-Tool</strong>.
+        Er demonstriert WeSlam's Expertise, baut Community auf, und generiert Enterprise-Inbounds für das Kerngeschäft: AI-Ready Design System Consulting.
+        Ziel: <strong>100 GitHub Stars bis Ende 2026</strong>, <strong>3–5 Enterprise-Leads</strong> aus der Community.
+      </p>
+    </div>
+  </div>
+    </div>
+    <div id="dr-problem" class="panel">
+      <h2>Das Problem</h2>
+  <p class="section-sub">Warum AI-Coding ohne Design-System-Guardrails scheitert</p>
+
+  <div class="card">
+    <div class="card-tag">Kern-Problem</div>
+    <h3>AI-generierter Code respektiert keine Design Systems</h3>
+    <p>
+      Wenn Cursor, Copilot oder Claude Code auf einem PR arbeitet, weiss heute niemand ob der generierte Code die Design-System-Tokens und Komponenten korrekt nutzt. Statt <code>var(--color-primary-500)</code> schreibt die AI <code>#3B82F6</code>. Statt <code>var(--spacing-4)</code> steht <code>16px</code>. Das passiert hundertfach am Tag.
+    </p>
+  </div>
+
+  <div class="g3 mt16">
+    <div class="stat-card">
+      <span class="stat-number" style="color:var(--red)">62%</span>
+      <span class="stat-label">der Entwickler berichten Rework wegen inkonsistentem AI-Code</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-number" style="color:var(--yellow)">20–30%</span>
+      <span class="stat-label">Produktivitätsgewinn durch AI-Coding — aber nur wenn Code konsistent bleibt</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-number" style="color:var(--green)">0</span>
+      <span class="stat-label">generische Open-Source-Tools die Design-System-Drift auf PRs prüfen</span>
+    </div>
+  </div>
+
+  <div class="alert alert-orange mt24">
+    <div class="alert-ico">🔥</div>
+    <div class="alert-body">
+      <h4>Die Drift-Kaskade</h4>
+      <p>Hardcoded Werte → Inkonsistente UI → Designer meldet Bug → Dev fixt manuell → Nächster AI-generierter PR wiederholt den Fehler → Design System wird ignoriert → Team fällt zurück auf manuelle Reviews. Der gesamte AI-Productivity-Gain geht verloren.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <h3 class="mt24 mb8">Warum existierende Tools das nicht lösen</h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Tool</th>
+        <th>Was es macht</th>
+        <th>Was fehlt</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>stylelint-declaration-strict-value</td>
+        <td>Prüft ob CSS Properties Variablen nutzen</td>
+        <td>Nur CSS. Kein JSX/TSX. Kennt keine Token-Map. Keine AI-spezifischen Patterns.</td>
+      </tr>
+      <tr>
+        <td>Carbon Stylelint Plugin</td>
+        <td>Enforces IBM Carbon Tokens</td>
+        <td>Nur für Carbon Design System. Nicht konfigurierbar für andere Token-Sets.</td>
+      </tr>
+      <tr>
+        <td>Atlassian ESLint Plugin</td>
+        <td>Enforces Atlassian Design Tokens</td>
+        <td>Nur für Atlassian. Erfordert @atlaskit Dependency.</td>
+      </tr>
+      <tr>
+        <td>MetaMask ESLint Plugin</td>
+        <td>Flagged Hex Colors in JS</td>
+        <td>Nur React Native / MetaMask spezifisch. Keine Token-Map Konfiguration.</td>
+      </tr>
+      <tr>
+        <td>Supernova.io</td>
+        <td>Design System Documentation + AI</td>
+        <td>SaaS-Plattform ($9.2M raised). Kein CI/CD-Level-Check. Kein PR-Level-Feedback.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="alert alert-green mt16">
+    <div class="alert-ico">✅</div>
+    <div class="alert-body">
+      <h4>Die Lücke</h4>
+      <p>Jedes existierende Tool ist entweder (a) an ein spezifisches Design System gebunden, (b) nur CSS, nicht JS/TSX, oder (c) keine CI/CD-Integration. <strong>Es gibt kein generisches, framework-agnostisches, token-map-konfigurierbares Open-Source-Tool das auf PR-Level Design-System-Compliance prüft.</strong></p>
+    </div>
+  </div>
+    </div>
+    <div id="dr-scope" class="panel">
+      <h2>MVP Scope</h2>
+  <p class="section-sub">Was rein kommt, was raus bleibt</p>
+
+  <div class="alert alert-purple">
+    <div class="alert-ico">🎯</div>
+    <div class="alert-body">
+      <h4>MVP-Prinzip</h4>
+      <p>Der MVP muss in 8 Wochen benutzbar sein und auf einem realen WeSlam-Kundenprojekt laufen. Alles was dieses Ziel nicht direkt unterstützt, ist Post-MVP.</p>
+    </div>
+  </div>
+
+  <h3 class="mt24 mb16">Feature-Matrix</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Feature</th>
+        <th>Beschreibung</th>
+        <th>Priorität</th>
+        <th>Phase</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Token-Map Import</td>
+        <td>W3C DTCG JSON + CSS Custom Properties + SCSS Variables als Token-Source</td>
+        <td><span class="prio-must">MUST</span></td>
+        <td>MVP</td>
+      </tr>
+      <tr>
+        <td>Color Detection</td>
+        <td>Hex (#fff, #3B82F6), rgb(), rgba(), hsl() in CSS, SCSS, JS, TSX erkennen</td>
+        <td><span class="prio-must">MUST</span></td>
+        <td>MVP</td>
+      </tr>
+      <tr>
+        <td>Spacing Detection</td>
+        <td>Hardcoded px/rem/em Werte für margin, padding, gap, etc. flaggen</td>
+        <td><span class="prio-must">MUST</span></td>
+        <td>MVP</td>
+      </tr>
+      <tr>
+        <td>GitHub PR Annotations</td>
+        <td>Inline-Kommentare auf den exakten Zeilen mit Token-Vorschlag</td>
+        <td><span class="prio-must">MUST</span></td>
+        <td>MVP</td>
+      </tr>
+      <tr>
+        <td>Summary Comment</td>
+        <td>PR-Kommentar mit Gesamt-Score, Violations-Breakdown, Token-Coverage</td>
+        <td><span class="prio-must">MUST</span></td>
+        <td>MVP</td>
+      </tr>
+      <tr>
+        <td>.driftrc.yml Config</td>
+        <td>YAML-Config für Token-Source-Path, Severity-Levels, Ignore-Patterns</td>
+        <td><span class="prio-must">MUST</span></td>
+        <td>MVP</td>
+      </tr>
+      <tr>
+        <td>React/Vue/Angular Support</td>
+        <td>Framework-spezifische Parser für JSX/TSX inline styles und styled-components</td>
+        <td><span class="prio-should">SHOULD</span></td>
+        <td>MVP</td>
+      </tr>
+      <tr>
+        <td>Tailwind Aware Mode</td>
+        <td>Erkennt willkürliche Tailwind-Werte wie <code>text-[#3B82F6]</code> oder <code>p-[17px]</code></td>
+        <td><span class="prio-should">SHOULD</span></td>
+        <td>MVP</td>
+      </tr>
+      <tr>
+        <td>Auto-Fix Suggestions</td>
+        <td>GitHub Suggestion-Format für 1:1 Token-Matches (Click-to-Apply)</td>
+        <td><span class="prio-should">SHOULD</span></td>
+        <td>MVP</td>
+      </tr>
+      <tr>
+        <td>Typography Detection</td>
+        <td>Font-size, font-weight, line-height Hardcodes erkennen</td>
+        <td><span class="prio-nice">NICE</span></td>
+        <td>Post-MVP</td>
+      </tr>
+      <tr>
+        <td>Trend Dashboard</td>
+        <td>Violations-over-time als GitHub Pages oder JSON-Export</td>
+        <td><span class="prio-nice">NICE</span></td>
+        <td>Post-MVP</td>
+      </tr>
+      <tr>
+        <td>GitLab CI Support</td>
+        <td>GitLab CI/CD Integration neben GitHub Actions</td>
+        <td><span class="prio-nice">NICE</span></td>
+        <td>Post-MVP</td>
+      </tr>
+      <tr>
+        <td>Figma MCP Integration</td>
+        <td>Token-Map direkt aus Figma via MCP Server statt JSON-File</td>
+        <td><span class="prio-nice">NICE</span></td>
+        <td>Post-MVP</td>
+      </tr>
+      <tr>
+        <td>Strict Mode / Merge Block</td>
+        <td>Optionaler Check-Failure der den Merge bei Critical Violations blockt</td>
+        <td><span class="prio-should">SHOULD</span></td>
+        <td>Post-MVP</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="g2 mt24">
+    <div class="card" style="border-color: rgba(0,194,124,0.3);">
+      <div class="card-tag" style="color:var(--green)">MVP: Drin</div>
+      <p>Token-Map Import (DTCG + CSS Vars) · Color + Spacing Detection · CSS + SCSS + JS/TSX · GitHub PR Annotations + Summary · YAML Config · React Support · Tailwind Aware Mode · Auto-Fix Suggestions</p>
+    </div>
+    <div class="card" style="border-color: rgba(255,74,28,0.3);">
+      <div class="card-tag" style="color:var(--red)">MVP: Raus</div>
+      <p>Typography Detection · Trend Dashboard · GitLab CI · Figma MCP Integration · Multi-Repo Aggregation · Slack Notifications · Component-Level Checks (nur Token-Level im MVP)</p>
+    </div>
+  </div>
+    </div>
+    <div id="dr-arch" class="panel">
+      <h2>Technische Architektur</h2>
+  <p class="section-sub">Wie der Drift Detector funktioniert</p>
+
+  <div class="flow">
+    <div class="flow-step">
+      <div class="step-num">1</div>
+      <div class="step-label">PR öffnen</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="step-num">2</div>
+      <div class="step-label">.driftrc.yml lesen</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="step-num">3</div>
+      <div class="step-label">Token-Map laden</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="step-num">4</div>
+      <div class="step-label">Changed Files parsen</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="step-num">5</div>
+      <div class="step-label">Values matchen</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="border-color:var(--accent)">
+      <div class="step-num" style="color:var(--accent)">6</div>
+      <div class="step-label">PR annotieren</div>
+    </div>
+  </div>
+
+  <h3 class="mt32 mb8">Config-Datei: .driftrc.yml</h3>
+  <div class="code-block">
+<span class="comment"># .driftrc.yml — Design System Drift Detector Config</span>
+
+<span class="key">token_sources</span>:
+  - <span class="key">path</span>: <span class="string">"./tokens/design-tokens.json"</span>
+    <span class="key">format</span>: <span class="string">"dtcg"</span>  <span class="comment"># W3C DTCG Standard</span>
+  - <span class="key">path</span>: <span class="string">"./src/styles/variables.css"</span>
+    <span class="key">format</span>: <span class="string">"css-custom-properties"</span>
+
+<span class="key">rules</span>:
+  <span class="key">color</span>:
+    <span class="key">severity</span>: <span class="string">"error"</span>
+    <span class="key">detect</span>: [<span class="string">"hex"</span>, <span class="string">"rgb"</span>, <span class="string">"rgba"</span>, <span class="string">"hsl"</span>]
+    <span class="key">ignore</span>: [<span class="string">"transparent"</span>, <span class="string">"inherit"</span>, <span class="string">"currentColor"</span>]
+  <span class="key">spacing</span>:
+    <span class="key">severity</span>: <span class="string">"warning"</span>
+    <span class="key">properties</span>: [<span class="string">"margin"</span>, <span class="string">"padding"</span>, <span class="string">"gap"</span>]
+    <span class="key">ignore</span>: [<span class="string">"0"</span>, <span class="string">"auto"</span>]
+  <span class="key">tailwind</span>:
+    <span class="key">enabled</span>: <span class="keyword">true</span>
+    <span class="key">detect_arbitrary</span>: <span class="keyword">true</span>  <span class="comment"># text-[#xxx], p-[17px]</span>
+
+<span class="key">scan</span>:
+  <span class="key">include</span>: [<span class="string">"src/**/*.{css,scss,tsx,jsx,vue}"</span>]
+  <span class="key">exclude</span>: [<span class="string">"**/*.test.*"</span>, <span class="string">"**/node_modules/**"</span>]
+
+<span class="key">output</span>:
+  <span class="key">annotations</span>: <span class="keyword">true</span>    <span class="comment"># Inline PR comments</span>
+  <span class="key">summary</span>: <span class="keyword">true</span>        <span class="comment"># Summary PR comment</span>
+  <span class="key">suggestions</span>: <span class="keyword">true</span>    <span class="comment"># Auto-fix suggestions</span>
+  <span class="key">fail_on</span>: <span class="string">"none"</span>       <span class="comment"># "none" | "error" | "warning"</span>
+  </div>
+
+  <h3 class="mt32 mb8">GitHub Action Usage</h3>
+  <div class="code-block">
+<span class="comment"># .github/workflows/drift-check.yml</span>
+<span class="key">name</span>: <span class="string">Design System Drift Check</span>
+<span class="key">on</span>: [<span class="string">pull_request</span>]
+
+<span class="key">jobs</span>:
+  <span class="key">drift-check</span>:
+    <span class="key">runs-on</span>: <span class="string">ubuntu-latest</span>
+    <span class="key">steps</span>:
+      - <span class="key">uses</span>: <span class="string">actions/checkout@v4</span>
+      - <span class="key">uses</span>: <span class="string">weslam/drift-detector@v1</span>
+        <span class="key">with</span>:
+          <span class="key">config</span>: <span class="string">".driftrc.yml"</span>
+          <span class="key">token</span>: <span class="string">${{ secrets.GITHUB_TOKEN }}</span>
+  </div>
+
+  <h3 class="mt32 mb8">Tech Stack</h3>
+  <div class="g2">
+    <div class="card">
+      <div class="card-tag">Runtime</div>
+      <h3>Node.js + TypeScript</h3>
+      <p>Maximale Kompatibilität mit dem Frontend-Ökosystem. TypeScript für Type Safety. Läuft nativ in GitHub Actions ohne Docker-Overhead.</p>
+    </div>
+    <div class="card">
+      <div class="card-tag">Parsing</div>
+      <h3>PostCSS + AST Parser</h3>
+      <p>PostCSS für CSS/SCSS. @babel/parser oder ts-morph für JSX/TSX. Regex-Fallback für Tailwind arbitrary values. Modular: je ein Parser pro Sprache/Framework.</p>
+    </div>
+    <div class="card">
+      <div class="card-tag">Token Matching</div>
+      <h3>Fuzzy Color Matching</h3>
+      <p>Exact Match (hex → token), Nearest Match (Delta-E Color Distance für nahe Farben), Spacing Scale Match (16px → spacing-4 wenn spacing-scale = 4px). Konfigurierbarer Threshold.</p>
+    </div>
+    <div class="card">
+      <div class="card-tag">Output</div>
+      <h3>GitHub Checks API</h3>
+      <p>@actions/core für Annotations. @octokit/rest für PR Comments. GitHub Suggestions Format für Auto-Fix. Keine externen Dependencies ausser GitHub.</p>
+    </div>
+  </div>
+
+  <div class="alert alert-purple mt16">
+    <div class="alert-ico">⚡</div>
+    <div class="alert-body">
+      <h4>Performance-Ziel</h4>
+      <p>Unter 60 Sekunden für einen PR mit 50 geänderten Dateien. Nur geänderte Dateien scannen (git diff), nicht das gesamte Repo. Token-Map einmal laden und im Memory halten.</p>
+    </div>
+  </div>
+
+  <h3 class="mt32 mb8">Beispiel: PR Output</h3>
+  <div class="code-block">
+<span class="comment">// 🔍 Design System Drift Report</span>
+<span class="comment">// PR #142: Add user profile page</span>
+<span class="comment">// ───────────────────────────────</span>
+
+<span class="fn">⚠ 7 violations found</span> (5 errors, 2 warnings)
+
+<span class="key">src/components/ProfileCard.tsx:24</span>
+  <span class="string">color: "#3B82F6"</span> → use <span class="fn">var(--color-primary-500)</span>  <span class="comment">[error]</span>
+
+<span class="key">src/components/ProfileCard.tsx:31</span>
+  <span class="string">padding: "16px 24px"</span> → use <span class="fn">var(--spacing-4) var(--spacing-6)</span>  <span class="comment">[warning]</span>
+
+<span class="key">src/components/ProfileCard.tsx:45</span>
+  <span class="string">className="text-[#6B7280]"</span> → use <span class="fn">text-gray-500</span>  <span class="comment">[error]</span>
+
+<span class="comment">// ───────────────────────────────</span>
+<span class="comment">// Token Coverage: 87% (was 82% last PR)</span>
+<span class="comment">// 3 violations are auto-fixable → click "Apply suggestion"</span>
+  </div>
+    </div>
+  </div>
+
+  <!-- ── AI-READINESS ── -->
+  <div id="doc-airead" class="doc">
+    <div id="ai-overview" class="panel active">
+      <div class="hero">
+    <div class="hero-tag"><span class="dot"></span> AI-Readiness Score · Deep Dive</div>
+    <h1>8 Kriterien,<br><span class="gradient-text">klar erklärt</span></h1>
+    <p class="hero-sub">
+      Was genau prüfen wir bei jedem Kriterium? Was machen wir konkret beim Kunden? Und was ist der Unterschied zwischen vorher und nachher?
+    </p>
+  </div>
+
+  <div class="g3">
+    <div class="stat-card">
+      <span class="stat-number" style="color:var(--red)">23</span>
+      <span class="stat-label">Typischer Score Swiss Enterprise heute (von 100)</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-number" style="color:var(--green)">75+</span>
+      <span class="stat-label">Ziel-Score nach WeSlam Sprint (6 Wochen)</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-number" style="color:var(--accent2)">8</span>
+      <span class="stat-label">Kriterien mit je 0–12.5 Punkten</span>
+    </div>
+  </div>
+
+  <div class="alert alert-green mt24">
+    <div class="alert-ico">💡</div>
+    <div class="alert-body">
+      <h4>Wie der Score funktioniert</h4>
+      <p>Jedes der 8 Kriterien wird mit 0–12.5 Punkten bewertet. Total: 100 Punkte. Der Score ist kein abstraktes Rating — jeder Punkt entspricht einer konkreten, prüfbaren Eigenschaft des Design Systems. Ein Score unter 40 bedeutet: AI-Coding-Tools (Cursor, Copilot, Claude) generieren Code der das Design System ignoriert.</p>
+    </div>
+  </div>
+
+  <h3 class="mt32 mb16">Die 8 Kriterien im Überblick</h3>
+
+  <div class="g2">
+    <div class="card">
+      <span class="sup">Kriterium 1 · Gewicht: 12.5</span>
+      <h3>Token-Struktur (W3C-konform)</h3>
+      <p>Sind eure Design-Tokens im W3C DTCG Standard exportierbar? Haben sie eine saubere Hierarchie?</p>
+    </div>
+    <div class="card">
+      <span class="sup">Kriterium 2 · Gewicht: 12.5</span>
+      <h3>Code Connect Setup</h3>
+      <p>Sind Figma-Komponenten mit echtem Code verknüpft? Weiss die AI welche Komponente sie importieren soll?</p>
+    </div>
+    <div class="card">
+      <span class="sup">Kriterium 3 · Gewicht: 12.5</span>
+      <h3>MCP Server Konfiguration</h3>
+      <p>Ist der Figma MCP Server konfiguriert, damit AI-Agents direkten Zugriff auf Design-Kontext haben?</p>
+    </div>
+    <div class="card">
+      <span class="sup">Kriterium 4 · Gewicht: 12.5</span>
+      <h3>AI-Agent Dokumentation</h3>
+      <p>Gibt es klare Regeln für AI-Agents: welche Komponenten wann nutzen, welche Patterns vermeiden?</p>
+    </div>
+    <div class="card">
+      <span class="sup">Kriterium 5 · Gewicht: 12.5</span>
+      <h3>Component-Naming (Figma ↔ Code)</h3>
+      <p>Heisst der Button in Figma gleich wie im Code? Erkennt die AI die Verbindung?</p>
+    </div>
+    <div class="card">
+      <span class="sup">Kriterium 6 · Gewicht: 12.5</span>
+      <h3>Semantische Token-Aliase</h3>
+      <p>Gibt es semantische Tokens wie "color-bg-error" statt nur primitive Werte wie "red-500"?</p>
+    </div>
+    <div class="card">
+      <span class="sup">Kriterium 7 · Gewicht: 12.5</span>
+      <h3>States &amp; Props dokumentiert</h3>
+      <p>Kennt die AI alle Zustände (hover, disabled, loading) und Props (size, variant) jeder Komponente?</p>
+    </div>
+    <div class="card">
+      <span class="sup">Kriterium 8 · Gewicht: 12.5</span>
+      <h3>Design-Dev Handoff Automation</h3>
+      <p>Ist die Pipeline automatisiert? Oder wird bei jedem Token-Update alles manuell synchronisiert?</p>
+    </div>
+  </div>
+    </div>
+    <div id="ai-c1" class="panel">
+      <h2>1. Token-Struktur (W3C-konform)</h2>
+  <p class="section-sub">Das Fundament — ohne das nichts anderes funktioniert</p>
+
+  <div class="criterion">
+    <div class="crit-header">
+      <div>
+        <span class="sup">Was es ist</span>
+        <h3>Design Tokens = die Atome eures Design Systems</h3>
+      </div>
+      <div class="crit-score">Typischer Score: 2 / 12.5</div>
+    </div>
+    <div class="crit-body">
+      <p>
+        Design Tokens sind die kleinsten Einheiten eures Design Systems: Farben, Abstände, Schriftgrössen, Border-Radien, Schatten.
+        Sie sind die <strong style="color:#0A0A0A">"Single Source of Truth"</strong> — der Ort wo definiert wird, dass euer Primärblau <code>#0066CC</code> ist
+        und euer Standard-Spacing <code>16px</code>.
+      </p>
+      <p style="margin-top:10px">
+        <strong style="color:#0A0A0A">W3C DTCG</strong> ist der neue, seit Oktober 2025 stabile Standard der definiert wie diese Tokens in einem JSON-Format
+        geschrieben werden — damit jedes Tool (Figma, Style Dictionary, Supernova, euer Code) sie lesen kann. Denk an CSV für Tabellen —
+        DTCG ist das universelle Format für Design-Entscheidungen.
+      </p>
+    </div>
+
+    <div class="ba">
+      <div class="ba-box ba-before">
+        <div class="ba-label red">❌ Vorher (typisch)</div>
+        <p>Tokens existieren als Figma-Variablen, aber nur in Figma. Kein JSON-Export. Naming ist inkonsistent: mal <code>blue-500</code>, mal <code>primary</code>, mal <code>brand-color</code>. Dev-Team hat eigene CSS-Variablen die nicht mit Figma übereinstimmen. Jeder definiert Farben anders.</p>
+      </div>
+      <div class="ba-box ba-after">
+        <div class="ba-label green">✅ Nachher</div>
+        <p>Ein einziges Token-JSON im W3C DTCG Format. 3-stufige Hierarchie: Primitive → Semantic → Component. Figma exportiert automatisch. Dev-Code konsumiert dasselbe JSON via Style Dictionary. Eine Wahrheit, zwei Outputs.</p>
+      </div>
+    </div>
+
+    <div class="code mt16">
+<span class="cm">// W3C DTCG Standard — so sieht ein Token-File aus</span>
+{
+  <span class="k">"color"</span>: {
+    <span class="k">"primitive"</span>: {
+      <span class="k">"blue-500"</span>: { <span class="k">"$value"</span>: <span class="s">"#0066CC"</span>, <span class="k">"$type"</span>: <span class="s">"color"</span> },
+      <span class="k">"blue-600"</span>: { <span class="k">"$value"</span>: <span class="s">"#004C99"</span>, <span class="k">"$type"</span>: <span class="s">"color"</span> }
+    },
+    <span class="k">"semantic"</span>: {
+      <span class="k">"primary"</span>: { <span class="k">"$value"</span>: <span class="s">"{color.primitive.blue-500}"</span>, <span class="k">"$type"</span>: <span class="s">"color"</span> },
+      <span class="k">"primary-hover"</span>: { <span class="k">"$value"</span>: <span class="s">"{color.primitive.blue-600}"</span>, <span class="k">"$type"</span>: <span class="s">"color"</span> }
+    }
+  },
+  <span class="k">"spacing"</span>: {
+    <span class="k">"xs"</span>: { <span class="k">"$value"</span>: <span class="s">"4px"</span>, <span class="k">"$type"</span>: <span class="s">"dimension"</span> },
+    <span class="k">"sm"</span>: { <span class="k">"$value"</span>: <span class="s">"8px"</span>, <span class="k">"$type"</span>: <span class="s">"dimension"</span> },
+    <span class="k">"md"</span>: { <span class="k">"$value"</span>: <span class="s">"16px"</span>, <span class="k">"$type"</span>: <span class="s">"dimension"</span> }
+  }
+}
+    </div>
+
+    <div class="what-we-do">
+      <div class="wwd-title">🔧 Was WeSlam konkret macht</div>
+      <div class="wwd-item">
+        <div class="wwd-num">1</div>
+        <div class="wwd-text"><strong>Token-Inventar erstellen:</strong> Alle bestehenden Tokens aus Figma und Code extrahieren. Duplikate und Inkonsistenzen finden. Wie viele Blau-Töne hat euer System wirklich? (Antwort bei den meisten: 12–25 statt der geplanten 5.)</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">2</div>
+        <div class="wwd-text"><strong>3-Stufen-Hierarchie aufbauen:</strong> Primitive Tokens (die rohen Werte), Semantic Tokens (was sie bedeuten: "primary", "error", "surface"), Component Tokens (Button-spezifisch). Die AI braucht die semantische Ebene um zu wissen was <em>gemeint</em> ist, nicht nur was der Wert ist.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">3</div>
+        <div class="wwd-text"><strong>W3C DTCG JSON exportieren:</strong> Figma-Variablen in das standardisierte JSON-Format überführen. Tokens Studio Plugin konfigurieren oder Figma's nativen DTCG-Export (ab Nov 2026) vorbereiten. Ergebnis: ein <code>tokens.json</code> das jedes Tool lesen kann.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">4</div>
+        <div class="wwd-text"><strong>Style Dictionary Pipeline einrichten:</strong> Das Token-JSON automatisch in CSS Custom Properties, SCSS Variables, iOS/Android-Formate transformieren. Ein <code>npm run build:tokens</code> Befehl der alles generiert. Kein manuelles Copy-Paste mehr.</div>
+      </div>
+    </div>
+  </div>
+    </div>
+    <div id="ai-c2" class="panel">
+      <h2>2. Code Connect Setup</h2>
+  <p class="section-sub">Die Brücke zwischen Figma-Design und echtem Code</p>
+
+  <div class="criterion">
+    <div class="crit-header">
+      <div>
+        <span class="sup">Was es ist</span>
+        <h3>Figma-Komponenten mit echtem Codebase-Code verknüpfen</h3>
+      </div>
+      <div class="crit-score">Typischer Score: 0.5 / 12.5</div>
+    </div>
+    <div class="crit-body">
+      <p>
+        Ohne Code Connect zeigt Figma Dev Mode generischen, auto-generierten Code. Mit Code Connect sieht der Entwickler (und die AI!)
+        den <strong style="color:#0A0A0A">echten Import-Pfad und die echten Props</strong> eurer Komponente.
+        Statt <code>&lt;div style="background: blue"&gt;</code> zeigt es <code>&lt;Button variant="primary" size="lg" /&gt;</code>.
+      </p>
+      <p style="margin-top:10px">
+        Für AI-Coding ist das der <strong style="color:#0A0A0A">wichtigste Einzelschritt</strong>. Ohne Code Connect hat die AI keinen Hinweis
+        dass eure Codebase schon eine <code>Button</code>-Komponente hat — und baut eine neue von Grund auf.
+      </p>
+    </div>
+
+    <div class="ba">
+      <div class="ba-box ba-before">
+        <div class="ba-label red">❌ Ohne Code Connect</div>
+        <p>AI sieht Figma-Design → generiert: <code>div</code> mit inline-styles, hardcoded Farben, eigene Border-Radien. Kein Import aus der Component Library. Jede generierte Seite ist ein Unikat.</p>
+      </div>
+      <div class="ba-box ba-after">
+        <div class="ba-label green">✅ Mit Code Connect</div>
+        <p>AI sieht Figma-Design → erkennt "das ist ein Button/primary/lg" → generiert: <code>import { Button } from '@company/ui'</code> mit korrekten Props. Konsistenter Code, keine Duplikate.</p>
+      </div>
+    </div>
+
+    <div class="code mt16">
+<span class="cm">// Code Connect File — verknüpft Figma-Komponente mit Code</span>
+<span class="cm">// Datei: src/components/Button/Button.figma.tsx</span>
+
+import figma from <span class="s">"@figma/code-connect"</span>
+import { Button } from <span class="s">"./Button"</span>
+
+figma.<span class="fn">connect</span>(Button, <span class="s">"https://figma.com/file/xxx/Button"</span>, {
+  <span class="k">props</span>: {
+    <span class="k">variant</span>: figma.<span class="fn">enum</span>(<span class="s">"Variant"</span>, {
+      Primary: <span class="s">"primary"</span>,
+      Secondary: <span class="s">"secondary"</span>,
+      Ghost: <span class="s">"ghost"</span>
+    }),
+    <span class="k">size</span>: figma.<span class="fn">enum</span>(<span class="s">"Size"</span>, {
+      Small: <span class="s">"sm"</span>,
+      Medium: <span class="s">"md"</span>,
+      Large: <span class="s">"lg"</span>
+    }),
+    <span class="k">label</span>: figma.<span class="fn">string</span>(<span class="s">"Label"</span>),
+    <span class="k">disabled</span>: figma.<span class="fn">boolean</span>(<span class="s">"Disabled"</span>)
+  },
+  <span class="k">example</span>: (props) =>
+    <span class="s">`&lt;Button variant="${props.variant}" size="${props.size}"
+       disabled={${props.disabled}}&gt;${props.label}&lt;/Button&gt;`</span>
+})
+    </div>
+
+    <div class="what-we-do">
+      <div class="wwd-title">🔧 Was WeSlam konkret macht</div>
+      <div class="wwd-item">
+        <div class="wwd-num">1</div>
+        <div class="wwd-text"><strong>Top-20-Komponenten identifizieren:</strong> Welche 20 Komponenten werden am häufigsten verwendet? (Button, Input, Card, Modal, Avatar, Badge, ...) Diese decken typischerweise 80% aller UI-Patterns ab.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">2</div>
+        <div class="wwd-text"><strong>Code Connect Files schreiben:</strong> Für jede der Top-20-Komponenten eine <code>.figma.tsx</code> Datei erstellen. Property-Mapping: Figma-Varianten → Code-Props. Einmal aufgesetzt, automatisch aktuell.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">3</div>
+        <div class="wwd-text"><strong>CLI einrichten und publishen:</strong> <code>npx figma connect publish</code> in die CI/CD-Pipeline einbauen. Bei jedem Merge auf Main werden die Mappings automatisch an Figma gepusht. Kein manueller Sync.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">4</div>
+        <div class="wwd-text"><strong>Team enablen:</strong> Workshop mit dem Design-System-Team: Wie schreibt man neue Code Connect Files? Wie updated man Mappings wenn sich Props ändern? Playbook mit Templates und Best Practices.</div>
+      </div>
+    </div>
+  </div>
+    </div>
+    <div id="ai-c3" class="panel">
+      <h2>3. MCP Server Konfiguration</h2>
+  <p class="section-sub">Der direkte Draht zwischen Figma und AI-Coding-Tools</p>
+
+  <div class="criterion">
+    <div class="crit-header">
+      <div>
+        <span class="sup">Was es ist</span>
+        <h3>Figma's MCP Server = AI-Agents können Figma "lesen"</h3>
+      </div>
+      <div class="crit-score">Typischer Score: 0 / 12.5</div>
+    </div>
+    <div class="crit-body">
+      <p>
+        MCP (Model Context Protocol) ist ein offener Standard der AI-Agents erlaubt, mit externen Tools zu kommunizieren.
+        Figma hat 2025 einen eigenen MCP-Server released. Das bedeutet: <strong style="color:#0A0A0A">Cursor, Claude oder Copilot können
+        direkt auf euer Figma-File zugreifen</strong> — Komponenten lesen, Styles extrahieren, Design-Kontext verstehen.
+      </p>
+      <p style="margin-top:10px">
+        <strong style="color:#0A0A0A">Einfach erklärt:</strong> Bisher musste der Entwickler Screenshots von Figma machen und dem AI-Tool zeigen. Mit MCP
+        kann die AI das Figma-File selbst öffnen, die Komponenten verstehen, und Code generieren der genau zum Design passt.
+      </p>
+    </div>
+
+    <div class="ba">
+      <div class="ba-box ba-before">
+        <div class="ba-label red">❌ Ohne MCP</div>
+        <p>Dev nimmt Screenshot von Figma → Paste in Cursor → AI "rät" anhand von Pixeln was gemeint ist → generiert ungefähren Code. Keine Ahnung von Tokens, Varianten, Spacing-System.</p>
+      </div>
+      <div class="ba-box ba-after">
+        <div class="ba-label green">✅ Mit MCP + Code Connect</div>
+        <p>Dev sagt "implementiere das Login-Formular aus Figma Frame XY" → AI fragt MCP Server → bekommt: Komponenten-Liste, Token-Werte, Code Connect Snippets → generiert exakten Code mit richtigen Imports.</p>
+      </div>
+    </div>
+
+    <div class="code mt16">
+<span class="cm">// Cursor MCP Config — .cursor/mcp.json</span>
+{
+  <span class="k">"mcpServers"</span>: {
+    <span class="k">"figma"</span>: {
+      <span class="k">"command"</span>: <span class="s">"npx"</span>,
+      <span class="k">"args"</span>: [<span class="s">"-y"</span>, <span class="s">"figma-developer-mcp"</span>, <span class="s">"--figma-api-key=YOUR_KEY"</span>],
+      <span class="k">"env"</span>: { <span class="k">"FIGMA_API_KEY"</span>: <span class="s">"figd_xxx"</span> }
+    }
+  }
+}
+    </div>
+
+    <div class="what-we-do">
+      <div class="wwd-title">🔧 Was WeSlam konkret macht</div>
+      <div class="wwd-item">
+        <div class="wwd-num">1</div>
+        <div class="wwd-text"><strong>MCP Server einrichten:</strong> Figma API-Key generieren, MCP-Config für Cursor/Claude/VS Code erstellen, auf jedem Dev-Rechner ausrollen. Setup-Script für einfaches Onboarding neuer Devs.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">2</div>
+        <div class="wwd-text"><strong>Code Connect optimieren für MCP:</strong> Der MCP-Server liefert nur dann guten Output wenn Code Connect sauber konfiguriert ist. Wir stellen sicher, dass die AI <code>CodeConnectSnippet</code>-Blöcke mit korrekten Imports und Props bekommt.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">3</div>
+        <div class="wwd-text"><strong>Custom Instructions hinzufügen:</strong> In der Code Connect UI können pro Komponente zusätzliche AI-Anweisungen hinterlegt werden: "Nutze immer die Accessible-Variante", "Dieser Button braucht immer ein Icon links". Die AI liest diese bei jedem MCP-Call.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">4</div>
+        <div class="wwd-text"><strong>Security klären:</strong> Figma API-Keys in Secret-Management (GitHub Secrets, 1Password). Für Schweizer Enterprises: prüfen ob Figma-API-Zugriff mit internem Security-Policy kompatibel ist (nDSG, Daten fliessen über Figma's API).</div>
+      </div>
+    </div>
+  </div>
+    </div>
+    <div id="ai-c4" class="panel">
+      <h2>4. AI-Agent Dokumentation</h2>
+  <p class="section-sub">Spielregeln für die AI — damit sie euer System respektiert</p>
+
+  <div class="criterion">
+    <div class="crit-header">
+      <div>
+        <span class="sup">Was es ist</span>
+        <h3>Component Rules &amp; AI Guidelines</h3>
+      </div>
+      <div class="crit-score">Typischer Score: 1 / 12.5</div>
+    </div>
+    <div class="crit-body">
+      <p>
+        AI-Agents wie Cursor und Claude können "System Prompts" oder "Rules Files" lesen — Textdateien die definieren
+        <strong style="color:#0A0A0A">wie die AI in eurem Projekt Code schreiben soll</strong>.
+        Ohne diese Regeln generiert die AI generischen Code. Mit ihnen generiert sie Code der eurer Design-System-Philosophie folgt.
+      </p>
+      <p style="margin-top:10px">
+        Denk an ein Onboarding-Dokument für einen neuen Entwickler — aber für die AI. "Bei uns nutzen wir immer
+        semantische Tokens. Wir wrappen nie einen Button in einen Link. Wir nutzen immer die <code>Stack</code>-Komponente für Layouts."
+      </p>
+    </div>
+
+    <div class="code mt16">
+<span class="cm"># .cursor/rules/design-system.mdc</span>
+<span class="cm"># Cursor Rules File — wird bei jedem Prompt mitgelesen</span>
+
+<span class="k">## Design System Rules</span>
+
+<span class="s">Du arbeitest mit dem @company/ui Design System.</span>
+
+<span class="k">### Farben</span>
+<span class="s">- Nutze IMMER semantische Tokens: `var(--color-primary)`, nie `#0066CC`</span>
+<span class="s">- Für Hintergründe: `var(--color-bg-*)`, für Text: `var(--color-text-*)`</span>
+<span class="s">- NIEMALS hardcoded Farben, auch nicht für Grau-Töne</span>
+
+<span class="k">### Komponenten</span>
+<span class="s">- Button: immer aus `@company/ui` importieren, nie selbst bauen</span>
+<span class="s">- Layouts: immer `Stack` oder `Grid` nutzen, nie raw flexbox</span>
+<span class="s">- Icons: nur aus `@company/icons`, nie inline SVG</span>
+
+<span class="k">### Spacing</span>
+<span class="s">- Nutze die Spacing-Scale: xs(4), sm(8), md(16), lg(24), xl(32)</span>
+<span class="s">- gap, padding, margin: immer als Token-Variable</span>
+<span class="s">- Kein `margin-top` auf Komponenten — nutze `Stack` mit `gap`</span>
+
+<span class="k">### Accessibility</span>
+<span class="s">- Jeder Button braucht ein `aria-label` wenn nur Icon</span>
+<span class="s">- Farb-Kontraste: mindestens WCAG AA (4.5:1 für Text)</span>
+    </div>
+
+    <div class="what-we-do">
+      <div class="wwd-title">🔧 Was WeSlam konkret macht</div>
+      <div class="wwd-item">
+        <div class="wwd-num">1</div>
+        <div class="wwd-text"><strong>Design-System-Regeln erfassen:</strong> Workshop mit Design- und Dev-Team. Welche Regeln gelten heute implizit? Was steht nirgends geschrieben? Was führt immer wieder zu Review-Kommentaren? Diese "unwritten rules" formalisieren.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">2</div>
+        <div class="wwd-text"><strong>Rules-Files schreiben:</strong> Cursor <code>.mdc</code>-Rules, Claude <code>CLAUDE.md</code>, Copilot Instructions-File. Jedes AI-Tool hat sein eigenes Format — wir erstellen alle drei damit das gesamte Team abgedeckt ist.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">3</div>
+        <div class="wwd-text"><strong>Component-spezifische Guidelines:</strong> Nicht nur globale Regeln, sondern pro-Komponente: "Dialog: immer mit Portal rendern. Table: immer mit virtualisierten Rows über 50 Einträge. Form: immer React Hook Form mit Zod Schema."</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">4</div>
+        <div class="wwd-text"><strong>Ins Repo committen:</strong> Rules-Files leben im Repo, nicht in persönlichen Einstellungen. Jeder Dev (und jede AI) hat automatisch Zugriff. Versioniert, reviewbar, updatebar. Teil des normalen PR-Prozesses.</div>
+      </div>
+    </div>
+  </div>
+    </div>
+    <div id="ai-c5" class="panel">
+      <h2>5. Component-Naming (Figma ↔ Code)</h2>
+  <p class="section-sub">Wenn Figma "CTA/Large" sagt aber der Code "ButtonPrimary" heisst</p>
+
+  <div class="criterion">
+    <div class="crit-header">
+      <div>
+        <span class="sup">Was es ist</span>
+        <h3>Identische Namen in Design und Code</h3>
+      </div>
+      <div class="crit-score">Typischer Score: 5 / 12.5</div>
+    </div>
+    <div class="crit-body">
+      <p>
+        <strong style="color:#0A0A0A">Das klingt trivial — ist es aber nicht.</strong>
+        In Figma heisst die Komponente "CTA / Primary / Large". Im Code heisst sie <code>ButtonPrimary</code> oder <code>PrimaryButton</code> oder <code>Btn</code>.
+        Die AI kann diese Verbindung nicht herstellen. Sie sieht zwei verschiedene Dinge — und baut eine dritte Variante.
+      </p>
+      <p style="margin-top:10px">
+        Naming-Konsistenz ist der Unterschied zwischen "AI versteht unser System" und "AI generiert Chaos".
+        Jeder Namens-Mismatch zwischen Figma und Code ist ein Punkt an dem die AI scheitert.
+      </p>
+    </div>
+
+    <div class="ba">
+      <div class="ba-box ba-before">
+        <div class="ba-label red">❌ Typische Realität</div>
+        <p>Figma: "Input / Text / Default"<br>Code: <code>TextInput</code><br>Storybook: <code>FormField</code><br>CSS-Klasse: <code>.input-text-field</code><br><br>4 Namen für dasselbe Ding. Kein Mensch blickt durch — die AI schon gar nicht.</p>
+      </div>
+      <div class="ba-box ba-after">
+        <div class="ba-label green">✅ Nach Harmonisierung</div>
+        <p>Figma: "TextInput"<br>Code: <code>TextInput</code><br>Storybook: <code>TextInput</code><br>CSS-Klasse: <code>.text-input</code><br><br>Ein Name. Überall. Die AI erkennt sofort: Figma-Komponente = Code-Komponente.</p>
+      </div>
+    </div>
+
+    <div class="what-we-do">
+      <div class="wwd-title">🔧 Was WeSlam konkret macht</div>
+      <div class="wwd-item">
+        <div class="wwd-num">1</div>
+        <div class="wwd-text"><strong>Naming-Audit:</strong> Alle Figma-Komponenten exportieren, alle Code-Komponenten listen, Side-by-Side vergleichen. Jede Abweichung dokumentieren. Bei 50+ Komponenten finden wir typischerweise 30–40 Naming-Mismatches.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">2</div>
+        <div class="wwd-text"><strong>Naming-Convention definieren:</strong> Eine Regel die für Figma UND Code gilt. z.B.: PascalCase, keine Abkürzungen, Variant als Suffix (<code>Button</code>, nicht <code>Btn</code>; <code>TextInput</code>, nicht <code>TxtInp</code>). Konvention im Design System Playbook dokumentieren.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">3</div>
+        <div class="wwd-text"><strong>Renaming durchführen:</strong> Figma-Komponenten umbenennen (Bulk-Rename Plugin). Code-Komponenten refactoren (mit Aliase für Backwards-Compatibility). Migration-Guide für Teams die alte Namen nutzen.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">4</div>
+        <div class="wwd-text"><strong>Linting-Rule einbauen:</strong> ESLint-Rule die prüft ob importierte Komponenten-Namen mit der offiziellen Naming-Convention übereinstimmen. Automatisch — nicht auf Code Review angewiesen.</div>
+      </div>
+    </div>
+  </div>
+    </div>
+    <div id="ai-c6" class="panel">
+      <h2>6. Semantische Token-Aliase</h2>
+  <p class="section-sub">Der Unterschied zwischen "red-500" und "color-error"</p>
+
+  <div class="criterion">
+    <div class="crit-header">
+      <div>
+        <span class="sup">Was es ist</span>
+        <h3>Tokens die sagen was sie <em>bedeuten</em>, nicht wie sie <em>aussehen</em></h3>
+      </div>
+      <div class="crit-score">Typischer Score: 3 / 12.5</div>
+    </div>
+    <div class="crit-body">
+      <p>
+        <strong style="color:#0A0A0A">Primitive Tokens</strong> beschreiben den Wert: <code>blue-500</code>, <code>red-400</code>, <code>gray-100</code>.
+        <strong style="color:#0A0A0A">Semantische Tokens</strong> beschreiben die Bedeutung: <code>color-bg-error</code>, <code>color-text-primary</code>, <code>color-border-focus</code>.
+      </p>
+      <p style="margin-top:10px">
+        Für AI ist das der Unterschied zwischen "rate mal" und "ich weiss es". Wenn die AI <code>color-bg-error</code> sieht, weiss sie:
+        das ist ein Error-Hintergrund. Wenn sie nur <code>red-400</code> sieht, hat sie keine Ahnung ob das ein Error, ein Brand-Element, oder ein Sale-Badge ist.
+      </p>
+    </div>
+
+    <div class="code mt16">
+<span class="cm">// ❌ Nur primitive Tokens — AI muss raten</span>
+<span class="k">background-color</span>: var(<span class="s">--red-100</span>);     <span class="cm">/* Ist das Error? Danger? Sale? */</span>
+<span class="k">color</span>: var(<span class="s">--red-700</span>);                  <span class="cm">/* Welches Rot für welchen Zweck? */</span>
+<span class="k">border</span>: 1px solid var(<span class="s">--red-300</span>);     <span class="cm">/* Zusammengehörend? Keine Ahnung */</span>
+
+<span class="cm">// ✅ Semantische Tokens — AI versteht den Kontext</span>
+<span class="k">background-color</span>: var(<span class="s">--color-bg-error</span>);       <span class="cm">/* Klar: Error-Hintergrund */</span>
+<span class="k">color</span>: var(<span class="s">--color-text-on-error</span>);              <span class="cm">/* Klar: Text auf Error */</span>
+<span class="k">border</span>: 1px solid var(<span class="s">--color-border-error</span>);   <span class="cm">/* Klar: Error-Border */</span>
+    </div>
+
+    <div class="what-we-do">
+      <div class="wwd-title">🔧 Was WeSlam konkret macht</div>
+      <div class="wwd-item">
+        <div class="wwd-num">1</div>
+        <div class="wwd-text"><strong>Semantische Ebene entwerfen:</strong> Kategorien definieren: Background (bg), Text (text), Border (border), Icon (icon). Zustände: default, hover, active, disabled, focus, error, success. Systematik die für das ganze System gilt.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">2</div>
+        <div class="wwd-text"><strong>Mapping erstellen:</strong> Jeder semantische Token referenziert einen primitiven: <code>color-bg-error</code> → <code>red-100</code>. Dokumentiert in einer Token-Map. Wenn sich das Rot ändert, ändert sich alles — an einer Stelle.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">3</div>
+        <div class="wwd-text"><strong>Theming vorbereiten:</strong> Semantische Tokens ermöglichen Light/Dark Mode durch einfaches Umschalten der Referenzen. <code>color-bg-surface</code> zeigt auf <code>white</code> im Light Mode und <code>gray-900</code> im Dark Mode. Die AI generiert theme-fähigen Code von Anfang an.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">4</div>
+        <div class="wwd-text"><strong>Migration:</strong> Bestehendes CSS durchgehen, primitive Token-Referenzen durch semantische ersetzen. Wo <code>var(--blue-500)</code> steht, wird <code>var(--color-primary)</code>. Schrittweise, file-by-file, mit Linting-Support.</div>
+      </div>
+    </div>
+  </div>
+    </div>
+    <div id="ai-c7" class="panel">
+      <h2>7. States &amp; Props dokumentiert</h2>
+  <p class="section-sub">Die AI muss wissen was ein Button alles "kann"</p>
+
+  <div class="criterion">
+    <div class="crit-header">
+      <div>
+        <span class="sup">Was es ist</span>
+        <h3>Jeder Zustand und jede Eigenschaft jeder Komponente ist maschinell lesbar</h3>
+      </div>
+      <div class="crit-score">Typischer Score: 4 / 12.5</div>
+    </div>
+    <div class="crit-body">
+      <p>
+        Ein Button hat nicht nur ein Aussehen — er hat <strong style="color:#0A0A0A">Varianten</strong> (primary, secondary, ghost),
+        <strong style="color:#0A0A0A">Grössen</strong> (sm, md, lg), <strong style="color:#0A0A0A">Zustände</strong> (default, hover, active, focus, disabled, loading)
+        und <strong style="color:#0A0A0A">Slots</strong> (Icon links, Icon rechts, nur Icon).
+      </p>
+      <p style="margin-top:10px">
+        Wenn die AI diese nicht kennt, generiert sie einen Button der nur "default/medium" kann.
+        Das Team fixt manuell — bei jeder Seite, bei jedem PR. Die AI-Produktivität geht verloren.
+      </p>
+    </div>
+
+    <div class="ba">
+      <div class="ba-box ba-before">
+        <div class="ba-label red">❌ Undokumentierte Komponente</div>
+        <p>AI generiert: <code>&lt;Button&gt;Click&lt;/Button&gt;</code><br>Kein variant-Prop. Kein Size. Kein disabled-State. Kein Loading-Spinner. Dev muss alles manuell nachrüsten. Jedes. Mal.</p>
+      </div>
+      <div class="ba-box ba-after">
+        <div class="ba-label green">✅ Vollständig dokumentiert</div>
+        <p>AI generiert: <code>&lt;Button variant="primary" size="lg" isLoading={submitting} leftIcon={&lt;Save /&gt;}&gt;Speichern&lt;/Button&gt;</code><br>Korrekte Props, richtiger State, Icon-Slot genutzt. Production-ready.</p>
+      </div>
+    </div>
+
+    <div class="what-we-do">
+      <div class="wwd-title">🔧 Was WeSlam konkret macht</div>
+      <div class="wwd-item">
+        <div class="wwd-num">1</div>
+        <div class="wwd-text"><strong>Prop-Inventar:</strong> Für jede Komponente: alle Props, alle möglichen Werte, Default-Werte, Required vs. Optional. In Figma als Variants, im Code als TypeScript-Interface. Beide müssen matchen.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">2</div>
+        <div class="wwd-text"><strong>State-Matrix erstellen:</strong> Tabelle pro Komponente: Welche Kombination von States gibt es? (z.B. Button: primary + disabled + loading). In Figma als Varianten-Baum. Im Code als Storybook-Stories.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">3</div>
+        <div class="wwd-text"><strong>Figma Variants aufräumen:</strong> Viele Design Systems haben unvollständige Variants in Figma — es fehlen States oder Grössen. Wir ergänzen die fehlenden und sorgen dafür dass Figma und Code 1:1 übereinstimmen.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">4</div>
+        <div class="wwd-text"><strong>TypeScript Interfaces als Source of Truth:</strong> Die Prop-Definitionen in TypeScript werden zur Referenz. Storybook-Stories werden auto-generiert aus den Interfaces. Die AI liest die Types und kennt automatisch alle Möglichkeiten.</div>
+      </div>
+    </div>
+  </div>
+    </div>
+    <div id="ai-c8" class="panel">
+      <h2>8. Design-Dev Handoff Automatisierung</h2>
+  <p class="section-sub">Schluss mit manueller Synchronisation</p>
+
+  <div class="criterion">
+    <div class="crit-header">
+      <div>
+        <span class="sup">Was es ist</span>
+        <h3>Tokens, Components und Docs werden automatisch synchronisiert</h3>
+      </div>
+      <div class="crit-score">Typischer Score: 2 / 12.5</div>
+    </div>
+    <div class="crit-body">
+      <p>
+        Heute bei den meisten Teams: Designer ändert eine Farbe in Figma → schreibt Slack-Nachricht an Dev → Dev sucht alle Stellen im Code →
+        ändert manuell → vergisst 3 Stellen → nächster Sprint hat Inkonsistenzen. Dieser Handoff-Prozess ist
+        <strong style="color:#0A0A0A">das grösste Zeitgrab in Design-System-Teams</strong>.
+      </p>
+      <p style="margin-top:10px">
+        Die Lösung: Eine automatisierte Pipeline. Figma → Token-Export (DTCG JSON) → Style Dictionary Transform → CSS/SCSS/JS Variablen → Git Commit → PR → Review → Merge.
+        Kein manuelles Copy-Paste. Kein Slack. Kein "hast du das schon geändert?".
+      </p>
+    </div>
+
+    <div class="ba">
+      <div class="ba-box ba-before">
+        <div class="ba-label red">❌ Manueller Handoff</div>
+        <p>Designer ändert Tokens in Figma → Slack-Message → Dev ändert CSS → vergisst SCSS → Mobile-Team weiss nichts davon → 3 Wochen später: "Warum sieht die App anders aus als das Design?"</p>
+      </div>
+      <div class="ba-box ba-after">
+        <div class="ba-label green">✅ Automatisierte Pipeline</div>
+        <p>Designer ändert Token in Figma → Tokens Studio pusht JSON zu GitHub → GitHub Action triggert Style Dictionary → generiert CSS + SCSS + iOS + Android → PR wird erstellt → Review → Merge. Alles in 10 Minuten, kein Mensch involviert.</p>
+      </div>
+    </div>
+
+    <div class="what-we-do">
+      <div class="wwd-title">🔧 Was WeSlam konkret macht</div>
+      <div class="wwd-item">
+        <div class="wwd-num">1</div>
+        <div class="wwd-text"><strong>Tokens Studio ↔ GitHub Sync einrichten:</strong> Tokens Studio Plugin mit GitHub-Repo verbinden. Bei jedem "Push" aus Figma wird automatisch ein Branch + PR erstellt mit dem aktualisierten Token-JSON.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">2</div>
+        <div class="wwd-text"><strong>Style Dictionary Pipeline bauen:</strong> GitHub Action die bei Token-Änderungen automatisch CSS Custom Properties, SCSS Variables, TypeScript Constants und bei Bedarf iOS/Android-Formate generiert. Ein Befehl, alle Plattformen.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">3</div>
+        <div class="wwd-text"><strong>Visual Regression einbauen:</strong> Chromatic oder Percy Integration die bei Token-Änderungen automatisch Screenshots aller Storybook-Stories vergleicht. "Diese Farbänderung betrifft 47 Komponenten — hier sind die Diffs." Keine Überraschungen mehr.</div>
+      </div>
+      <div class="wwd-item">
+        <div class="wwd-num">4</div>
+        <div class="wwd-text"><strong>Documentation Auto-Sync:</strong> Storybook, Zeroheight oder Supernova automatisch updaten wenn sich Tokens oder Components ändern. Die Doku ist immer aktuell — nicht "Stand letztes Quartal".</div>
+      </div>
+    </div>
+  </div>
+    </div>
+  </div>
+
+  <!-- ── FIGMA REPORT ── -->
+  <div id="doc-figma" class="doc">
+    <div id="fi-overview" class="panel active">
+      <div class="overview-header">
+    <h1>Figma Report: Externe Validierung für WeSlam</h1>
+    <p class="subtitle">Figmas offizieller Report «How design systems power the new pace of product development» (2025) liefert starke Marktdaten und Framework-Validierung für den WeSlam AI-Ready Design System Service.</p>
+  </div>
+
+  <div class="source-badge">Figma — How design systems power the new pace of product development (2025, 31 Seiten)</div>
+
+  <div class="stat-row">
+    <div class="stat-card">
+      <span class="num">57%</span>
+      <span class="label">der Product Builder verbringen mehr Zeit auf High-Value-Work dank AI</span>
+    </div>
+    <div class="stat-card">
+      <span class="num">3</span>
+      <span class="label">Schlüssel-Tools Figma nennt: Tokens, Code Connect, MCP Server</span>
+    </div>
+    <div class="stat-card">
+      <span class="num">1</span>
+      <span class="label">Kernaussage: Machine-readable Design Systems sind die Zukunft</span>
+    </div>
+    <div class="stat-card">
+      <span class="num">0</span>
+      <span class="label">Swiss Enterprises haben heute eine vollständige AI-Ready Infrastruktur</span>
+    </div>
+  </div>
+
+  <h2>Warum dieser Report für WeSlam wichtig ist</h2>
+  <p>Figma ist der Market Leader im Design-Tool-Bereich. Wenn Figma einen offiziellen Report über AI-Ready Design Systems publiziert, ist das ein Marktsignal — nicht nur eine Produktankündigung. Der Report:</p>
+
+  <div class="tag-list">
+    <span class="tag green">✓ Bestätigt WeSlams Kernhypothese</span>
+    <span class="tag green">✓ Nennt konkrete Tools (die WeSlam implementiert)</span>
+    <span class="tag green">✓ Liefert Verkaufsdaten (57% Stat)</span>
+    <span class="tag green">✓ Validiert Drift Detector Konzept explizit</span>
+    <span class="tag">Neue Lücken identifiziert</span>
+    <span class="tag">Prompting Framework für Kunden</span>
+  </div>
+
+  <hr class="divider">
+
+  <h2>Die 4 Säulen laut Figma Report</h2>
+
+  <div class="framework-row">
+    <div class="fw-card">
+      <div class="fw-label">Säule 1</div>
+      <div class="fw-title">🏗 Machine-Readable Token Infrastructure</div>
+      <p>W3C DTCG Standard als Fundament. Tokens müssen strukturiert sein, damit AI sie konsumieren kann. Primitive → Semantic → Component Hierarchie.</p>
+    </div>
+    <div class="fw-card">
+      <div class="fw-label">Säule 2</div>
+      <div class="fw-title">🔌 Code Connect Integration</div>
+      <p>Figma-Komponenten müssen auf echte Code-Komponenten gemappt sein — sonst generiert AI generic HTML statt Design-System-Komponenten.</p>
+    </div>
+    <div class="fw-card">
+      <div class="fw-label">Säule 3</div>
+      <div class="fw-title">🤖 MCP Server (AI Agent Access)</div>
+      <p>Der Figma MCP Server ermöglicht AI-Agenten (Cursor, Claude, Copilot) direkten Zugriff auf Figma-Dateien — die Verbindung zwischen Design und Code.</p>
+    </div>
+    <div class="fw-card">
+      <div class="fw-label">Säule 4</div>
+      <div class="fw-title">📚 AI-Optimierte Dokumentation</div>
+      <p>Konsistente Namenskonventionen, klare Component-Beschreibungen und maschinenlesbare Dokumentation sind kritisch für AI-Nutzung.</p>
+    </div>
+  </div>
+
+  <div class="alert alert-purple">
+    <strong>WeSlam Connection:</strong> Diese 4 Säulen decken sich exakt mit dem WeSlam AI-Readiness Score Framework. Figma bestätigt: Was WeSlam messen und implementieren will, ist der richtige Ansatz.
+  </div>
+    </div>
+    <div id="fi-validation" class="panel">
+      <h1>Figma validiert WeSlam — im Detail</h1>
+  <p class="lead">Jeder Punkt des WeSlam AI-Readiness Scores findet sich im Figma Report wieder. Das ist keine Koinzidenz — es bestätigt, dass WeSlams Framework den richtigen Ansatz verfolgt.</p>
+
+  <div class="alert alert-green">
+    <strong>Fazit vorab:</strong> Der Figma Report bestätigt 6 von 8 WeSlam AI-Readiness Kriterien explizit. Die 2 weiteren (Governance, CI/CD) werden implizit angesprochen. WeSlam hat den richtigen Rahmen.
+  </div>
+
+  <div class="validation-card">
+    <div class="vc-header">
+      <div class="vc-icon">1️⃣</div>
+      <div>
+        <div class="vc-title">C1: Token-Architektur — ✅ Explizit bestätigt</div>
+        <div class="vc-sub">WeSlam Kriterium vs. Figma Report</div>
+      </div>
+    </div>
+    <div class="figma-says">
+      <div class="fs-label">Figma sagt</div>
+      <div class="fs-text">W3C DTCG Token-Standard ist der Grundstein. Primitive → Semantic → Component Hierarchie ist obligatorisch. Ohne strukturierte Tokens kann AI keine konsistente Ausgabe liefern.</div>
+    </div>
+    <div class="weslam-does">
+      <div class="wd-label">WeSlam macht</div>
+      <div class="wd-text">Audit der Token-Architektur (C1), Migration auf DTCG-Format, Aufbau der 3-Ebenen-Hierarchie mit Style Dictionary + Tokens Studio. Exakt was Figma empfiehlt.</div>
+    </div>
+  </div>
+
+  <div class="validation-card">
+    <div class="vc-header">
+      <div class="vc-icon">2️⃣</div>
+      <div>
+        <div class="vc-title">C2: Naming Convention — ✅ Explizit bestätigt</div>
+        <div class="vc-sub">WeSlam Kriterium vs. Figma Report</div>
+      </div>
+    </div>
+    <div class="figma-says">
+      <div class="fs-label">Figma sagt</div>
+      <div class="fs-text">«Consistent naming conventions are critical for AI consumption.» AI kann nur dann korrekt arbeiten, wenn Namen vorhersehbar und konsistent sind. Inkonsistente Namen führen zu falschen Zuordnungen.</div>
+    </div>
+    <div class="weslam-does">
+      <div class="wd-label">WeSlam macht</div>
+      <div class="wd-text">Naming Convention Audit (C2), Definition von kebab-case Standards, Elimination von Duplikaten, Einführung von Linting-Rules für Token-Naming. Deckt sich 1:1.</div>
+    </div>
+  </div>
+
+  <div class="validation-card">
+    <div class="vc-header">
+      <div class="vc-icon">3️⃣</div>
+      <div>
+        <div class="vc-title">C3: Dokumentationsqualität — ✅ Explizit bestätigt</div>
+        <div class="vc-sub">WeSlam Kriterium vs. Figma Report</div>
+      </div>
+    </div>
+    <div class="figma-says">
+      <div class="fs-label">Figma sagt</div>
+      <div class="fs-text">AI-Agenten lesen Dokumentation. Ohne klare Component-Beschreibungen (Usage, Variants, Props) generiert AI-Code falsche oder unvollständige Implementierungen.</div>
+    </div>
+    <div class="weslam-does">
+      <div class="wd-label">WeSlam macht</div>
+      <div class="wd-text">Dokumentations-Audit (C3), Aufbau von structured MDX-Docs, AI-optimierte Storybook-Konfiguration mit JSDoc-Kommentaren. Exakt diese Lücke schliesst WeSlam.</div>
+    </div>
+  </div>
+
+  <div class="validation-card">
+    <div class="vc-header">
+      <div class="vc-icon">4️⃣</div>
+      <div>
+        <div class="vc-title">C4: Code Connect / Figma-Code-Sync — ✅ Explizit bestätigt</div>
+        <div class="vc-sub">WeSlam Kriterium vs. Figma Report</div>
+      </div>
+    </div>
+    <div class="figma-says">
+      <div class="fs-label">Figma sagt</div>
+      <div class="fs-text">Code Connect ist die entscheidende Verbindung. Ohne Mapping zwischen Figma-Komponenten und Code-Komponenten weiss AI nicht, welche Komponente zu verwenden ist.</div>
+    </div>
+    <div class="weslam-does">
+      <div class="wd-label">WeSlam macht</div>
+      <div class="wd-text">Code Connect Setup als Teil des WeSlam Sprint-Pakets. Figma-zu-Code Mapping für alle Design-System-Komponenten. WeSlam ist einer der wenigen Schweizer Anbieter, der das anbietet.</div>
+    </div>
+  </div>
+
+  <div class="validation-card">
+    <div class="vc-header">
+      <div class="vc-icon">5️⃣</div>
+      <div>
+        <div class="vc-title">C5: MCP / AI-Tool-Integration — ✅ Explizit bestätigt</div>
+        <div class="vc-sub">WeSlam Kriterium vs. Figma Report</div>
+      </div>
+    </div>
+    <div class="figma-says">
+      <div class="fs-label">Figma sagt</div>
+      <div class="fs-text">Figma MCP Server ist das Bindeglied zwischen Design und AI-Tools. Konfiguration + Testing ist notwendig, um optimale Ergebnisse zu erzielen.</div>
+    </div>
+    <div class="weslam-does">
+      <div class="wd-label">WeSlam macht</div>
+      <div class="wd-text">MCP Server Setup und Konfiguration (C5). WeSlam testet die Integration mit Cursor, Claude, GitHub Copilot und dokumentiert Best Practices für den Kunden.</div>
+    </div>
+  </div>
+
+  <div class="validation-card">
+    <div class="vc-header">
+      <div class="vc-icon">8️⃣</div>
+      <div>
+        <div class="vc-title">C8: Team AI-Kompetenz — ✅ Explizit bestätigt</div>
+        <div class="vc-sub">WeSlam Kriterium vs. Figma Report</div>
+      </div>
+    </div>
+    <div class="figma-says">
+      <div class="fs-label">Figma sagt</div>
+      <div class="fs-text">«New skills will shape the next era.» Teams müssen Prompting, AI-Output-Verifikation und Design System Governance im AI-Zeitalter neu erlernen.</div>
+    </div>
+    <div class="weslam-does">
+      <div class="wd-label">WeSlam macht</div>
+      <div class="wd-text">Workshops für Teams (C8): Prompting für Design System Kontext, AI-Output-Review, Governance-Prozesse. WeSlam bringt das Know-how für die neuen Skills.</div>
+    </div>
+  </div>
+
+  <div class="alert alert-purple">
+    <strong>Swiss Context:</strong> Der Figma Report spricht globale Best Practices an. WeSlam übersetzt diese für den Schweizer Enterprise-Markt: FINMA-Compliance, Swisscom/SBB/PostFinance Landschaft, Deutsch/Französisch Multi-Brand Anforderungen. Das ist der Swiss Advantage.
+  </div>
+    </div>
+    <div id="fi-actions" class="panel">
+      <h1>Konsequenzen für WeSlam</h1>
+  <p class="lead">Was der Figma Report konkret für die WeSlam Strategie bedeutet — in priorisierten Handlungsempfehlungen.</p>
+
+  <h2>Sofortmassnahmen (Messaging Update)</h2>
+
+  <div class="overlap-item">
+    <div class="overlap-icon">📢</div>
+    <div class="overlap-content">
+      <div class="ot">57% Stat in alle Sales-Materialien aufnehmen</div>
+      <div class="os">«57% der Product Builder verbringen mehr Zeit auf strategischer Arbeit, wenn AI Routine übernimmt.» (Figma, 2025) — Diese Zahl gehört in das Pitch Deck, die Website und jeden Sales-Call.</div>
+      <div class="op">→ Homepage, LinkedIn Posts, Client Pitches</div>
+    </div>
+  </div>
+
+  <div class="overlap-item">
+    <div class="overlap-icon">🏷️</div>
+    <div class="overlap-content">
+      <div class="ot">Figma als Authority Referenz nutzen</div>
+      <div class="os">«Figma — der Design-Tool-Leader — empfiehlt genau das, was WeSlam implementiert: W3C DTCG Tokens, Code Connect, MCP Server.» Das ist externe Validierung ohne Selbstlobby.</div>
+      <div class="op">→ Trust-Building mit Swiss Enterprise Kunden</div>
+    </div>
+  </div>
+
+  <div class="overlap-item">
+    <div class="overlap-icon">🎯</div>
+    <div class="overlap-content">
+      <div class="ot">Drift Detector Messaging schärfen</div>
+      <div class="os">«Figma sagt: Teams brauchen Tracking für AI-Workarounds. WeSlam Drift Detector ist das Tool, das Figma beschreibt.» — Direkte Referenz auf den Figma Report als Markt-Beweis.</div>
+      <div class="op">→ GitHub README, Product Hunt Launch, Dev Community</div>
+    </div>
+  </div>
+
+  <div class="overlap-item">
+    <div class="overlap-icon">📚</div>
+    <div class="overlap-content">
+      <div class="ot">Prompting Workshop als neues Produkt</div>
+      <div class="os">Figma identifiziert Prompting als kritischen neuen Skill. WeSlam kann ein strukturiertes 4-Modul Workshop-Format (CHF 4'500) als Add-on zum Sprint entwickeln.</div>
+      <div class="op">→ Q3 2025 Produktentwicklung</div>
+    </div>
+  </div>
+
+  <div class="overlap-item">
+    <div class="overlap-icon">🇨🇭</div>
+    <div class="overlap-content">
+      <div class="ot">Swiss Gap explizit kommunizieren</div>
+      <div class="os">«Der Figma Report adressiert globale Best Practices. Swiss Enterprises brauchen zusätzlich: FINMA, nDSG, Multi-Sprache. WeSlam ist der einzige Schweizer Anbieter der das liefert.»</div>
+      <div class="op">→ Swiss Market Positioning schärfen</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <h2>Mittelfristige Produktentwicklung</h2>
+
+  <div class="framework-row">
+    <div class="fw-card">
+      <div class="fw-label">Q2 2025</div>
+      <div class="fw-title">Drift Detector Launch</div>
+      <p>Open-Source GitHub Action. Go-to-Market mit Figma Report als Referenz. «Das Tool das Figma beschreibt, aber nicht anbietet.»</p>
+    </div>
+    <div class="fw-card">
+      <div class="fw-label">Q3 2025</div>
+      <div class="fw-title">Workshop-Paket</div>
+      <p>4-Modul Design System AI-Prompting Workshop. Figma Framework als Curriculum-Grundlage. CHF 4'500 pro Tag.</p>
+    </div>
+    <div class="fw-card">
+      <div class="fw-label">Q3 2025</div>
+      <div class="fw-title">Legacy-Migration Playbook</div>
+      <p>Strukturierter Prozess: Legacy CSS → DTCG Tokens. Häufigster Einstiegspunkt für Swiss Enterprises.</p>
+    </div>
+    <div class="fw-card">
+      <div class="fw-label">Q4 2025</div>
+      <div class="fw-title">AI-Readiness Zertifikat</div>
+      <p>Schweizer Design System erhält WeSlam AI-Readiness Badge nach Audit + Sprint. Positionierung als Swiss Standard.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <h2>Updated Revenue-Hochrechnung</h2>
+  <p>Mit dem Figma Report als Validierung und dem Prompting Workshop als neuem Produkt:</p>
+  <div class="stat-row">
+    <div class="stat-card">
+      <span class="num">CHF 500k</span>
+      <span class="label">Jahr 1 Ziel: 4x Sprint (CHF 40k) + 3x Retainer (CHF 30k) + 5x Workshop + Drift SaaS</span>
+    </div>
+    <div class="stat-card">
+      <span class="num">CHF 1.2M</span>
+      <span class="label">Jahr 2 Ziel: Drift Detector als Paid Tier + 8x Retainer + Team-Growth</span>
+    </div>
+  </div>
+
+  <div class="alert alert-green">
+    <strong>Key Insight:</strong> Der Figma Report verschiebt die WeSlam-Positionierung von «netter Swiss Consultant» zu «offiziell endorsed Implementierungspartner für die Figma AI-Ready Design System Vision». Das ist ein signifikanter Positioning-Upgrade.
+  </div>
+    </div>
+  </div>
+
+</div><!-- /content -->
+
+<script>
+// Active doc tracking
+let activeDoc = 'blueprint';
+
+function showDoc(docId) {
+  // Hide all docs
+  document.querySelectorAll('.doc').forEach(d => d.classList.remove('active'));
+  document.querySelectorAll('.doc-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.sec-nav').forEach(n => n.style.display = 'none');
+
+  // Show selected
+  document.getElementById('doc-' + docId).classList.add('active');
+  event.currentTarget.classList.add('active');
+  document.getElementById('secnav-' + docId).style.display = 'flex';
+
+  activeDoc = docId;
+
+  // Activate first panel in that doc
+  const doc = document.getElementById('doc-' + docId);
+  const panels = doc.querySelectorAll('.panel');
+  panels.forEach(p => p.classList.remove('active'));
+  if (panels[0]) panels[0].classList.add('active');
+
+  // Activate first sec-btn in that secnav
+  const secnav = document.getElementById('secnav-' + docId);
+  const btns = secnav.querySelectorAll('.sec-btn');
+  btns.forEach(b => b.classList.remove('active'));
+  if (btns[0]) btns[0].classList.add('active');
+
+  window.scrollTo(0, 0);
+}
+
+function showPanel(docId, panelId, btn) {
+  const doc = document.getElementById('doc-' + docId);
+  doc.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(panelId).classList.add('active');
+
+  const secnav = document.getElementById('secnav-' + docId);
+  secnav.querySelectorAll('.sec-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  window.scrollTo(0, 0);
+}
+
+function subtab(id, btn, group) {
+  document.querySelectorAll('[data-group="' + group + '"]').forEach(p => p.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  btn.parentElement.querySelectorAll('.stab').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+}
+
+</script>
+
+</body>
+</html>
